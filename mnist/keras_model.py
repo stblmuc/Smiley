@@ -59,10 +59,8 @@ class Keras:
     # Create model of CNN with slim api
     def predict(self, inputs):
 
-        #
         # print(inputs.tolist())
         preds = self.model.predict(np.array(inputs))
-        # print(preds)
         preds = preds * 100.
         # print(preds)
         return preds

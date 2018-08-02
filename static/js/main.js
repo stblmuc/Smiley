@@ -142,7 +142,7 @@ class Main {
                         row.append(cell);
                         //if (results[classifierIdx] && results[classifierIdx][categoryIdx]) {
                             const result = results[classifierIdx][categoryIdx];
-                            cell.text(result);
+                            cell.text((result*100).toFixed(3)+"%");
                             const mostSuccessfullValue = mostSuccessfullValues[classifierIdx];
                             if (!mostSuccessfullValue || result > mostSuccessfullValue) {
                                 mostSuccessfullValues[classifierIdx] = result;

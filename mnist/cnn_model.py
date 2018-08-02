@@ -35,7 +35,7 @@ def CNN(inputs, categories=2, is_training=True):
         # biases_initializer = init_ops.zeros_initializer
         net = slim.fully_connected(net, 1024, scope='fc3')  # 3rd layer
         net = slim.dropout(net, is_training=is_training, scope='dropout3')  # dropout: 0.5 by default
-        outputs = slim.fully_connected(net, categories, activation_fn=None, normalizer_fn=None,
+        outputs = slim.fully_connected(net, categories, activation_fn=tf.nn.softmax, normalizer_fn=None,
                                        scope='fco')  # output layer
 
     return outputs, slim.get_model_variables()

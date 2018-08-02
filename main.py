@@ -55,13 +55,11 @@ def cnn_predict(input):
 
 # Keras prediction
 def keras_predict(input):
-    print("BLABLABLA")
     pred = keras.predict(input)
     output = np.zeros(12)  # up to 12 classes
     fillUptoIdx = len(pred[0])
     output[:fillUptoIdx] = pred
     output = output.tolist()
-    print("HAHAHA")
     return output
 
 
@@ -84,7 +82,7 @@ def mnist():
     cnn_input = (((255 - data) / 255.0) - 0.5).reshape(1, 784)
 
     keras_input = (data / 255.0).reshape(1, 28, 28, 1)
-    keras_output = keras_predict(keras_input)
+    #keras_output = keras_predict(keras_input)
 
     # get_activations(sess.graph.get_tensor_by_name("conv2/Relu:0"), cnn_input)
 
@@ -96,6 +94,7 @@ def mnist():
     try:
         cnn_output = cnn_predict(cnn_input)
         cnn_output = [-1.0 if math.isnan(f) else f for f in cnn_output]
+        print(cnn_output)
     except (NotFoundError, InvalidArgumentError):
         cnn_output = []
 
@@ -119,7 +118,7 @@ def mnist():
         category_names[ind] = [x for x in category_manager.CATEGORIES.keys() if category_manager.CATEGORIES[x] == ind][
             0]
 
-    return jsonify(classifiers=["regression", "CNN", "Keras"], results=[regression_output, cnn_output, keras_output],
+    return jsonify(classifiers=["regression", "CNN"], results=[regression_output, cnn_output],
                    error=err,
                    categories=category_names)
 
