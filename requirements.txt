@@ -1,0 +1,8 @@
+Flask
+numpy
+matplotlib
+scipy
+tensorflow
+pypng
+h5py
+image
