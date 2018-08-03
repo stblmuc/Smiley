@@ -41,9 +41,6 @@ def train():
     with tf.name_scope("LOSS"):
         loss = tf.losses.softmax_cross_entropy(y_, y)
 
-    print("Loss: \n")
-    print(loss)
-
     # create a summary to monitor loss tensor
     tf.summary.scalar('loss', loss)
 

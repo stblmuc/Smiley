@@ -31,7 +31,7 @@ class Main {
             this.ctx.closePath();
             this.ctx.stroke();
         }
-        $('#output td').text('').removeClass('success');
+        $('#output td, tr').remove();
     }
 
     onMouseDown(e) {
