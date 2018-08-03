@@ -21,7 +21,7 @@ VALIDATION_RATIO = 0.20  # split training data into 80% training data and 20% va
 MNIST_TRAIN_DATA_SIZE = 60000
 MNIST_TEST_DATA_SIZE = 10000
 
-USE_MNIST = False # True if and only if mnist dataset should be used to create a base model
+USE_MNIST = True # True if and only if mnist dataset should be used to create a base model
 EXPAND_DISPLAY_STEP = 5  # image augmentation is logged every EXPAND_DISPLAY_STEP images
 NUM_AUGM_PER_IMAGE = 5 # number of random augmentations per image
 
@@ -155,10 +155,6 @@ def add_extra_data(model, train_images, train_labels, test_images, test_labels, 
     one_hot_encoding[numpy.arange(len(extra_test_images)), extra_test_labels] = 1
     extra_test_labels = numpy.reshape(one_hot_encoding, [-1, number_of_categories])
 
-
-    #if not USE_MNIST:
-        #return extra_train_images, extra_train_labels, extra_test_images, extra_test_labels
-
     if sum([1 for c in number_per_category.items() if
             c[0] not in [str(n) for n in range(10)] and
                             c[1] != 0.0 and c[1] == number_per_category_in_training[c[0]]]) == 0:
@@ -244,7 +240,6 @@ def expand_training_data(images, labels):
             expanded_images.append(numpy.reshape(new_img_, 784))
             expanded_labels.append(y)
 
-    print("Number of expanded images %d" % len(expanded_images))
     # images and labels are concatenated for random-shuffle at each epoch
     # notice that pair of image and label should not be broken
     expanded_train_total_data = numpy.concatenate((expanded_images, expanded_labels), axis=1)
@@ -255,7 +250,15 @@ def expand_training_data(images, labels):
 
 # prepare training data (MNIST + generated images)
 def prepare_MNIST_data(model, use_data_augmentation=True):
-    if USE_MNIST:
+    any_in = lambda a, b: any(i in b for i in a)
+    digit_categories_exist = any_in(["0", "1", "2", "3", "4", "5", "6", "7", "8", "9"], category_manager.CATEGORIES)
+
+    train_data = []
+    train_labels = []
+    test_data = []
+    test_labels = []
+
+    if USE_MNIST and digit_categories_exist:
         # get the data files
         train_data_filename = maybe_download('train-images-idx3-ubyte.gz')
         train_labels_filename = maybe_download('train-labels-idx1-ubyte.gz')
@@ -268,13 +271,10 @@ def prepare_MNIST_data(model, use_data_augmentation=True):
 
     # add extra data from category folders
     train_ratio = float(MNIST_TRAIN_DATA_SIZE) / float(MNIST_TEST_DATA_SIZE + MNIST_TRAIN_DATA_SIZE)
-    train_data, train_labels, test_data, test_labels = add_extra_data(model, [], [], [],
-                                                                      [],
-                                                                      train_ratio)
+    train_data, train_labels, test_data, test_labels = add_extra_data(model, train_data, train_labels, test_data, test_labels, train_ratio)
 
     # create a validation set
-    train_data, train_labels, validation_data, validation_labels = create_validation_set(train_data, train_labels,
-                                                                                         VALIDATION_RATIO)
+    train_data, train_labels, validation_data, validation_labels = create_validation_set(train_data, train_labels, VALIDATION_RATIO)
 
     # concatenate train_data and train_labels for random shuffle
     if use_data_augmentation:
