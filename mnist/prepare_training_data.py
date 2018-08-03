@@ -21,6 +21,8 @@ VALIDATION_RATIO = 0.20  # split training data into 80% training data and 20% va
 MNIST_TRAIN_DATA_SIZE = 60000
 MNIST_TEST_DATA_SIZE = 10000
 
+USE_MNIST = False # True if and only if mnist dataset should be used to create a base model
+
 
 # download MNIST data
 def maybe_download(filename):
@@ -151,6 +153,10 @@ def add_extra_data(model, train_images, train_labels, test_images, test_labels, 
     one_hot_encoding[numpy.arange(len(extra_test_images)), extra_test_labels] = 1
     extra_test_labels = numpy.reshape(one_hot_encoding, [-1, number_of_categories])
 
+
+    if not USE_MNIST:
+        return extra_train_images, extra_train_labels, extra_test_images, extra_test_labels
+
     if sum([1 for c in number_per_category.items() if
             c[0] not in [str(n) for n in range(10)] and
                             c[1] != 0.0 and c[1] == number_per_category_in_training[c[0]]]) == 0:
@@ -206,6 +212,7 @@ def create_validation_set(train_data, train_labels, VALIDATION_PROPORTION):
 
 # augment training data
 def expand_training_data(images, labels):
+    print("Expand data:")
     expanded_images = []
     expanded_labels = []
 
