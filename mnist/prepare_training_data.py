@@ -22,6 +22,8 @@ MNIST_TRAIN_DATA_SIZE = 60000
 MNIST_TEST_DATA_SIZE = 10000
 
 USE_MNIST = False # True if and only if mnist dataset should be used to create a base model
+EXPAND_DISPLAY_STEP = 5  # image augmentation is logged every EXPAND_DISPLAY_STEP images
+NUM_AUGM_PER_IMAGE = 5 # number of random augmentations per image
 
 
 # download MNIST data
@@ -154,8 +156,8 @@ def add_extra_data(model, train_images, train_labels, test_images, test_labels, 
     extra_test_labels = numpy.reshape(one_hot_encoding, [-1, number_of_categories])
 
 
-    if not USE_MNIST:
-        return extra_train_images, extra_train_labels, extra_test_images, extra_test_labels
+    #if not USE_MNIST:
+        #return extra_train_images, extra_train_labels, extra_test_images, extra_test_labels
 
     if sum([1 for c in number_per_category.items() if
             c[0] not in [str(n) for n in range(10)] and
@@ -212,14 +214,12 @@ def create_validation_set(train_data, train_labels, VALIDATION_PROPORTION):
 
 # augment training data
 def expand_training_data(images, labels):
-    print("Expand data:")
     expanded_images = []
     expanded_labels = []
-
     j = 0
     for x, y in zip(images, labels):
         j += 1
-        if j % 100 == 0:
+        if j % EXPAND_DISPLAY_STEP == 0:
             print('expanding data : %03d / %03d' % (j, numpy.size(images, 0)))
 
         # register original data
@@ -231,7 +231,7 @@ def expand_training_data(images, labels):
         bg_value = numpy.median(x)  # this is regarded as background's value
         image = numpy.reshape(x, (-1, 28))
 
-        for i in range(4):
+        for i in range(NUM_AUGM_PER_IMAGE):
             # rotate the image with random degree
             angle = numpy.random.randint(-15, 15, 1)
             new_img = ndimage.rotate(image, angle, reshape=False, cval=bg_value)
@@ -244,6 +244,7 @@ def expand_training_data(images, labels):
             expanded_images.append(numpy.reshape(new_img_, 784))
             expanded_labels.append(y)
 
+    print("Number of expanded images %d" % len(expanded_images))
     # images and labels are concatenated for random-shuffle at each epoch
     # notice that pair of image and label should not be broken
     expanded_train_total_data = numpy.concatenate((expanded_images, expanded_labels), axis=1)
@@ -254,20 +255,21 @@ def expand_training_data(images, labels):
 
 # prepare training data (MNIST + generated images)
 def prepare_MNIST_data(model, use_data_augmentation=True):
-    # get the data files
-    train_data_filename = maybe_download('train-images-idx3-ubyte.gz')
-    train_labels_filename = maybe_download('train-labels-idx1-ubyte.gz')
-    test_data_filename = maybe_download('t10k-images-idx3-ubyte.gz')
-    test_labels_filename = maybe_download('t10k-labels-idx1-ubyte.gz')
+    if USE_MNIST:
+        # get the data files
+        train_data_filename = maybe_download('train-images-idx3-ubyte.gz')
+        train_labels_filename = maybe_download('train-labels-idx1-ubyte.gz')
+        test_data_filename = maybe_download('t10k-images-idx3-ubyte.gz')
+        test_labels_filename = maybe_download('t10k-labels-idx1-ubyte.gz')
 
-    # extract data and labels into vectors
-    train_data, train_labels = extract_data(model, train_data_filename, train_labels_filename, MNIST_TRAIN_DATA_SIZE)
-    test_data, test_labels = extract_data(model, test_data_filename, test_labels_filename, MNIST_TEST_DATA_SIZE)
+        # extract data and labels into vectors
+        train_data, train_labels = extract_data(model, train_data_filename, train_labels_filename, MNIST_TRAIN_DATA_SIZE)
+        test_data, test_labels = extract_data(model, test_data_filename, test_labels_filename, MNIST_TEST_DATA_SIZE)
 
     # add extra data from category folders
     train_ratio = float(MNIST_TRAIN_DATA_SIZE) / float(MNIST_TEST_DATA_SIZE + MNIST_TRAIN_DATA_SIZE)
-    train_data, train_labels, test_data, test_labels = add_extra_data(model, train_data, train_labels, test_data,
-                                                                      test_labels,
+    train_data, train_labels, test_data, test_labels = add_extra_data(model, [], [], [],
+                                                                      [],
                                                                       train_ratio)
 
     # create a validation set
