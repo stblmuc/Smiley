@@ -13,7 +13,7 @@ LOGS_DIRECTORY = "data/logs/"
 
 # parameters
 TRAINING_EPOCHS = 10  # 10
-TRAIN_BATCH_SIZE = 50  # 50
+TRAIN_BATCH_SIZE = 5  # 50
 DISPLAY_STEP = 100  # 100
 VALIDATION_STEP = 500  # 500
 TEST_BATCH_SIZE = 5000  # 5000
@@ -39,7 +39,10 @@ def train():
 
     # loss function
     with tf.name_scope("LOSS"):
-        loss = slim.losses.softmax_cross_entropy(y, y_)
+        loss = tf.losses.softmax_cross_entropy(y_, y)
+
+    print("Loss: \n")
+    print(loss)
 
     # create a summary to monitor loss tensor
     tf.summary.scalar('loss', loss)
