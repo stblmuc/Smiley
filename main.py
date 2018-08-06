@@ -30,7 +30,7 @@ y1, variables = regression_model.regression(x, categories=len(category_manager.C
 saver_regression = tf.train.Saver(variables)
 
 # CNN model
-y2, variables = cnn_model.CNN(x, categories=len(category_manager.CATEGORIES), is_training=is_training)
+y2, variables = cnn_model.convolutional(x, nCategories=len(category_manager.CATEGORIES), is_training=is_training)
 saver_cnn = tf.train.Saver(variables)
 
 # Webapp definition
@@ -43,7 +43,7 @@ def regression_predict(input):
 
 # CNN prediction
 def cnn_predict(input):
-    saver_cnn.restore(sess, MODELS_DIRECTORY + "convolutional.ckpt")  # load saved model
+    saver_cnn.restore(sess, MODELS_DIRECTORY + "convolutional1.ckpt")  # load saved model
     result = sess.run(y2, feed_dict={x: input, is_training: False}).flatten().tolist()
     return result
 

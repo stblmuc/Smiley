@@ -6,7 +6,7 @@ import tensorflow.contrib.slim as slim
 
 
 # Create definition of CNN model with slim API
-def CNN(inputs, categories=2, is_training=True):
+def CNN(inputs, nCategories=2, is_training=True):
     batch_norm_params = {'is_training': is_training, 'decay': 0.9, 'updates_collections': None}
     with slim.arg_scope([slim.conv2d, slim.fully_connected],
                         normalizer_fn=slim.batch_norm,
@@ -35,7 +35,32 @@ def CNN(inputs, categories=2, is_training=True):
         # biases_initializer = init_ops.zeros_initializer
         net = slim.fully_connected(net, 1024, scope='fc3')  # 3rd layer
         net = slim.dropout(net, is_training=is_training, scope='dropout3')  # dropout: 0.5 by default
-        outputs = slim.fully_connected(net, categories, activation_fn=tf.nn.softmax, normalizer_fn=None,
+        outputs = slim.fully_connected(net, nCategories, activation_fn=tf.nn.softmax, normalizer_fn=None,
                                        scope='fco')  # output layer
 
     return outputs, slim.get_model_variables()
+
+# CNN with normal tensorflow
+def convolutional(x, nCategories=2, is_training=True):
+
+    with tf.variable_scope('cnn'):
+
+        x_image = tf.reshape(x, [-1, 28, 28, 1])
+
+        conv1 = tf.layers.conv2d(x_image, 32, 5, activation=tf.nn.relu)
+        conv1 = tf.layers.max_pooling2d(conv1, 2, 2)
+
+        conv2 = tf.layers.conv2d(conv1, 64, 5, activation=tf.nn.relu)
+        conv2 = tf.layers.max_pooling2d(conv2, 2, 2)
+
+        fc1 = tf.contrib.layers.flatten(conv2)
+
+        fc1 = tf.layers.dense(fc1, 1024)
+
+        fc1 = tf.layers.dropout(fc1, rate=0.5, training=is_training)
+
+        out = tf.layers.dense(fc1, nCategories)
+    
+        y = tf.nn.softmax(out)
+        
+    return y, tf.get_collection(tf.GraphKeys.TRAINABLE_VARIABLES, scope="cnn") 

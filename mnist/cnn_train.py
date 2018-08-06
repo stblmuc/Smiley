@@ -8,11 +8,11 @@ from tensorflow.python.framework.errors_impl import InvalidArgumentError, NotFou
 import prepare_training_data, cnn_model
 import os
 
-MODEL_DIRECTORY = "data/models/convolutional.ckpt"
+MODEL_DIRECTORY = "data/models/convolutional1.ckpt"
 LOGS_DIRECTORY = "data/logs/"
 
 # parameters
-TRAINING_EPOCHS = 10  # 10
+TRAINING_EPOCHS = 5  # 10
 TRAIN_BATCH_SIZE = 5  # 50
 DISPLAY_STEP = 100  # 100
 VALIDATION_STEP = 500  # 500
@@ -35,8 +35,8 @@ def train():
     y_ = tf.placeholder(tf.float32, [None, curr_number_of_categories])  # CNN output
 
     # CNN model
-    y, variables = cnn_model.CNN(x, categories=curr_number_of_categories)
-
+    y, variables = cnn_model.convolutional(x, nCategories=curr_number_of_categories)
+    print(variables)
     # loss function
     with tf.name_scope("LOSS"):
         loss = tf.losses.softmax_cross_entropy(y_, y)
@@ -52,7 +52,7 @@ def train():
 
         learning_rate = tf.train.exponential_decay(
             1e-4,  # base learning rate.
-            batch * batch_size,  # current index into the dataset.
+            batch * batch_size,  # current index into the dataset.Sav
             train_size,  # decay step.
             0.95,  # decay rate.
             staircase=True)
