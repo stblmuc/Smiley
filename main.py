@@ -1,21 +1,19 @@
 import numpy as np
 import tensorflow as tf
 from flask import Flask, jsonify, render_template, request
-from mnist import regression_model, cnn_model, category_manager
+from smiley import regression_model, cnn_model, category_manager
 from tensorflow.python.framework.errors_impl import InvalidArgumentError, NotFoundError
 import os
 import math
-import matplotlib as mp
-import matplotlib.pyplot as plt
 
-MODELS_DIRECTORY = "mnist/data/models/"
+MODELS_DIRECTORY = "smiley/data/models/"
 
 # Initialize the mapping between categories and indices in the prediction vectors
 category_manager.update()
 
 # create folder for models if it doesn't exist
-if not os.path.exists("mnist/data/models/"):
-    os.makedirs("mnist/data/models/")
+if not os.path.exists("smiley/data/models/"):
+    os.makedirs("smiley/data/models/")
 
 # Model variables
 x = tf.placeholder("float", [None, 784])
@@ -53,8 +51,8 @@ def main():
     return render_template('index.html')
 
 # Predict
-@app.route('/api/mnist', methods=['POST'])
-def mnist():
+@app.route('/api/smiley', methods=['POST'])
+def smiley():
     # input with pixel values between 0 (black) and 255 (white)
     data = np.array(request.json, dtype=np.uint8)
 
@@ -63,8 +61,6 @@ def mnist():
 
     # transform pixels to values between -0.5 (white) and 0.5 (black)
     cnn_input = (((255 - data) / 255.0) - 0.5).reshape(1, 784)
-
-    # get_activations(sess.graph.get_tensor_by_name("conv2/Relu:0"), cnn_input)
 
     try:
         regression_output = regression_predict(regression_input)
@@ -97,7 +93,7 @@ def mnist():
         category_names[ind] = [x for x in category_manager.CATEGORIES.keys() if category_manager.CATEGORIES[x] == ind][
             0]
 
-    return jsonify(classifiers=["Linear", "CNN"], results=[regression_output, cnn_output],
+    return jsonify(classifiers=["Linear Regression", "CNN"], results=[regression_output, cnn_output],
                    error=err,
                    categories=category_names)
 
@@ -111,23 +107,6 @@ def generate_training_example():
     category_manager.add_training_example(image, category)
 
     return "ok"
-
-
-# functions for plotting activations of different layers:
-def plot_nn_filter(units):
-    filters = units.shape[3]
-    plt.figure(1, figsize=(20, 20))
-    n_columns = 6
-    n_rows = math.ceil(filters / n_columns) + 1
-    for i in range(filters):
-        plt.subplot(n_rows, n_columns, i + 1)
-        plt.title('Filter ' + str(i))
-        plt.imshow(units[0, :, :, i], interpolation="nearest", cmap="gray")
-    print("done plotting")
-
-def get_activations(layer, stimuli):
-    units = sess.run(layer, feed_dict={x: stimuli, is_training: False})
-    plot_nn_filter(units)
 
 # main
 if __name__ == '__main__':

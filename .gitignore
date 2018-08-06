@@ -6,6 +6,3 @@ __pycache__/
 # Flask
 instance/
 .webassets-cache
-
-# Training Data
-mnist_data/

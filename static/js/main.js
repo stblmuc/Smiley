@@ -95,7 +95,7 @@ class Main {
 
     loadOutput(inputs) {
         $.ajax({
-            url: '/api/mnist',
+            url: '/api/smiley',
             method: 'POST',
             contentType: 'application/json',
             data: JSON.stringify(inputs),

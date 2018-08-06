@@ -1,8 +1,5 @@
-Flask
-numpy
-matplotlib
-scipy
-tensorflow
-pypng
-h5py
-image
+Flask==1.0.2
+numpy==1.15.0
+scipy==1.1.0
+tensorflow==1.9.0
+pypng==0.0.18
