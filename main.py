@@ -45,7 +45,7 @@ def regression_predict(input):
 def cnn_predict(input):
     saver_cnn.restore(sess, MODELS_DIRECTORY + "convolutional.ckpt")  # load saved model
     result = sess.run(y2, feed_dict={x: input, is_training: False}).flatten().tolist()
-    return [z - min(result) for z in result]  # shift predictions to avoid negative values
+    return result
 
 # Root
 @app.route('/')
