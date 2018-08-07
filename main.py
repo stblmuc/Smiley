@@ -43,7 +43,7 @@ def regression_predict(input):
 
 # CNN prediction
 def cnn_predict(input):
-    saver_cnn.restore(sess, MODELS_DIRECTORY + "convolutional1.ckpt")  # load saved model
+    saver_cnn.restore(sess, MODELS_DIRECTORY + "convolutional.ckpt")  # load saved model
     result = sess.run(y2, feed_dict={x: input, is_training: False}).flatten().tolist()
     return result
 

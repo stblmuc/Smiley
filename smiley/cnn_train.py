@@ -8,8 +8,8 @@ import prepare_training_data, cnn_model
 import os
 import configparser
 
-MODEL_DIRECTORY = "data/models/convolutional1.ckpt"
-LOGS_DIRECTORY = "data/logs/"
+MODEL_DIRECTORY = os.path.join(os.path.dirname(__file__), "data/models/convolutional.ckpt")
+LOGS_DIRECTORY = os.path.join(os.path.dirname(__file__), "data/logs/")
 
 # parameters
 TRAIN_BATCH_SIZE = 5  # 50
@@ -86,9 +86,9 @@ def train():
     total_batch = int(train_size / batch_size)
 
     # op to write logs to Tensorboard
-    if not os.path.exists(os.path.join(os.path.dirname(__file__), LOGS_DIRECTORY)):
+    if not os.path.exists(LOGS_DIRECTORY):
         # create logs directory if it doesn't exist
-        os.makedirs(os.path.join(os.path.dirname(__file__), LOGS_DIRECTORY))
+        os.makedirs(LOGS_DIRECTORY)
     # summary_writer = tf.summary.FileWriter(LOGS_DIRECTORY, graph=tf.get_default_graph())
 
     # restore stored CNN model if it exists and has the correct number of categories
@@ -135,7 +135,7 @@ def train():
             # save the current model if the maximum accuracy is updated
             if validation_accuracy > max_acc:
                 max_acc = validation_accuracy
-                save_path = saver.save(sess, os.path.join(os.path.dirname(__file__), MODEL_DIRECTORY), write_meta_graph=False, write_state=False)
+                save_path = saver.save(sess, MODEL_DIRECTORY, write_meta_graph=False, write_state=False)
                 print("Model updated and saved in file: %s" % save_path)
 
                 # saver.save(sess, LOGS_DIRECTORY + "CNN", epoch)
@@ -143,7 +143,7 @@ def train():
     print("Optimization Finished!")
 
     # restore variables from disk
-    saver.restore(sess, os.path.join(os.path.dirname(__file__), MODEL_DIRECTORY))
+    saver.restore(sess, MODEL_DIRECTORY)
 
     # calculate accuracy for all test images
     test_size = test_labels.shape[0]
@@ -169,7 +169,7 @@ def train():
 
 def maybe_restore_model(saver, sess, accuracy, validation_data, x, validation_labels, y_, is_training):
     try:
-        saver.restore(sess, os.path.join(os.path.dirname(__file__), MODEL_DIRECTORY))
+        saver.restore(sess, MODEL_DIRECTORY)
         # save the current maximum accuracy value for validation data
         max_acc = sess.run(accuracy,
                            feed_dict={x: validation_data, y_: validation_labels,

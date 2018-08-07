@@ -6,7 +6,7 @@ from tensorflow.python.framework.errors_impl import InvalidArgumentError, NotFou
 import os
 import configparser
 
-MODEL_DIRECTORY = "data/models/regression.ckpt"
+MODEL_DIRECTORY = os.path.join(os.path.dirname(__file__), "data/models/regression.ckpt")
 DISPLAY_STEP = 100
 BATCH_SIZE = 50
 
@@ -79,14 +79,14 @@ def train():
             max_acc = validation_accuracy
             # store new regression model
             save_path = saver.save(
-                sess, os.path.join(os.path.dirname(__file__), MODEL_DIRECTORY),
+                sess, MODEL_DIRECTORY,
                 write_meta_graph=False, write_state=False)
             print("Model updated and saved in file: %s" % save_path)
 
     print("Optimization Finished!")
 
     # restore variables from disk
-    saver.restore(sess, os.path.join(os.path.dirname(__file__), MODEL_DIRECTORY))
+    saver.restore(sess, MODEL_DIRECTORY)
 
     # calculate accuracy for all test images
     test_accuracy = sess.run(accuracy, feed_dict={x: test_data, y_: test_labels})
@@ -96,7 +96,7 @@ def train():
 
 def maybe_restore_model(saver, sess, accuracy, test_data, x, test_labels, y_):
     try:
-        saver.restore(sess, os.path.join(os.path.dirname(__file__), MODEL_DIRECTORY))
+        saver.restore(sess, MODEL_DIRECTORY)
         # save the current maximum accuracy value for validation data
         max_acc = sess.run(accuracy, feed_dict={x: test_data, y_: test_labels})
     except (NotFoundError, InvalidArgumentError):

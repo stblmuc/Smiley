@@ -25,7 +25,7 @@ def add_data(model, train_images, train_labels, test_images, test_labels, train_
     datagen = ImageDataGenerator()
 
     generator = datagen.flow_from_directory(
-        os.path.join(os.path.dirname(__file__), category_manager.CATEGORIES_LOCATION),
+        category_manager.CATEGORIES_LOCATION,
         color_mode='grayscale',
         target_size=(28, 28),
         batch_size=1,
