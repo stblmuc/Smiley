@@ -3,6 +3,7 @@ import tensorflow as tf
 from flask import Flask, jsonify, render_template, request
 from smiley import regression_model, cnn_model, category_manager
 from tensorflow.python.framework.errors_impl import InvalidArgumentError, NotFoundError
+import webbrowser
 import os
 import math
 
@@ -110,4 +111,8 @@ def generate_training_example():
 
 # main
 if __name__ == '__main__':
+    # Open webbrowser tab for the app
+    new = 2 # open in a new tab, if possible
+    webbrowser.open("http://localhost:5000", new=new)
+
     app.run()

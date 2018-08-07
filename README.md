@@ -1,59 +1,43 @@
+# Smiley Recognition by TensorFlow #
 
-CNN Architektur von https://github.com/hwalsuklee/tensorflow-mnist-cnn
-Rahmen von https://github.com/sugyan/tensorflow-mnist
+###### A Python app for smiley recognition from images generated with the mouse or imported from cameras.
 
+GIF - TO DO
 
+Project and parts of the code inspired by [this repo](https://github.com/sugyan/tensorflow-mnist)
 
-README von https://github.com/sugyan/tensorflow-mnist:
+## General knowledge
 
+We try to provide easily understandable and concise backend and frontend capable of generating and importing data (i.e. images), as well as training and testing Machine Learning models for smiley recognition.
 
-# MNIST classification by TensorFlow #
-
-- [MNIST For ML Beginners](https://www.tensorflow.org/tutorials/mnist/beginners/)
-- [Deep MNIST for Experts](https://www.tensorflow.org/tutorials/mnist/pros/)
-
-![screencast](https://cloud.githubusercontent.com/assets/80381/11339453/f04f885e-923c-11e5-8845-33c16978c54d.gif)
+Additionally, we want to provide a better search experience by creating a syntactic and semantic error correction with the help of machine learning.
 
 
-## JUST PYTHON ##
+### Requirements ###
 
-### Requirement ###
+* We recommend to install [`anaconda`](https://docs.anaconda.com/anaconda/install/)
 
-- Python >=2.7 or >=3.4
-  - TensorFlow >=1.0
+- Python >=2.7 or >=3.6 (recommended 3.6.6)
+  - TensorFlow >=1.9 (tested 1.9.0)
 
+### Usage ###
 
-### How to run ###
+From installing until running the application, simply follow the instructions:
 
-    $ set FLASK_APP=main.py
-    $ python -m flask run
+```bash
+> # Creating and activating the environment
+> conda create --name smiley python=3.6.6
+> source activate smiley
+>
+> # To install requirements
+> pip install -r requirements.txt
+> 
+> # Running the app
+> python main.py
+> 
+> # Navigate to localhost:5000 if it doesn't open automatically
+```
 
+### License ###
 
-
-## WITH NODE (original) ## 
-
-Caution: gunicorn does not work on Windows
-
-### Requirement ###
-
-- Python >=2.7 or >=3.4
-  - TensorFlow >=1.0
-
-
-
-### How to run ###
-
-    $ pip install -r requirements.txt
-   $ gunicorn main:app --log-file=-
-
-
-### Deploy to Heroku ###
-
-    $ heroku apps:create [NAME]
-    $ heroku buildpacks:add heroku/nodejs
-    $ heroku buildpacks:add heroku/python
-    $ git push heroku master
-
-or Heroku Button.
-
-[![Deploy](https://www.herokucdn.com/deploy/button.svg)](https://heroku.com/deploy)
+TO DO
