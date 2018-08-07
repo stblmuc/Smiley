@@ -9,7 +9,6 @@ import prepare_training_data, cnn_model
 import os
 import configparser
 
-
 MODEL_DIRECTORY = "data/models/convolutional1.ckpt"
 LOGS_DIRECTORY = "data/logs/"
 

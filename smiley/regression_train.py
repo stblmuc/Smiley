@@ -16,81 +16,86 @@ MODEL_DIRECTORY = "data/models/regression.ckpt"
 DISPLAY_STEP = 100
 BATCH_SIZE = 50
 
-config = configparser.ConfigParser()
-config.read('trainConfig.ini')
 
-# regression model
-x = tf.placeholder(tf.float32, [None, 784])  # regression input
-y_ = tf.placeholder(tf.float32, [None, curr_number_of_categories])  # regression output
-y, variables = regression_model.regression(x, categories=curr_number_of_categories)
+def train():
+    config = configparser.ConfigParser()
+    config.read('trainConfig.ini')
 
-# training variables
-cross_entropy = -tf.reduce_sum(y_ * tf.log(y))
-train_step = tf.train.GradientDescentOptimizer(float(config['REGRESSION']['LEARNING_RATE'])).minimize(cross_entropy)
-correct_prediction = tf.equal(tf.argmax(y, 1), tf.argmax(y_, 1))
-accuracy = tf.reduce_mean(tf.cast(correct_prediction, tf.float32))
+    # regression model
+    x = tf.placeholder(tf.float32, [None, 784])  # regression input
+    y_ = tf.placeholder(tf.float32, [None, curr_number_of_categories])  # regression output
+    y, variables = regression_model.regression(x, categories=curr_number_of_categories)
 
-# merge training data and validation data
-validation_total_data = numpy.concatenate((validation_data, validation_labels), axis=1)
-new_train_total_data = numpy.concatenate((train_total_data, validation_total_data))
-train_size = new_train_total_data.shape[0]
+    # training variables
+    cross_entropy = -tf.reduce_sum(y_ * tf.log(y))
+    train_step = tf.train.GradientDescentOptimizer(float(config['REGRESSION']['LEARNING_RATE'])).minimize(cross_entropy)
+    correct_prediction = tf.equal(tf.argmax(y, 1), tf.argmax(y_, 1))
+    accuracy = tf.reduce_mean(tf.cast(correct_prediction, tf.float32))
 
-sess = tf.InteractiveSession()
-sess.run(tf.global_variables_initializer())
-saver = tf.train.Saver(variables)
+    # merge training data and validation data
+    validation_total_data = numpy.concatenate((validation_data, validation_labels), axis=1)
+    new_train_total_data = numpy.concatenate((train_total_data, validation_total_data))
+    train_size = new_train_total_data.shape[0]
 
-# training cycle
-total_batch = int(train_size / BATCH_SIZE)
+    sess = tf.InteractiveSession()
+    sess.run(tf.global_variables_initializer())
+    saver = tf.train.Saver(variables)
 
-# restore stored regression model if it exists and has the correct number of categories
-try:
+    # training cycle
+    total_batch = int(train_size / BATCH_SIZE)
+
+    # restore stored regression model if it exists and has the correct number of categories
+    try:
+        saver.restore(sess, MODEL_DIRECTORY)
+        # save the current maximum accuracy value for validation data
+        max_acc = sess.run(accuracy, feed_dict={x: test_data, y_: test_labels})
+    except (NotFoundError, InvalidArgumentError):
+        # initialize the maximum accuracy value for validation data
+        max_acc = 0.
+
+    # loop for epoch
+    for epoch in range(int(config['REGRESSION']['EPOCHS'])):
+
+        # random shuffling
+        numpy.random.shuffle(train_total_data)
+        train_data_ = new_train_total_data[:, :-curr_number_of_categories]
+        train_labels_ = new_train_total_data[:, -curr_number_of_categories:]
+
+        # loop over all batches
+        for i in range(total_batch):
+            # compute the offset of the current minibatch in the data.
+            offset = (i * BATCH_SIZE) % (train_size)
+            batch_xs = train_data_[offset:(offset + BATCH_SIZE), :]
+            batch_ys = train_labels_[offset:(offset + BATCH_SIZE), :]
+            _, train_accuracy = sess.run([train_step, accuracy], feed_dict={x: batch_xs, y_: batch_ys})
+
+            # display logs
+            if i % DISPLAY_STEP == 0:
+                print("Epoch:", '%04d,' % (epoch + 1),
+                      "batch_index %4d/%4d, training accuracy %.5f" % (i, total_batch, train_accuracy))
+
+        # check total accuracy
+        validation_accuracy = sess.run(accuracy, feed_dict={x: validation_data, y_: validation_labels})
+        print("Epoch:", '%04d,' % (epoch + 1),
+              "validation accuracy %.5f" % (validation_accuracy))
+
+        if validation_accuracy > max_acc:
+            max_acc = validation_accuracy
+            # store new regression model
+            save_path = saver.save(
+                sess, MODEL_DIRECTORY,
+                write_meta_graph=False, write_state=False)
+            print("Model updated and saved in file: %s" % save_path)
+
+    print("Optimization Finished!")
+
+    # restore variables from disk
     saver.restore(sess, MODEL_DIRECTORY)
-    # save the current maximum accuracy value for validation data
-    max_acc = sess.run(accuracy, feed_dict={x: test_data, y_: test_labels})
-except (NotFoundError, InvalidArgumentError):
-    # initialize the maximum accuracy value for validation data
-    max_acc = 0.
 
-# loop for epoch
-for epoch in range(int(config['REGRESSION']['EPOCHS'])):
+    # calculate accuracy for all test images
+    test_accuracy = sess.run(accuracy, feed_dict={x: test_data, y_: test_labels})
 
-    # random shuffling
-    numpy.random.shuffle(train_total_data)
-    train_data_ = new_train_total_data[:, :-curr_number_of_categories]
-    train_labels_ = new_train_total_data[:, -curr_number_of_categories:]
+    print("test accuracy for the stored model: %g" % test_accuracy)
 
-    # loop over all batches
-    for i in range(total_batch):
-        # compute the offset of the current minibatch in the data.
-        offset = (i * BATCH_SIZE) % (train_size)
-        batch_xs = train_data_[offset:(offset + BATCH_SIZE), :]
-        batch_ys = train_labels_[offset:(offset + BATCH_SIZE), :]
-        _, train_accuracy = sess.run([train_step, accuracy], feed_dict={x: batch_xs, y_: batch_ys})
-
-        # display logs
-        if i % DISPLAY_STEP == 0:
-            print("Epoch:", '%04d,' % (epoch + 1),
-                  "batch_index %4d/%4d, training accuracy %.5f" % (i, total_batch, train_accuracy))
-
-    # check total accuracy
-    validation_accuracy = sess.run(accuracy, feed_dict={x: validation_data, y_: validation_labels})
-    print("Epoch:", '%04d,' % (epoch + 1),
-          "validation accuracy %.5f" % (validation_accuracy))
-
-    if validation_accuracy > max_acc:
-        max_acc = validation_accuracy
-        # store new regression model
-        save_path = saver.save(
-            sess, MODEL_DIRECTORY,
-            write_meta_graph=False, write_state=False)
-        print("Model updated and saved in file: %s" % save_path)
-
-print("Optimization Finished!")
-
-# restore variables from disk
-saver.restore(sess, MODEL_DIRECTORY)
-
-# calculate accuracy for all test images
-test_accuracy = sess.run(accuracy, feed_dict={x: test_data, y_: test_labels})
-
-print("test accuracy for the stored model: %g" % test_accuracy)
+if __name__ == '__main__':
+    train()
