@@ -173,6 +173,19 @@ class Main {
             }
         });
     }
+
+    trainModel(button) {
+        $(button).prop('disabled', true)
+        button.innerHTML = "Training..."
+        $.ajax({
+            url: '/api/train-model',
+            method: 'POST',
+            success: (data) => {
+                button.innerHTML = "Train"
+                $(button).prop('disabled', false)
+            }
+        })
+    }
 }
 
 $(() => {
@@ -195,5 +208,9 @@ $(() => {
             alert("Please enter a name/label for the data");
         };
          main.initialize();
+    });
+
+    $('#train').click((e) => {
+        main.trainModel(e.target);
     });
 });

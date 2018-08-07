@@ -3,23 +3,25 @@ import regression_model
 import tensorflow as tf
 import prepare_training_data, category_manager
 from tensorflow.python.framework.errors_impl import InvalidArgumentError, NotFoundError
+import os
 import configparser
-
-# get training/validation/testing data
-try:
-    curr_number_of_categories, train_total_data, train_size, validation_data, validation_labels, test_data, test_labels = prepare_training_data.prepare_data(
-        "regression", True)
-except TypeError:
-    raise Exception("Error preparing training/validation/test data. Create more training examples.")
 
 MODEL_DIRECTORY = "data/models/regression.ckpt"
 DISPLAY_STEP = 100
 BATCH_SIZE = 50
 
-
 def train():
+    print("\nLINEAR REGRESSION TRAINING STARTED.")
+
+    # get training/validation/testing data
+    try:
+        curr_number_of_categories, train_total_data, train_size, validation_data, validation_labels, test_data, test_labels = prepare_training_data.prepare_data(
+            "regression", True)
+    except TypeError:
+        raise Exception("Error preparing training/validation/test data. Create more training examples.")
+
     config = configparser.ConfigParser()
-    config.read('trainConfig.ini')
+    config.read(os.path.join(os.path.dirname(__file__), 'trainConfig.ini'))
 
     # regression model
     x = tf.placeholder(tf.float32, [None, 784])  # regression input
@@ -77,22 +79,24 @@ def train():
             max_acc = validation_accuracy
             # store new regression model
             save_path = saver.save(
-                sess, MODEL_DIRECTORY,
+                sess, os.path.join(os.path.dirname(__file__), MODEL_DIRECTORY),
                 write_meta_graph=False, write_state=False)
             print("Model updated and saved in file: %s" % save_path)
 
     print("Optimization Finished!")
 
     # restore variables from disk
-    saver.restore(sess, MODEL_DIRECTORY)
+    saver.restore(sess, os.path.join(os.path.dirname(__file__), MODEL_DIRECTORY))
 
     # calculate accuracy for all test images
     test_accuracy = sess.run(accuracy, feed_dict={x: test_data, y_: test_labels})
     print("test accuracy for the stored model: %g" % test_accuracy)
+    sess.close()
+    print("LINEAR REGRESSION TRAINING END.")
 
-def maybe_restore_model(saver, sess, accuracy, validation_data, x, validation_labels, y_):
+def maybe_restore_model(saver, sess, accuracy, test_data, x, test_labels, y_):
     try:
-        saver.restore(sess, MODEL_DIRECTORY)
+        saver.restore(sess, os.path.join(os.path.dirname(__file__), MODEL_DIRECTORY))
         # save the current maximum accuracy value for validation data
         max_acc = sess.run(accuracy, feed_dict={x: test_data, y_: test_labels})
     except (NotFoundError, InvalidArgumentError):

@@ -1,11 +1,12 @@
 import numpy as np
 import tensorflow as tf
-from flask import Flask, jsonify, render_template, request
-from smiley import regression_model, cnn_model, category_manager
+from flask import Flask, jsonify, render_template, url_for, request
 from tensorflow.python.framework.errors_impl import InvalidArgumentError, NotFoundError
 import webbrowser
-import os
+import os, sys
 import math
+sys.path.append("smiley")
+import regression_model, cnn_model, category_manager, regression_train, cnn_train
 
 MODELS_DIRECTORY = "smiley/data/models/"
 
@@ -13,8 +14,8 @@ MODELS_DIRECTORY = "smiley/data/models/"
 category_manager.update()
 
 # create folder for models if it doesn't exist
-if not os.path.exists("smiley/data/models/"):
-    os.makedirs("smiley/data/models/")
+if not os.path.exists(MODELS_DIRECTORY):
+    os.makedirs(MODELS_DIRECTORY)
 
 # Model variables
 x = tf.placeholder("float", [None, 784])
@@ -106,6 +107,14 @@ def generate_training_example():
     category = request.json["cat"]
 
     category_manager.add_training_example(image, category)
+
+    return "ok"
+
+# Train model
+@app.route('/api/train-model', methods=['POST'])
+def train_model():
+    regression_train.train()
+    cnn_train.train()
 
     return "ok"
 

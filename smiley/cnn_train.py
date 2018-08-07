@@ -3,7 +3,6 @@ from __future__ import division
 from __future__ import print_function
 import numpy
 import tensorflow as tf
-import tensorflow.contrib.slim as slim
 from tensorflow.python.framework.errors_impl import InvalidArgumentError, NotFoundError
 import prepare_training_data, cnn_model
 import os
@@ -20,6 +19,8 @@ TEST_BATCH_SIZE = 5  # 5000
 
 
 def train():
+    print("\nCNN TRAINING STARTED.")
+
     # get training/validation/testing data
     try:
         curr_number_of_categories, train_total_data, train_size, validation_data, validation_labels, test_data, test_labels = prepare_training_data.prepare_data(
@@ -28,7 +29,7 @@ def train():
         raise Exception("Error preparing training/validation/test data. Create more training examples.")
 
     config = configparser.ConfigParser()
-    config.read('trainConfig.ini')
+    config.read(os.path.join(os.path.dirname(__file__), 'trainConfig.ini'))
 
     batch_size = TRAIN_BATCH_SIZE
     is_training = tf.placeholder(tf.bool)
@@ -85,9 +86,9 @@ def train():
     total_batch = int(train_size / batch_size)
 
     # op to write logs to Tensorboard
-    if not os.path.exists(LOGS_DIRECTORY):
+    if not os.path.exists(os.path.join(os.path.dirname(__file__), LOGS_DIRECTORY)):
         # create logs directory if it doesn't exist
-        os.makedirs(LOGS_DIRECTORY)
+        os.makedirs(os.path.join(os.path.dirname(__file__), LOGS_DIRECTORY))
     # summary_writer = tf.summary.FileWriter(LOGS_DIRECTORY, graph=tf.get_default_graph())
 
     # restore stored CNN model if it exists and has the correct number of categories
@@ -134,7 +135,7 @@ def train():
             # save the current model if the maximum accuracy is updated
             if validation_accuracy > max_acc:
                 max_acc = validation_accuracy
-                save_path = saver.save(sess, MODEL_DIRECTORY, write_meta_graph=False, write_state=False)
+                save_path = saver.save(sess, os.path.join(os.path.dirname(__file__), MODEL_DIRECTORY), write_meta_graph=False, write_state=False)
                 print("Model updated and saved in file: %s" % save_path)
 
                 # saver.save(sess, LOGS_DIRECTORY + "CNN", epoch)
@@ -142,7 +143,7 @@ def train():
     print("Optimization Finished!")
 
     # restore variables from disk
-    saver.restore(sess, MODEL_DIRECTORY)
+    saver.restore(sess, os.path.join(os.path.dirname(__file__), MODEL_DIRECTORY))
 
     # calculate accuracy for all test images
     test_size = test_labels.shape[0]
@@ -163,10 +164,12 @@ def train():
         acc_buffer.append(numpy.sum(correct_prediction) / batch_size)
 
     print("test accuracy for the stored model: %g" % numpy.mean(acc_buffer))
+    sess.close()
+    print("CNN TRAINING END.")
 
 def maybe_restore_model(saver, sess, accuracy, validation_data, x, validation_labels, y_, is_training):
     try:
-        saver.restore(sess, MODEL_DIRECTORY)
+        saver.restore(sess, os.path.join(os.path.dirname(__file__), MODEL_DIRECTORY))
         # save the current maximum accuracy value for validation data
         max_acc = sess.run(accuracy,
                            feed_dict={x: validation_data, y_: validation_labels,

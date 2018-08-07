@@ -25,7 +25,7 @@ def add_data(model, train_images, train_labels, test_images, test_labels, train_
     datagen = ImageDataGenerator()
 
     generator = datagen.flow_from_directory(
-        category_manager.CATEGORIES_LOCATION,
+        os.path.join(os.path.dirname(__file__), category_manager.CATEGORIES_LOCATION),
         color_mode='grayscale',
         target_size=(28, 28),
         batch_size=1,
@@ -130,7 +130,7 @@ def expand_training_data(images, labels):
     expanded_labels = []
     j = 0
     config = configparser.ConfigParser()
-    config.read('trainConfig.ini')
+    config.read(os.path.join(os.path.dirname(__file__), 'trainConfig.ini'))
     for x, y in zip(images, labels):
         j += 1
         if j % EXPAND_DISPLAY_STEP == 0:
