@@ -6,15 +6,20 @@ from tensorflow.python.framework.errors_impl import InvalidArgumentError, NotFou
 import webbrowser
 import os
 import math
+import configparser
 
-MODELS_DIRECTORY = "smiley/data/models/"
+
+config = configparser.ConfigParser()
+config.read('./smiley/trainConfig.ini')
+
+MODELS_DIRECTORY = config['DEFAULT']['MODELS_DIRECTORY']
 
 # Initialize the mapping between categories and indices in the prediction vectors
 category_manager.update()
 
 # create folder for models if it doesn't exist
-if not os.path.exists("smiley/data/models/"):
-    os.makedirs("smiley/data/models/")
+if not os.path.exists(MODELS_DIRECTORY):
+    os.makedirs(MODELS_DIRECTORY)
 
 # Model variables
 x = tf.placeholder("float", [None, 784])
@@ -91,12 +96,10 @@ def smiley():
 
     category_names = ["" for x in range(len(category_manager.CATEGORIES))]
     for ind in range(len(category_names)):
-        category_names[ind] = [x for x in category_manager.CATEGORIES.keys() if category_manager.CATEGORIES[x] == ind][
-            0]
+        category_names[ind] = [x for x in category_manager.CATEGORIES.keys() if category_manager.CATEGORIES[x] == ind][0]
 
     return jsonify(classifiers=["Linear Regression", "CNN"], results=[regression_output, cnn_output],
-                   error=err,
-                   categories=category_names)
+                   error=err, categories=category_names)
 
 
 # Add training example

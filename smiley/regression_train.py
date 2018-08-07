@@ -5,21 +5,20 @@ import prepare_training_data, category_manager
 from tensorflow.python.framework.errors_impl import InvalidArgumentError, NotFoundError
 import configparser
 
-# get training/validation/testing data
-try:
-    curr_number_of_categories, train_total_data, train_size, validation_data, validation_labels, test_data, test_labels = prepare_training_data.prepare_data(
-        "regression", True)
-except TypeError:
-    raise Exception("Error preparing training/validation/test data. Create more training examples.")
-
-MODEL_DIRECTORY = "data/models/regression.ckpt"
-DISPLAY_STEP = 100
-BATCH_SIZE = 50
-
 
 def train():
     config = configparser.ConfigParser()
     config.read('trainConfig.ini')
+
+    BATCH_SIZE = int(config['DEFAULT']['TRAIN_BATCH_SIZE'])
+    MODEL_DIRECTORY = config['REGRESSION']['MODEL_DIRECTORY']
+
+    # get training/validation/testing data
+    try:
+        curr_number_of_categories, train_total_data, train_size, validation_data, validation_labels, test_data, test_labels = prepare_training_data.prepare_data(
+            "regression", True)
+    except TypeError:
+        raise Exception("Error preparing training/validation/test data. Create more training examples.")
 
     # regression model
     x = tf.placeholder(tf.float32, [None, 784])  # regression input
@@ -45,7 +44,7 @@ def train():
     total_batch = int(train_size / BATCH_SIZE)
 
     # restore stored regression model if it exists and has the correct number of categories
-    max_acc = maybe_restore_model(saver, sess, accuracy, validation_data, x, validation_labels, y_)
+    max_acc = maybe_restore_model(MODEL_DIRECTORY, saver, sess, accuracy, validation_data, x, validation_labels, y_)
 
     # loop for epoch
     for epoch in range(int(config['REGRESSION']['EPOCHS'])):
@@ -64,7 +63,7 @@ def train():
             _, train_accuracy = sess.run([train_step, accuracy], feed_dict={x: batch_xs, y_: batch_ys})
 
             # display logs
-            if i % DISPLAY_STEP == 0:
+            if i % int(config['LOGS']['TRAIN_ACCURACY_DISPLAY_STEP']) == 0:
                 print("Epoch:", '%04d,' % (epoch + 1),
                       "batch_index %4d/%4d, training accuracy %.5f" % (i, total_batch, train_accuracy))
 
@@ -90,11 +89,11 @@ def train():
     test_accuracy = sess.run(accuracy, feed_dict={x: test_data, y_: test_labels})
     print("test accuracy for the stored model: %g" % test_accuracy)
 
-def maybe_restore_model(saver, sess, accuracy, validation_data, x, validation_labels, y_):
+def maybe_restore_model(model_path, saver, sess, accuracy, validation_data, x, validation_labels, y_):
     try:
-        saver.restore(sess, MODEL_DIRECTORY)
+        saver.restore(sess, model_path)
         # save the current maximum accuracy value for validation data
-        max_acc = sess.run(accuracy, feed_dict={x: test_data, y_: test_labels})
+        max_acc = sess.run(accuracy, feed_dict={x: validation_data, y_: validation_labels})
     except (NotFoundError, InvalidArgumentError):
         # initialize the maximum accuracy value for validation data
         max_acc = 0.

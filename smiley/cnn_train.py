@@ -9,17 +9,14 @@ import prepare_training_data, cnn_model
 import os
 import configparser
 
-MODEL_DIRECTORY = "data/models/convolutional1.ckpt"
-LOGS_DIRECTORY = "data/logs/"
-
-# parameters
-TRAIN_BATCH_SIZE = 5  # 50
-DISPLAY_STEP = 20  # 100
-VALIDATION_STEP = 5  # 500
-TEST_BATCH_SIZE = 5  # 5000
-
 
 def train():
+    config = configparser.ConfigParser()
+    config.read('trainConfig.ini')
+
+    MODEL_DIRECTORY = config['CNN']['MODEL_DIRECTORY']
+    LOGS_DIRECTORY = config['CNN']['LOGS_DIRECTORY']
+
     # get training/validation/testing data
     try:
         curr_number_of_categories, train_total_data, train_size, validation_data, validation_labels, test_data, test_labels = prepare_training_data.prepare_data(
@@ -27,10 +24,7 @@ def train():
     except TypeError:
         raise Exception("Error preparing training/validation/test data. Create more training examples.")
 
-    config = configparser.ConfigParser()
-    config.read('trainConfig.ini')
-
-    batch_size = TRAIN_BATCH_SIZE
+    batch_size = int(config['DEFAULT']['TRAIN_BATCH_SIZE'])
     is_training = tf.placeholder(tf.bool)
 
     x = tf.placeholder(tf.float32, [None, 784])  # CNN input
@@ -90,7 +84,7 @@ def train():
     # summary_writer = tf.summary.FileWriter(LOGS_DIRECTORY, graph=tf.get_default_graph())
 
     # restore stored CNN model if it exists and has the correct number of categories
-    max_acc = maybe_restore_model(saver, sess, accuracy, validation_data, x, validation_labels, y_, is_training)
+    max_acc = maybe_restore_model(MODEL_DIRECTORY, saver, sess, accuracy, validation_data, x, validation_labels, y_, is_training)
 
     # loop for epoch
     for epoch in range(int(config['CNN']['EPOCHS'])):
@@ -116,7 +110,7 @@ def train():
             # summary_writer.add_summary(summary, epoch * total_batch + i)
 
             validation_accuracy = computeAccuracy(epoch, i, total_batch, train_accuracy, sess, 
-                accuracy, x, validation_data, y_, validation_labels, is_training)
+                accuracy, x, validation_data, y_, validation_labels, is_training, int(config['LOGS']['TRAIN_ACCURACY_DISPLAY_STEP']), int(config['LOGS']['VALIDATION_STEP']))
 
             # save the current model if the maximum accuracy is updated
             if validation_accuracy > max_acc:
@@ -133,7 +127,7 @@ def train():
 
     # calculate accuracy for all test images
     test_size = test_labels.shape[0]
-    batch_size = min(test_size, TEST_BATCH_SIZE)
+    batch_size = min(test_size, int(config['DEFAULT']['TEST_BATCH_SIZE']))
     total_batch = int(test_size / batch_size)
 
     acc_buffer = []
@@ -151,9 +145,9 @@ def train():
 
     print("test accuracy for the stored model: %g" % numpy.mean(acc_buffer))
 
-def maybe_restore_model(saver, sess, accuracy, validation_data, x, validation_labels, y_, is_training):
+def maybe_restore_model(model_path, saver, sess, accuracy, validation_data, x, validation_labels, y_, is_training):
     try:
-        saver.restore(sess, MODEL_DIRECTORY)
+        saver.restore(sess, model_path)
         # save the current maximum accuracy value for validation data
         max_acc = sess.run(accuracy,
                            feed_dict={x: validation_data, y_: validation_labels,
@@ -163,7 +157,7 @@ def maybe_restore_model(saver, sess, accuracy, validation_data, x, validation_la
         max_acc = 0.
     return max_acc
 
-def computeAccuracy(epoch, i, total_batch, train_accuracy, sess, accuracy, x, validation_data, y_, validation_labels, is_training):
+def computeAccuracy(epoch, i, total_batch, train_accuracy, sess, accuracy, x, validation_data, y_, validation_labels, is_training, DISPLAY_STEP, VALIDATION_STEP):
     # display logs
     if i % DISPLAY_STEP == 0:
         print("Epoch:", '%04d,' % (epoch + 1),

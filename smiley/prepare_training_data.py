@@ -9,14 +9,7 @@ import tensorflow as tf
 import configparser
 
 # parameters
-IMAGE_SIZE = 28
-NUM_CHANNELS = 1
-PIXEL_DEPTH = 255
 NUM_LABELS = len(category_manager.update())
-VALIDATION_RATIO = 0.20  # split training data into 80% training data and 20% validation data
-
-EXPAND_DISPLAY_STEP = 5  # image augmentation is logged every EXPAND_DISPLAY_STEP images
-TRAIN_RATIO = 0.8 # split generated data into 80& for training and 20% for testing
 
 # get images from category folders, add them to training/test images
 def add_data(model, train_images, train_labels, test_images, test_labels, train_ratio):
@@ -132,7 +125,7 @@ def expand_training_data(images, labels):
     config.read('trainConfig.ini')
     for x, y in zip(images, labels):
         j += 1
-        if j % EXPAND_DISPLAY_STEP == 0:
+        if j % int(config['LOGS']['EXPAND_DISPLAY_STEP']) == 0:
             print('expanding data : %03d / %03d' % (j, numpy.size(images, 0)))
 
         # register original data
@@ -174,11 +167,15 @@ def prepare_data(model, use_data_augmentation=True):
     test_data = []
     test_labels = []
 
+    config = configparser.ConfigParser()
+    config.read('trainConfig.ini')
+    train_ratio = float(config['DEFAULT']['TRAIN_RATIO'])
+
     # add  data from category folders
-    train_data, train_labels, test_data, test_labels = add_data(model, train_data, train_labels, test_data, test_labels, TRAIN_RATIO)
+    train_data, train_labels, test_data, test_labels = add_data(model, train_data, train_labels, test_data, test_labels, train_ratio)
 
     # create a validation set
-    train_data, train_labels, validation_data, validation_labels = create_validation_set(train_data, train_labels, VALIDATION_RATIO)
+    train_data, train_labels, validation_data, validation_labels = create_validation_set(train_data, train_labels, 1-train_ratio)
 
     # concatenate train_data and train_labels for random shuffle
     if use_data_augmentation:
