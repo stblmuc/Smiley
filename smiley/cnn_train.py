@@ -91,15 +91,7 @@ def train():
     # summary_writer = tf.summary.FileWriter(LOGS_DIRECTORY, graph=tf.get_default_graph())
 
     # restore stored CNN model if it exists and has the correct number of categories
-    try:
-        saver.restore(sess, MODEL_DIRECTORY)
-        # save the current maximum accuracy value for validation data
-        max_acc = sess.run(accuracy,
-                           feed_dict={x: validation_data, y_: validation_labels,
-                                      is_training: False})
-    except (NotFoundError, InvalidArgumentError):
-        # initialize the maximum accuracy value for validation data
-        max_acc = 0.
+    max_acc = maybe_restore_model(saver, sess, accuracy, validation_data, x, validation_labels, y_, is_training)
 
     # loop for epoch
     for epoch in range(int(config['CNN']['EPOCHS'])):
@@ -172,6 +164,17 @@ def train():
 
     print("test accuracy for the stored model: %g" % numpy.mean(acc_buffer))
 
+def maybe_restore_model(saver, sess, accuracy, validation_data, x, validation_labels, y_, is_training):
+    try:
+        saver.restore(sess, MODEL_DIRECTORY)
+        # save the current maximum accuracy value for validation data
+        max_acc = sess.run(accuracy,
+                           feed_dict={x: validation_data, y_: validation_labels,
+                                      is_training: False})
+    except (NotFoundError, InvalidArgumentError):
+        # initialize the maximum accuracy value for validation data
+        max_acc = 0.
+    return max_acc
 
 if __name__ == '__main__':
     train()

@@ -45,13 +45,7 @@ def train():
     total_batch = int(train_size / BATCH_SIZE)
 
     # restore stored regression model if it exists and has the correct number of categories
-    try:
-        saver.restore(sess, MODEL_DIRECTORY)
-        # save the current maximum accuracy value for validation data
-        max_acc = sess.run(accuracy, feed_dict={x: test_data, y_: test_labels})
-    except (NotFoundError, InvalidArgumentError):
-        # initialize the maximum accuracy value for validation data
-        max_acc = 0.
+    max_acc = maybe_restore_model(saver, sess, accuracy, validation_data, x, validation_labels, y_)
 
     # loop for epoch
     for epoch in range(int(config['REGRESSION']['EPOCHS'])):
@@ -94,8 +88,17 @@ def train():
 
     # calculate accuracy for all test images
     test_accuracy = sess.run(accuracy, feed_dict={x: test_data, y_: test_labels})
-
     print("test accuracy for the stored model: %g" % test_accuracy)
+
+def maybe_restore_model(saver, sess, accuracy, validation_data, x, validation_labels, y_):
+    try:
+        saver.restore(sess, MODEL_DIRECTORY)
+        # save the current maximum accuracy value for validation data
+        max_acc = sess.run(accuracy, feed_dict={x: test_data, y_: test_labels})
+    except (NotFoundError, InvalidArgumentError):
+        # initialize the maximum accuracy value for validation data
+        max_acc = 0.
+    return max_acc
 
 if __name__ == '__main__':
     train()
