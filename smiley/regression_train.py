@@ -3,6 +3,7 @@ import regression_model
 import tensorflow as tf
 import prepare_training_data, category_manager
 from tensorflow.python.framework.errors_impl import InvalidArgumentError, NotFoundError
+import configparser
 
 # get training/validation/testing data
 try:
@@ -13,6 +14,10 @@ except TypeError:
 
 MODEL_DIRECTORY = "data/models/regression.ckpt"
 DISPLAY_STEP = 100
+BATCH_SIZE = 50
+
+config = configparser.ConfigParser()
+config.read('trainConfig.ini')
 
 # regression model
 x = tf.placeholder(tf.float32, [None, 784])  # regression input
@@ -21,11 +26,9 @@ y, variables = regression_model.regression(x, categories=curr_number_of_categori
 
 # training variables
 cross_entropy = -tf.reduce_sum(y_ * tf.log(y))
-train_step = tf.train.GradientDescentOptimizer(0.01).minimize(cross_entropy)
+train_step = tf.train.GradientDescentOptimizer(float(config['REGRESSION']['LEARNING_RATE'])).minimize(cross_entropy)
 correct_prediction = tf.equal(tf.argmax(y, 1), tf.argmax(y_, 1))
 accuracy = tf.reduce_mean(tf.cast(correct_prediction, tf.float32))
-BATCH_SIZE = 50
-TRAINING_EPOCHS = 10
 
 # merge training data and validation data
 validation_total_data = numpy.concatenate((validation_data, validation_labels), axis=1)
@@ -49,7 +52,7 @@ except (NotFoundError, InvalidArgumentError):
     max_acc = 0.
 
 # loop for epoch
-for epoch in range(TRAINING_EPOCHS):
+for epoch in range(int(config['REGRESSION']['EPOCHS'])):
 
     # random shuffling
     numpy.random.shuffle(train_total_data)

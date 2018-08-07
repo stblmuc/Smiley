@@ -6,6 +6,7 @@ import numpy
 from scipy import ndimage
 import category_manager
 import tensorflow as tf
+import configparser
 
 # parameters
 IMAGE_SIZE = 28
@@ -15,7 +16,6 @@ NUM_LABELS = len(category_manager.update())
 VALIDATION_RATIO = 0.20  # split training data into 80% training data and 20% validation data
 
 EXPAND_DISPLAY_STEP = 5  # image augmentation is logged every EXPAND_DISPLAY_STEP images
-NUM_AUGM_PER_IMAGE = 5 # number of random augmentations per image
 TRAIN_RATIO = 0.8 # split generated data into 80& for training and 20% for testing
 
 # get images from category folders, add them to training/test images
@@ -37,7 +37,7 @@ def add_data(model, train_images, train_labels, test_images, test_labels, train_
     images = []
     labels = []
 
-    # is there any  data?
+    # is there any data?
     if number_of_images == 0:
         return train_images, train_labels, test_images, test_labels
 
@@ -129,6 +129,8 @@ def expand_training_data(images, labels):
     expanded_images = []
     expanded_labels = []
     j = 0
+    config = configparser.ConfigParser()
+    config.read('trainConfig.ini')
     for x, y in zip(images, labels):
         j += 1
         if j % EXPAND_DISPLAY_STEP == 0:
@@ -143,9 +145,11 @@ def expand_training_data(images, labels):
         bg_value = numpy.median(x)  # this is regarded as background's value
         image = numpy.reshape(x, (-1, 28))
 
-        for i in range(NUM_AUGM_PER_IMAGE):
+        num_augm_per_img = int(config['DEFAULT']['NUMBER_AUGMENTATIONS_PER_IMAGE'])
+        max_angle = int(config['DEFAULT']['MAX_ANGLE_FOR_AUGMENTATION'])
+        for i in range(num_augm_per_img):
             # rotate the image with random degree
-            angle = numpy.random.randint(-15, 15, 1)
+            angle = numpy.random.randint(-max_angle, max_angle, 1)
             new_img = ndimage.rotate(image, angle, reshape=False, cval=bg_value)
 
             # shift the image with random distance

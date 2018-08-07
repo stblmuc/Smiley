@@ -7,12 +7,13 @@ import tensorflow.contrib.slim as slim
 from tensorflow.python.framework.errors_impl import InvalidArgumentError, NotFoundError
 import prepare_training_data, cnn_model
 import os
+import configparser
+
 
 MODEL_DIRECTORY = "data/models/convolutional1.ckpt"
 LOGS_DIRECTORY = "data/logs/"
 
 # parameters
-TRAINING_EPOCHS = 10  # 10
 TRAIN_BATCH_SIZE = 5  # 50
 DISPLAY_STEP = 20  # 100
 VALIDATION_STEP = 5  # 500
@@ -26,6 +27,9 @@ def train():
             "CNN", True)
     except TypeError:
         raise Exception("Error preparing training/validation/test data. Create more training examples.")
+
+    config = configparser.ConfigParser()
+    config.read('trainConfig.ini')
 
     batch_size = TRAIN_BATCH_SIZE
     is_training = tf.placeholder(tf.bool)
@@ -50,7 +54,7 @@ def train():
         batch = tf.Variable(0)
 
         learning_rate = tf.train.exponential_decay(
-            1e-4,  # base learning rate.
+            float(config['CNN']['LEARNING_RATE']),  # base learning rate.
             batch * batch_size,  # current index into the dataset.Sav
             train_size,  # decay step.
             0.95,  # decay rate.
@@ -99,7 +103,7 @@ def train():
         max_acc = 0.
 
     # loop for epoch
-    for epoch in range(TRAINING_EPOCHS):
+    for epoch in range(int(config['CNN']['EPOCHS'])):
 
         # random shuffling
         numpy.random.shuffle(train_total_data)

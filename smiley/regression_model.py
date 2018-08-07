@@ -1,6 +1,5 @@
 import tensorflow as tf
 
-
 # create definition of Softmax regression model
 def regression(x, categories=2):
     W = tf.Variable(tf.zeros([784, categories]), name="W")  # weights
