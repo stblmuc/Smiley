@@ -4,7 +4,7 @@
 
 GIF - TO DO
 
-Project and parts of the code inspired by [this repo](https://github.com/sugyan/tensorflow-mnist)
+Project and parts of the code inspired by [this repo](https://github.com/sugyan/tensorflow-mnist).
 
 ## General knowledge
 
@@ -12,7 +12,7 @@ We try to provide easily understandable and concise backend and frontend capable
 
 ### Requirements ###
 
-* We recommend to install [`anaconda`](https://docs.anaconda.com/anaconda/install/)
+- We recommend to install [`anaconda`](https://docs.anaconda.com/anaconda/install/)
 
 - Python >=2.7 or >=3.6 (recommended 3.6.6)
   - TensorFlow >=1.9 (recommended 1.9.0)
@@ -32,7 +32,7 @@ From installing until running the application, simply follow the instructions:
 > # Running the app
 > python main.py
 > 
-> # Navigate to localhost:5000 if the webbrowser doesn't open automatically
+> # Navigate to localhost:5000 (webbrowser opens a new tab automatically)
 ```
 
 ### License ###

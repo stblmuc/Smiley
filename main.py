@@ -1,6 +1,6 @@
 import numpy as np
 import tensorflow as tf
-from flask import Flask, jsonify, render_template, url_for, request
+from flask import Flask, jsonify, render_template, request
 from tensorflow.python.framework.errors_impl import InvalidArgumentError, NotFoundError
 import webbrowser
 import os, sys
@@ -9,6 +9,8 @@ sys.path.append("smiley")
 import regression_model, cnn_model, category_manager, regression_train, cnn_train
 
 MODELS_DIRECTORY = "smiley/data/models/"
+REGRESSION_MODEL_FILENAME = "regression.ckpt"
+CNN_MODEL_FILENAME = "convolutional.ckpt"
 
 # Initialize the mapping between categories and indices in the prediction vectors
 category_manager.update()
@@ -38,12 +40,12 @@ app = Flask(__name__)
 
 # Regression prediction
 def regression_predict(input):
-    saver_regression.restore(sess, MODELS_DIRECTORY + "regression.ckpt")  # load saved model
+    saver_regression.restore(sess, MODELS_DIRECTORY + REGRESSION_MODEL_FILENAME)  # load saved model
     return sess.run(y1, feed_dict={x: input}).flatten().tolist()
 
 # CNN prediction
 def cnn_predict(input):
-    saver_cnn.restore(sess, MODELS_DIRECTORY + "convolutional.ckpt")  # load saved model
+    saver_cnn.restore(sess, MODELS_DIRECTORY + CNN_MODEL_FILENAME)  # load saved model
     result = sess.run(y2, feed_dict={x: input, is_training: False}).flatten().tolist()
     return result
 
@@ -111,10 +113,19 @@ def generate_training_example():
     return "ok"
 
 # Train model
-@app.route('/api/train-model', methods=['POST'])
-def train_model():
+@app.route('/api/train-models', methods=['POST'])
+def train_models():
     regression_train.train()
     cnn_train.train()
+
+    return "ok"
+
+# Delete all saved models
+@app.route('/api/delete-all-models', methods=['POST'])
+def delete_all_models():
+    filelist = [f for f in os.listdir(MODELS_DIRECTORY)]
+    for f in filelist:
+        os.remove(os.path.join(MODELS_DIRECTORY, f))
 
     return "ok"
 
