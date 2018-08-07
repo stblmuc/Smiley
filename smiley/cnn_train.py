@@ -86,7 +86,6 @@ def train():
 
     # op to write logs to Tensorboard
     if not os.path.exists(LOGS_DIRECTORY):
-        # create logs directory if it doesn't exist
         os.makedirs(LOGS_DIRECTORY)
     # summary_writer = tf.summary.FileWriter(LOGS_DIRECTORY, graph=tf.get_default_graph())
 
@@ -116,20 +115,8 @@ def train():
             # Write logs at every iteration
             # summary_writer.add_summary(summary, epoch * total_batch + i)
 
-            # display logs
-            if i % DISPLAY_STEP == 0:
-                print("Epoch:", '%04d,' % (epoch + 1),
-                      "batch_index %4d/%4d, training accuracy %.5f" % (i, total_batch, train_accuracy))
-
-            # get accuracy for validation data
-            if i % VALIDATION_STEP == 0:
-                # calculate accuracy
-                validation_accuracy = sess.run(accuracy,
-                                               feed_dict={x: validation_data, y_: validation_labels,
-                                                          is_training: False})
-
-                print("Epoch:", '%04d,' % (epoch + 1),
-                      "batch_index %4d/%4d, validation accuracy %.5f" % (i, total_batch, validation_accuracy))
+            validation_accuracy = computeAccuracy(epoch, i, total_batch, train_accuracy, sess, 
+                accuracy, x, validation_data, y_, validation_labels, is_training)
 
             # save the current model if the maximum accuracy is updated
             if validation_accuracy > max_acc:
@@ -175,6 +162,25 @@ def maybe_restore_model(saver, sess, accuracy, validation_data, x, validation_la
         # initialize the maximum accuracy value for validation data
         max_acc = 0.
     return max_acc
+
+def computeAccuracy(epoch, i, total_batch, train_accuracy, sess, accuracy, x, validation_data, y_, validation_labels, is_training):
+    # display logs
+    if i % DISPLAY_STEP == 0:
+        print("Epoch:", '%04d,' % (epoch + 1),
+              "batch_index %4d/%4d, training accuracy %.5f" % (i, total_batch, train_accuracy))
+
+    # get accuracy for validation data
+    validation_accuracy = 0
+    if i % VALIDATION_STEP == 0:
+        # calculate accuracy
+        validation_accuracy = sess.run(accuracy,
+                                       feed_dict={x: validation_data, y_: validation_labels,
+                                                  is_training: False})
+
+        print("Epoch:", '%04d,' % (epoch + 1),
+              "batch_index %4d/%4d, validation accuracy %.5f" % (i, total_batch, validation_accuracy))
+
+    return validation_accuracy
 
 if __name__ == '__main__':
     train()
