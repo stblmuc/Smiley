@@ -6,7 +6,6 @@ from tensorflow.python.framework.errors_impl import InvalidArgumentError, NotFou
 import os
 import configparser
 
-MODEL_DIRECTORY = os.path.join(os.path.dirname(__file__), "data/models/regression.ckpt")
 
 def train():
     print("\nLINEAR REGRESSION TRAINING STARTED.")
@@ -15,7 +14,7 @@ def train():
     config.read(os.path.join(os.path.dirname(__file__), 'trainConfig.ini'))
 
     BATCH_SIZE = int(config['DEFAULT']['TRAIN_BATCH_SIZE'])
-    MODEL_DIRECTORY = config['REGRESSION']['MODEL_DIRECTORY']
+    MODEL_DIRECTORY = os.path.join(os.path.dirname(__file__), config['REGRESSION']['MODEL_DIRECTORY'])
 
     # get training/validation/testing data
     try:
@@ -66,23 +65,16 @@ def train():
             batch_ys = train_labels_[offset:(offset + BATCH_SIZE), :]
             _, train_accuracy = sess.run([train_step, accuracy], feed_dict={x: batch_xs, y_: batch_ys})
 
-            # display logs
-            if i % int(config['LOGS']['TRAIN_ACCURACY_DISPLAY_STEP']) == 0:
-                print("Epoch:", '%04d,' % (epoch + 1),
-                      "batch_index %4d/%4d, training accuracy %.5f" % (i, total_batch, train_accuracy))
+            validation_accuracy = computeAccuracy(MODEL_DIRECTORY, saver, sess, accuracy, train_accuracy, i, total_batch, epoch, validation_data, x, 
+                validation_labels, y_, is_training, int(config['LOGS']['TRAIN_ACCURACY_DISPLAY_STEP']), int(config['LOGS']['VALIDATION_STEP']))
 
-        # check total accuracy
-        validation_accuracy = sess.run(accuracy, feed_dict={x: validation_data, y_: validation_labels})
-        print("Epoch:", '%04d,' % (epoch + 1),
-              "validation accuracy %.5f" % (validation_accuracy))
-
-        if validation_accuracy > max_acc:
-            max_acc = validation_accuracy
-            # store new regression model
-            save_path = saver.save(
-                sess, MODEL_DIRECTORY,
-                write_meta_graph=False, write_state=False)
-            print("Model updated and saved in file: %s" % save_path)
+            if validation_accuracy > max_acc:
+                max_acc = validation_accuracy
+                # store new regression model
+                save_path = saver.save(
+                    sess, MODEL_DIRECTORY,
+                    write_meta_graph=False, write_state=False)
+                print("Model updated and saved in file: %s" % save_path)
 
     print("Optimization Finished!")
 
@@ -104,6 +96,23 @@ def maybe_restore_model(model_path, saver, sess, accuracy, validation_data, x, v
         # initialize the maximum accuracy value for validation data
         max_acc = 0.
     return max_acc
+
+def computeAccuracy(MODEL_DIRECTORY, saver, sess, accuracy, train_accuracy, i, total_batch, epoch, validation_data, x, validation_labels, y_, is_training, DISPLAY_STEP, VALIDATION_STEP):
+    if i % DISPLAY_STEP == 0:
+        print("Epoch:", '%04d,' % (epoch + 1),
+              "batch_index %4d/%4d, training accuracy %.5f" % (i, total_batch, train_accuracy))
+
+    # get accuracy for validation data
+    validation_accuracy = 0
+    if i % VALIDATION_STEP == 0:
+        # calculate accuracy
+        validation_accuracy = sess.run(accuracy,
+                                       feed_dict={x: validation_data, y_: validation_labels,
+                                                  is_training: False})
+
+        print("Epoch:", '%04d,' % (epoch + 1),
+              "batch_index %4d/%4d, validation accuracy %.5f" % (i, total_batch, validation_accuracy))
+    return validation_accuracy
 
 if __name__ == '__main__':
     train()

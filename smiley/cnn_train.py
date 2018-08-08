@@ -8,15 +8,13 @@ import prepare_training_data, cnn_model
 import os
 import configparser
 
-MODEL_DIRECTORY = os.path.join(os.path.dirname(__file__), "data/models/convolutional.ckpt")
-LOGS_DIRECTORY = os.path.join(os.path.dirname(__file__), "data/logs/")
 
 def train():
     config = configparser.ConfigParser()
     config.read(os.path.join(os.path.dirname(__file__), 'trainConfig.ini'))
 
-    MODEL_DIRECTORY = config['CNN']['MODEL_DIRECTORY']
-    LOGS_DIRECTORY = config['CNN']['LOGS_DIRECTORY']
+    MODEL_DIRECTORY = os.path.join(os.path.dirname(__file__), config['CNN']['MODEL_DIRECTORY'])
+    LOGS_DIRECTORY = os.path.join(os.path.dirname(__file__), config['CNN']['LOGS_DIRECTORY'])
 
     print("\nCNN TRAINING STARTED.")
 
