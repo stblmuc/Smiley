@@ -10,13 +10,10 @@ import configparser
 sys.path.append("smiley")
 import regression_model, cnn_model, category_manager, regression_train, cnn_train
 
-REGRESSION_MODEL_FILENAME = "regression.ckpt"
-CNN_MODEL_FILENAME = "convolutional.ckpt"
-
 config = configparser.ConfigParser()
 config.read('./smiley/trainConfig.ini')
 
-MODELS_DIRECTORY = config['DEFAULT']['MODELS_DIRECTORY']
+MODELS_DIRECTORY = config['DEFAULT']['LOGIC_DIRECTORY'] + config['DEFAULT']['MODELS_DIRECTORY']
 
 # Initialize the mapping between categories and indices in the prediction vectors
 category_manager.update()
@@ -46,12 +43,12 @@ app = Flask(__name__)
 
 # Regression prediction
 def regression_predict(input):
-    saver_regression.restore(sess, MODELS_DIRECTORY + REGRESSION_MODEL_FILENAME)  # load saved model
+    saver_regression.restore(sess, MODELS_DIRECTORY + config['REGRESSION']['MODEL_FILENAME'])  # load saved model
     return sess.run(y1, feed_dict={x: input}).flatten().tolist()
 
 # CNN prediction
 def cnn_predict(input):
-    saver_cnn.restore(sess, MODELS_DIRECTORY + CNN_MODEL_FILENAME)  # load saved model
+    saver_cnn.restore(sess, MODELS_DIRECTORY + config['CNN']['MODEL_FILENAME'])  # load saved model
     result = sess.run(y2, feed_dict={x: input, is_training: False}).flatten().tolist()
     return result
 
@@ -138,5 +135,5 @@ if __name__ == '__main__':
     # Open webbrowser tab for the app
     new = 2 # open in a new tab, if possible
     webbrowser.open("http://localhost:5000", new=new)
-
+    
     app.run()

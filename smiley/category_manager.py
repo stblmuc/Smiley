@@ -1,7 +1,11 @@
 import os
 import png
+import configparser
 
-CATEGORIES_LOCATION = os.path.join(os.path.dirname(__file__), "data/categories/")
+config = configparser.ConfigParser()
+config.read(os.path.join(os.path.dirname(__file__), 'trainConfig.ini'))
+
+CATEGORIES_LOCATION = os.path.join(os.path.dirname(__file__), config['CATEGORIES']['DIRECTORY'])
 CATEGORIES = None
 
 def update():

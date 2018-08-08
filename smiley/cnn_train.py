@@ -13,7 +13,7 @@ def train():
     config = configparser.ConfigParser()
     config.read(os.path.join(os.path.dirname(__file__), 'trainConfig.ini'))
 
-    MODEL_DIRECTORY = os.path.join(os.path.dirname(__file__), config['CNN']['MODEL_DIRECTORY'])
+    MODEL_DIRECTORY = os.path.join(os.path.dirname(__file__), config['DEFAULT']['MODELS_DIRECTORY'] + config['CNN']['MODEL_FILENAME'])
     LOGS_DIRECTORY = os.path.join(os.path.dirname(__file__), config['CNN']['LOGS_DIRECTORY'])
 
     print("\nCNN TRAINING STARTED.")

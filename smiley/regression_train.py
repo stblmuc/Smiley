@@ -14,7 +14,7 @@ def train():
     config.read(os.path.join(os.path.dirname(__file__), 'trainConfig.ini'))
 
     BATCH_SIZE = int(config['DEFAULT']['TRAIN_BATCH_SIZE'])
-    MODEL_DIRECTORY = os.path.join(os.path.dirname(__file__), config['REGRESSION']['MODEL_DIRECTORY'])
+    MODEL_DIRECTORY = os.path.join(os.path.dirname(__file__), config['DEFAULT']['MODELS_DIRECTORY'] + config['REGRESSION']['MODEL_FILENAME'])
 
     # get training/validation/testing data
     try:
