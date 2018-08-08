@@ -4,7 +4,7 @@
 
 GIF - TO DO
 
-Project and parts of the code inspired by [this repo](https://github.com/sugyan/tensorflow-mnist).
+Parts of the code came from [this repo](https://github.com/sugyan/tensorflow-mnist).
 
 ## General knowledge
 
@@ -34,6 +34,10 @@ From installing until running the application, simply follow the instructions:
 > 
 > # Navigate to localhost:5000 (webbrowser opens a new tab automatically)
 ```
+
+The log information can be accessed by TensorBoard:
+
+    $ python -m tensorboard.main --logdir smiley/data/logs
 
 ### License ###
 

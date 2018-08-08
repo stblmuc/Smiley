@@ -31,14 +31,14 @@ def train():
     batch_size = int(config['DEFAULT']['TRAIN_BATCH_SIZE'])    
     is_training = tf.placeholder(tf.bool)
 
-    x = tf.placeholder(tf.float32, [None, 784])  # CNN input
-    y_ = tf.placeholder(tf.float32, [None, curr_number_of_categories])  # CNN output
+    x = tf.placeholder(tf.float32, [None, 784], name="image")  # CNN input
+    y_ = tf.placeholder(tf.float32, [None, curr_number_of_categories], name="labels")  # CNN output
 
     # CNN model
     y, variables = cnn_model.convolutional(x, nCategories=curr_number_of_categories)
 
     # loss function
-    with tf.name_scope("LOSS"):
+    with tf.name_scope("Loss"):
         loss = tf.losses.softmax_cross_entropy(y_, y)
 
     # create a summary to monitor loss tensor
@@ -64,7 +64,7 @@ def train():
     tf.summary.scalar('learning_rate', learning_rate)
 
     # get accuracy of model
-    with tf.name_scope("ACC"):
+    with tf.name_scope("Acc"):
         correct_prediction = tf.equal(tf.argmax(y, 1), tf.argmax(y_, 1))
         accuracy = tf.reduce_mean(tf.cast(correct_prediction, tf.float32))
 
@@ -85,7 +85,7 @@ def train():
     # op to write logs to Tensorboard
     if not os.path.exists(LOGS_DIRECTORY):
         os.makedirs(LOGS_DIRECTORY)
-    # summary_writer = tf.summary.FileWriter(LOGS_DIRECTORY, graph=tf.get_default_graph())
+    summary_writer = tf.summary.FileWriter(LOGS_DIRECTORY, graph=tf.get_default_graph())
 
     # restore stored CNN model if it exists and has the correct number of categories
     max_acc = maybe_restore_model(MODEL_DIRECTORY, saver, sess, accuracy, validation_data, x, validation_labels, y_, is_training)
@@ -111,7 +111,7 @@ def train():
                                                   feed_dict={x: batch_xs, y_: batch_ys, is_training: True})
 
             # Write logs at every iteration
-            # summary_writer.add_summary(summary, epoch * total_batch + i)
+            summary_writer.add_summary(summary, epoch * total_batch + i)
 
             validation_accuracy = computeAccuracy(MODEL_DIRECTORY, saver, sess, accuracy, train_accuracy, i, total_batch, epoch, validation_data, x, 
                 validation_labels, y_, is_training, int(config['LOGS']['TRAIN_ACCURACY_DISPLAY_STEP']), int(config['LOGS']['VALIDATION_STEP']))
@@ -147,7 +147,9 @@ def train():
         acc_buffer.append(numpy.sum(correct_prediction) / batch_size)
 
     print("test accuracy for the stored model: %g" % numpy.mean(acc_buffer))
+
     sess.close()
+
     print("CNN TRAINING END.")
 
 def maybe_restore_model(model_path, saver, sess, accuracy, validation_data, x, validation_labels, y_, is_training):

@@ -24,15 +24,18 @@ def train():
         raise Exception("Error preparing training/validation/test data. Create more training examples.")
 
     # regression model
-    x = tf.placeholder(tf.float32, [None, 784])  # regression input
-    y_ = tf.placeholder(tf.float32, [None, curr_number_of_categories])  # regression output
-    y, variables = regression_model.regression(x, categories=curr_number_of_categories)
+    x = tf.placeholder(tf.float32, [None, 784], name="image")  # regression input
+    y_ = tf.placeholder(tf.float32, [None, curr_number_of_categories], name="labels")  # regression output
+    y, variables = regression_model.regression(x, nCategories=curr_number_of_categories)
 
     # training variables
-    cross_entropy = -tf.reduce_sum(y_ * tf.log(y))
-    train_step = tf.train.GradientDescentOptimizer(float(config['REGRESSION']['LEARNING_RATE'])).minimize(cross_entropy)
-    correct_prediction = tf.equal(tf.argmax(y, 1), tf.argmax(y_, 1))
-    accuracy = tf.reduce_mean(tf.cast(correct_prediction, tf.float32))
+    with tf.name_scope("Loss"):
+        cross_entropy = -tf.reduce_sum(y_ * tf.log(y))
+    with tf.name_scope("GradientDescent"):
+        train_step = tf.train.GradientDescentOptimizer(float(config['REGRESSION']['LEARNING_RATE'])).minimize(cross_entropy)
+    with tf.name_scope("Acc"):
+        correct_prediction = tf.equal(tf.argmax(y, 1), tf.argmax(y_, 1))
+        accuracy = tf.reduce_mean(tf.cast(correct_prediction, tf.float32))
 
     # merge training data and validation data
     validation_total_data = numpy.concatenate((validation_data, validation_labels), axis=1)
@@ -82,7 +85,9 @@ def train():
     # calculate accuracy for all test images
     test_accuracy = sess.run(accuracy, feed_dict={x: test_data, y_: test_labels})
     print("test accuracy for the stored model: %g" % test_accuracy)
+
     sess.close()
+
     print("LINEAR REGRESSION TRAINING END.")
 
 def maybe_restore_model(model_path, saver, sess, accuracy, validation_data, x, validation_labels, y_):    
