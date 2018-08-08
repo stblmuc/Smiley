@@ -1,7 +1,7 @@
 import tensorflow as tf
 
-# create definition of Softmax regression model
-def regression(x, categories=2):
+# create definition of Softmax regression model: prediction = softmax(input * Weights + bias)
+def regression(x, categories):
 	with tf.variable_scope('regression'):
 		W = tf.Variable(tf.zeros([784, categories]), name="W")  # weights
 		b = tf.Variable(tf.zeros([categories]), name="b")  # biases

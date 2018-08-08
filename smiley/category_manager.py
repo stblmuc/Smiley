@@ -31,8 +31,7 @@ def add_training_example(image, category):
         os.makedirs(os.path.join(CATEGORIES_LOCATION, category))
 
     # name for new training example image
-    image_name = max(
-        [0] + [int(x.split(".")[0]) for x in os.listdir(os.path.join(CATEGORIES_LOCATION, category))]) + 1
+    image_name = max([0] + [int(x.split(".")[0]) for x in os.listdir(os.path.join(CATEGORIES_LOCATION, category))]) + 1
 
     # store new training example image
     w = png.Writer(28, 28, greyscale=True)
