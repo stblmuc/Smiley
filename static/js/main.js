@@ -31,7 +31,7 @@ class Main {
             this.ctx.closePath();
             this.ctx.stroke();
         }
-        $('#output td, tr').remove();
+        this.clearOutput();
     }
 
     onMouseDown(e) {
@@ -93,6 +93,11 @@ class Main {
         img.src = this.canvas.toDataURL();
     }
 
+    clearOutput() {
+        $("#error").text("");
+        $('#output td, #output tr').remove();
+    }
+
     loadOutput(inputs) {
         $.ajax({
             url: '/api/smiley',
@@ -111,6 +116,10 @@ class Main {
                 } else {
                     $("#error").text("");
                 }
+
+                // Don't display table if results contain empty arrays
+                if (!results.filter((e)=>{return e.length}).length)
+                    return;
 
                 const table = $("#output");
                 const thead = $("<thead>");
@@ -140,15 +149,13 @@ class Main {
                     for (let classifierIdx = 0; classifierIdx < classifiers.length; classifierIdx++) {
                         const cell = $("<td>");
                         row.append(cell);
-                        //if (results[classifierIdx] && results[classifierIdx][categoryIdx]) {
-                            const result = results[classifierIdx][categoryIdx];
-                            cell.text((result*100).toFixed(3)+"%");
-                            const mostSuccessfullValue = mostSuccessfullValues[classifierIdx];
-                            if (!mostSuccessfullValue || result > mostSuccessfullValue) {
-                                mostSuccessfullValues[classifierIdx] = result;
-                                mostSuccessfullCells[classifierIdx] = cell;
-                            }
-                        //}
+                        const result = results[classifierIdx][categoryIdx];
+                        cell.text((result*100).toFixed(3)+"%");
+                        const mostSuccessfullValue = mostSuccessfullValues[classifierIdx];
+                        if (!mostSuccessfullValue || result > mostSuccessfullValue) {
+                            mostSuccessfullValues[classifierIdx] = result;
+                            mostSuccessfullCells[classifierIdx] = cell;
+                        }
                     }
                 }
 
@@ -156,6 +163,9 @@ class Main {
                     mostSuccessfullCells[index].addClass("success");
                 }
             }
+        })
+        .fail(() => {
+            this.checkConnection();
         });
     }
 
@@ -170,33 +180,59 @@ class Main {
                 window.setTimeout(() => {
                     $("#trainigDataLabel").css("background-color", "#ffffff");
                 }, 500);
+                this.initialize();
             }
+        })
+        .fail(() => {
+            this.checkConnection();
         });
     }
 
     trainModels(button) {
-        $(button).prop('disabled', true)
-        button.innerHTML = "Training..."
+        $(button).prop('disabled', true);
+        $(button).text("Training...");
         $.ajax({
             url: '/api/train-models',
             method: 'POST',
             success: (data) => {
-                button.innerHTML = "Train"
-                $(button).prop('disabled', false)
+                this.drawInput((inputs) => {
+                    this.loadOutput(inputs);
+                });
             }
         })
+        .always(() => {
+            $(button).text("Train");
+            $(button).prop('disabled', false);
+        })
+        .fail(() => {
+            this.clearOutput();
+            this.checkConnection();
+        });
     }
 
     deleteAllModels(button) {
-        $(button).prop('disabled', true)
+        if (!confirm("Do you really want to delete all trained models?"))
+            return;
+
+        $(button).prop('disabled', true);
         $.ajax({
             url: '/api/delete-all-models',
             method: 'POST',
-            success: (data) => {
-                $(button).prop('disabled', false)
-                alert("All models deleted!")
+            success: () => {
+                this.clearOutput();
             }
         })
+        .always(() => {
+            $(button).prop('disabled', false);
+        })
+        .fail(() => {
+            this.checkConnection();
+        });
+    }
+
+    checkConnection() {
+        const error = "<b>Please check the connection with the server.</b>";
+        $("#error").html(error);
     }
 }
 
@@ -219,10 +255,9 @@ $(() => {
         } else {
             alert("Please enter a name/label for the data");
         };
-         main.initialize();
     });
 
-    $('#train').click((e) => {
+    $('#trainModels').click((e) => {
         main.trainModels(e.target);
     });
 

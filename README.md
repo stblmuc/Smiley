@@ -1,4 +1,4 @@
-# Smiley Recognition by TensorFlow #
+# Smiley Recognition using TensorFlow #
 
 ###### A Python app for smiley recognition from images generated with the mouse or imported from cameras.
 

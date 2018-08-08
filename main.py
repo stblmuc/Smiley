@@ -84,13 +84,13 @@ def smiley():
     if len(regression_output) == 0:
         if len(cnn_output) == 0:
             # error loading both models
-            err = "Models not found or incompatible number of categories. Please retrain the classifiers or restart the server"
+            err = "Models not found or incompatible number of categories. Please (re-)train the classifiers."
         else:
             # error loading regression model
-            err = "Model not found or incompatible number of categories. Please retrain the regression classifier or restart the server"
+            err = "Model not found or incompatible number of categories. Please (re-)train the regression classifier."
     elif len(cnn_output) == 0:
         # error loading CNN model
-        err = "Model not found or incompatible number of categories. Please retrain the CNN classifier or restart the server"
+        err = "Model not found or incompatible number of categories. Please (re-)train the CNN classifier."
 
     if len(err) > 0:
         print(err)
