@@ -2,6 +2,7 @@
 <html>
 <head>
     <title>Smiley Demo</title>
+    <link rel="shortcut icon" href="{{ url_for('static', filename='favicon.ico') }}">
     <link rel="stylesheet" href="{{ url_for('static', filename='css/bootstrap.min.css') }}">
     <script type="text/javascript" src="{{ url_for('static', filename='js/jquery.min.js') }}"></script>
     <script type="text/javascript" src="{{ url_for('static', filename='js/main.js') }}"></script>
@@ -19,7 +20,7 @@
             <p>
                 <button id="clear" class="btn btn-default">Clear</button>
                 <label for="trainigDataLabel">&nbsp;Add Training Data To:
-                    <input list="trainigDataLabelOptions" id="trainigDataLabel">
+                    <input list="trainigDataLabelOptions" id="trainigDataLabel" placeholder="E.g. smile">
                     <datalist id="trainigDataLabelOptions">
                         <option value="cool">
                         <option value="onHead">
@@ -29,6 +30,13 @@
                     <button id="addTrainingData" class="btn btn-default">Add
                     </button>
                 </label>
+            </p>
+            <p>
+                <b>Models:</b>
+                <span class="btn-group">
+                    <button id="train" class="btn btn-primary">Train</button>
+                    <button id="deleteModels" class="btn btn-danger">Delete</button>
+                </span>
             </p>
         </div>
         <div class="col-md-6">

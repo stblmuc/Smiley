@@ -173,6 +173,31 @@ class Main {
             }
         });
     }
+
+    trainModels(button) {
+        $(button).prop('disabled', true)
+        button.innerHTML = "Training..."
+        $.ajax({
+            url: '/api/train-models',
+            method: 'POST',
+            success: (data) => {
+                button.innerHTML = "Train"
+                $(button).prop('disabled', false)
+            }
+        })
+    }
+
+    deleteAllModels(button) {
+        $(button).prop('disabled', true)
+        $.ajax({
+            url: '/api/delete-all-models',
+            method: 'POST',
+            success: (data) => {
+                $(button).prop('disabled', false)
+                alert("All models deleted!")
+            }
+        })
+    }
 }
 
 $(() => {
@@ -195,5 +220,13 @@ $(() => {
             alert("Please enter a name/label for the data");
         };
          main.initialize();
+    });
+
+    $('#train').click((e) => {
+        main.trainModels(e.target);
+    });
+
+    $('#deleteModels').click((e) => {
+        main.deleteAllModels(e.target);
     });
 });

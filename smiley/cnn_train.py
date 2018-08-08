@@ -3,19 +3,20 @@ from __future__ import division
 from __future__ import print_function
 import numpy
 import tensorflow as tf
-import tensorflow.contrib.slim as slim
 from tensorflow.python.framework.errors_impl import InvalidArgumentError, NotFoundError
 import prepare_training_data, cnn_model
 import os
 import configparser
 
-
-def train():
+MODEL_DIRECTORY = os.path.join(os.path.dirname(__file__), "data/models/convolutional.ckpt")
+LOGS_DIRECTORY = os.path.join(os.path.dirname(__file__), "data/logs/")def train():
     config = configparser.ConfigParser()
     config.read('trainConfig.ini')
 
     MODEL_DIRECTORY = config['CNN']['MODEL_DIRECTORY']
     LOGS_DIRECTORY = config['CNN']['LOGS_DIRECTORY']
+
+    print("\nCNN TRAINING STARTED.")
 
     # get training/validation/testing data
     try:
@@ -24,8 +25,10 @@ def train():
     except TypeError:
         raise Exception("Error preparing training/validation/test data. Create more training examples.")
 
-    batch_size = int(config['DEFAULT']['TRAIN_BATCH_SIZE'])
-    is_training = tf.placeholder(tf.bool)
+    config = configparser.ConfigParser()
+    config.read(os.path.join(os.path.dirname(__file__), 'trainConfig.ini'))
+
+    batch_size = int(config['DEFAULT']['TRAIN_BATCH_SIZE'])    is_training = tf.placeholder(tf.bool)
 
     x = tf.placeholder(tf.float32, [None, 784])  # CNN input
     y_ = tf.placeholder(tf.float32, [None, curr_number_of_categories])  # CNN output
@@ -109,9 +112,7 @@ def train():
             # Write logs at every iteration
             # summary_writer.add_summary(summary, epoch * total_batch + i)
 
-            validation_accuracy = computeAccuracy(epoch, i, total_batch, train_accuracy, sess, 
-                accuracy, x, validation_data, y_, validation_labels, is_training, int(config['LOGS']['TRAIN_ACCURACY_DISPLAY_STEP']), int(config['LOGS']['VALIDATION_STEP']))
-
+                accuracy, x, validation_data, y_, validation_labels, is_training)
             # save the current model if the maximum accuracy is updated
             if validation_accuracy > max_acc:
                 max_acc = validation_accuracy
@@ -144,6 +145,8 @@ def train():
         acc_buffer.append(numpy.sum(correct_prediction) / batch_size)
 
     print("test accuracy for the stored model: %g" % numpy.mean(acc_buffer))
+    sess.close()
+    print("CNN TRAINING END.")
 
 def maybe_restore_model(model_path, saver, sess, accuracy, validation_data, x, validation_labels, y_, is_training):
     try:
@@ -156,25 +159,6 @@ def maybe_restore_model(model_path, saver, sess, accuracy, validation_data, x, v
         # initialize the maximum accuracy value for validation data
         max_acc = 0.
     return max_acc
-
-def computeAccuracy(epoch, i, total_batch, train_accuracy, sess, accuracy, x, validation_data, y_, validation_labels, is_training, DISPLAY_STEP, VALIDATION_STEP):
-    # display logs
-    if i % DISPLAY_STEP == 0:
-        print("Epoch:", '%04d,' % (epoch + 1),
-              "batch_index %4d/%4d, training accuracy %.5f" % (i, total_batch, train_accuracy))
-
-    # get accuracy for validation data
-    validation_accuracy = 0
-    if i % VALIDATION_STEP == 0:
-        # calculate accuracy
-        validation_accuracy = sess.run(accuracy,
-                                       feed_dict={x: validation_data, y_: validation_labels,
-                                                  is_training: False})
-
-        print("Epoch:", '%04d,' % (epoch + 1),
-              "batch_index %4d/%4d, validation accuracy %.5f" % (i, total_batch, validation_accuracy))
-
-    return validation_accuracy
 
 if __name__ == '__main__':
     train()

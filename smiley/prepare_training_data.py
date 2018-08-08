@@ -78,6 +78,7 @@ def add_data(model, train_images, train_labels, test_images, test_labels, train_
     if sum([1 for c in number_per_category.items() if
             c[0] not in [str(n) for n in range(10)] and
                             c[1] != 0.0 and c[1] == number_per_category_in_training[c[0]]]) == 0:
+
         return train_images, train_labels, test_images, test_labels
     else:
         # at least one category has all examples in the training set (meaning there are not
@@ -122,7 +123,7 @@ def expand_training_data(images, labels):
     expanded_labels = []
     j = 0
     config = configparser.ConfigParser()
-    config.read('trainConfig.ini')
+    config.read(os.path.join(os.path.dirname(__file__), 'trainConfig.ini'))
     for x, y in zip(images, labels):
         j += 1
         if j % int(config['LOGS']['EXPAND_DISPLAY_STEP']) == 0:

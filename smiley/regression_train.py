@@ -3,12 +3,14 @@ import regression_model
 import tensorflow as tf
 import prepare_training_data, category_manager
 from tensorflow.python.framework.errors_impl import InvalidArgumentError, NotFoundError
+import os
 import configparser
 
+MODEL_DIRECTORY = os.path.join(os.path.dirname(__file__), "data/models/regression.ckpt")
+	print("\nLINEAR REGRESSION TRAINING STARTED.")
 
-def train():
     config = configparser.ConfigParser()
-    config.read('trainConfig.ini')
+    config.read(os.path.join(os.path.dirname(__file__), 'trainConfig.ini'))
 
     BATCH_SIZE = int(config['DEFAULT']['TRAIN_BATCH_SIZE'])
     MODEL_DIRECTORY = config['REGRESSION']['MODEL_DIRECTORY']
@@ -88,9 +90,10 @@ def train():
     # calculate accuracy for all test images
     test_accuracy = sess.run(accuracy, feed_dict={x: test_data, y_: test_labels})
     print("test accuracy for the stored model: %g" % test_accuracy)
+    sess.close()
+    print("LINEAR REGRESSION TRAINING END.")
 
-def maybe_restore_model(model_path, saver, sess, accuracy, validation_data, x, validation_labels, y_):
-    try:
+def maybe_restore_model(model_path, saver, sess, accuracy, validation_data, x, validation_labels, y_):    try:
         saver.restore(sess, model_path)
         # save the current maximum accuracy value for validation data
         max_acc = sess.run(accuracy, feed_dict={x: validation_data, y_: validation_labels})
