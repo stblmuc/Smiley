@@ -11,6 +11,10 @@ import configparser
 # parameters
 NUM_LABELS = len(category_manager.update())
 
+# load config params
+config = configparser.ConfigParser()
+config.read(os.path.join(os.path.dirname(__file__), 'trainConfig.ini'))
+
 # get images from category folders, add them to training/test images
 def add_data(model, train_images, train_labels, test_images, test_labels, train_ratio):
     from tensorflow.contrib.keras.api.keras.preprocessing.image import ImageDataGenerator
@@ -122,8 +126,6 @@ def expand_training_data(images, labels):
     expanded_images = []
     expanded_labels = []
     j = 0
-    config = configparser.ConfigParser()
-    config.read(os.path.join(os.path.dirname(__file__), 'trainConfig.ini'))
     for x, y in zip(images, labels):
         j += 1
         if j % int(config['LOGS']['EXPAND_DISPLAY_STEP']) == 0:
@@ -168,8 +170,6 @@ def prepare_data(model, use_data_augmentation=True):
     test_data = []
     test_labels = []
 
-    config = configparser.ConfigParser()
-    config.read(os.path.join(os.path.dirname(__file__), 'trainConfig.ini'))
     train_ratio = float(config['DEFAULT']['TRAIN_RATIO'])
 
     # add  data from category folders

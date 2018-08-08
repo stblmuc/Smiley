@@ -63,6 +63,7 @@ def train():
             offset = (i * BATCH_SIZE) % (train_size)
             batch_xs = train_data_[offset:(offset + BATCH_SIZE), :]
             batch_ys = train_labels_[offset:(offset + BATCH_SIZE), :]
+            
             _, train_accuracy = sess.run([train_step, accuracy], feed_dict={x: batch_xs, y_: batch_ys})
 
             validation_accuracy = computeAccuracy(MODEL_DIRECTORY, saver, sess, accuracy, train_accuracy, i, total_batch, epoch, validation_data, x, 
