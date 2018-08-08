@@ -34,5 +34,6 @@ def add_training_example(image, category):
     image_name = max([0] + [int(x.split(".")[0]) for x in os.listdir(os.path.join(CATEGORIES_LOCATION, category))]) + 1
 
     # store new training example image
-    w = png.Writer(28, 28, greyscale=True)
+    image_size = int(config['DEFAULT']['IMAGE_SIZE'])
+    w = png.Writer(image_size, image_size, greyscale=True)
     w.write(open(os.path.join(CATEGORIES_LOCATION, category) + "/" + str(image_name) + ".png", "wb"), image)

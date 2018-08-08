@@ -21,10 +21,12 @@ def add_data(model, train_images, train_labels, test_images, test_labels, train_
 
     datagen = ImageDataGenerator()
 
+    image_size = int(config['DEFAULT']['IMAGE_SIZE'])
+
     generator = datagen.flow_from_directory(
         category_manager.CATEGORIES_LOCATION,
         color_mode='grayscale',
-        target_size=(28, 28),
+        target_size=(image_size, image_size),
         batch_size=1,
         class_mode='binary')
 
@@ -43,7 +45,7 @@ def add_data(model, train_images, train_labels, test_images, test_labels, train_
 
     while number_processed < number_of_images:
         item = next(generator)
-        image = numpy.array(item[0], dtype=numpy.uint8).reshape(1, 28, 28, 1)
+        image = numpy.array(item[0], dtype=numpy.uint8).reshape(1, image_size, image_size, 1)
         if model == "regression":
             image = ((255 - image) / 255.0)
         elif model == "CNN":
@@ -138,7 +140,7 @@ def expand_training_data(images, labels):
         # get a value for the background
         # zero is the expected value, but median() is used to estimate background's value
         bg_value = numpy.median(x)  # this is regarded as background's value
-        image = numpy.reshape(x, (-1, 28))
+        image = numpy.reshape(x, (-1, int(config['DEFAULT']['IMAGE_SIZE'])))
 
         num_augm_per_img = int(config['DEFAULT']['NUMBER_AUGMENTATIONS_PER_IMAGE'])
         max_angle = int(config['DEFAULT']['MAX_ANGLE_FOR_AUGMENTATION'])

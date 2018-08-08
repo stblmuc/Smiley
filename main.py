@@ -106,7 +106,8 @@ def smiley():
 # Add training example
 @app.route('/api/generate-training-example', methods=['POST'])
 def generate_training_example():
-    image = np.array(request.json["img"], dtype=np.uint8).reshape(28, 28, 1)
+    image_size = int(config['DEFAULT']['IMAGE_SIZE'])
+    image = np.array(request.json["img"], dtype=np.uint8).reshape(image_size, image_size, 1)
     category = request.json["cat"]
 
     category_manager.add_training_example(image, category)
@@ -135,5 +136,5 @@ if __name__ == '__main__':
     # Open webbrowser tab for the app
     new = 2 # open in a new tab, if possible
     webbrowser.open("http://localhost:5000", new=new)
-    
+
     app.run()
