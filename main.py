@@ -9,6 +9,7 @@ import configparser
 
 sys.path.append("smiley")
 import regression_model, cnn_model, category_manager, regression_train, cnn_train
+
 REGRESSION_MODEL_FILENAME = "regression.ckpt"
 CNN_MODEL_FILENAME = "convolutional.ckpt"
 

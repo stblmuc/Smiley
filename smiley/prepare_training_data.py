@@ -169,7 +169,7 @@ def prepare_data(model, use_data_augmentation=True):
     test_labels = []
 
     config = configparser.ConfigParser()
-    config.read('trainConfig.ini')
+    config.read(os.path.join(os.path.dirname(__file__), 'trainConfig.ini'))
     train_ratio = float(config['DEFAULT']['TRAIN_RATIO'])
 
     # add  data from category folders

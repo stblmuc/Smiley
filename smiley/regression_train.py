@@ -7,7 +7,9 @@ import os
 import configparser
 
 MODEL_DIRECTORY = os.path.join(os.path.dirname(__file__), "data/models/regression.ckpt")
-	print("\nLINEAR REGRESSION TRAINING STARTED.")
+
+def train():
+    print("\nLINEAR REGRESSION TRAINING STARTED.")
 
     config = configparser.ConfigParser()
     config.read(os.path.join(os.path.dirname(__file__), 'trainConfig.ini'))
@@ -93,7 +95,8 @@ MODEL_DIRECTORY = os.path.join(os.path.dirname(__file__), "data/models/regressio
     sess.close()
     print("LINEAR REGRESSION TRAINING END.")
 
-def maybe_restore_model(model_path, saver, sess, accuracy, validation_data, x, validation_labels, y_):    try:
+def maybe_restore_model(model_path, saver, sess, accuracy, validation_data, x, validation_labels, y_):    
+    try:
         saver.restore(sess, model_path)
         # save the current maximum accuracy value for validation data
         max_acc = sess.run(accuracy, feed_dict={x: validation_data, y_: validation_labels})
