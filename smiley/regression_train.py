@@ -66,14 +66,11 @@ def train():
             _, train_accuracy = sess.run([train_step, accuracy], feed_dict={x: batch_xs, y_: batch_ys})
 
             validation_accuracy = computeAccuracy(MODEL_DIRECTORY, saver, sess, accuracy, train_accuracy, i, total_batch, epoch, validation_data, x, 
-                validation_labels, y_, is_training, int(config['LOGS']['TRAIN_ACCURACY_DISPLAY_STEP']), int(config['LOGS']['VALIDATION_STEP']))
+                validation_labels, y_, int(config['LOGS']['TRAIN_ACCURACY_DISPLAY_STEP']), int(config['LOGS']['VALIDATION_STEP']))
 
             if validation_accuracy > max_acc:
                 max_acc = validation_accuracy
-                # store new regression model
-                save_path = saver.save(
-                    sess, MODEL_DIRECTORY,
-                    write_meta_graph=False, write_state=False)
+                save_path = saver.save(sess, MODEL_DIRECTORY, write_meta_graph=False, write_state=False)
                 print("Model updated and saved in file: %s" % save_path)
 
     print("Optimization Finished!")
@@ -97,7 +94,7 @@ def maybe_restore_model(model_path, saver, sess, accuracy, validation_data, x, v
         max_acc = 0.
     return max_acc
 
-def computeAccuracy(MODEL_DIRECTORY, saver, sess, accuracy, train_accuracy, i, total_batch, epoch, validation_data, x, validation_labels, y_, is_training, DISPLAY_STEP, VALIDATION_STEP):
+def computeAccuracy(MODEL_DIRECTORY, saver, sess, accuracy, train_accuracy, i, total_batch, epoch, validation_data, x, validation_labels, y_, DISPLAY_STEP, VALIDATION_STEP):
     if i % DISPLAY_STEP == 0:
         print("Epoch:", '%04d,' % (epoch + 1),
               "batch_index %4d/%4d, training accuracy %.5f" % (i, total_batch, train_accuracy))
@@ -106,9 +103,7 @@ def computeAccuracy(MODEL_DIRECTORY, saver, sess, accuracy, train_accuracy, i, t
     validation_accuracy = 0
     if i % VALIDATION_STEP == 0:
         # calculate accuracy
-        validation_accuracy = sess.run(accuracy,
-                                       feed_dict={x: validation_data, y_: validation_labels,
-                                                  is_training: False})
+        validation_accuracy = sess.run(accuracy, feed_dict={x: validation_data, y_: validation_labels})
 
         print("Epoch:", '%04d,' % (epoch + 1),
               "batch_index %4d/%4d, validation accuracy %.5f" % (i, total_batch, validation_accuracy))
