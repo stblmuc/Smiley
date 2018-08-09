@@ -3,13 +3,18 @@ class Main {
 
     constructor() {
         this.canvas = document.getElementById('main');
+        this.ctx = this.canvas.getContext('2d');
         this.input = document.getElementById('input');  
+
         this.image_size = param.image_size;
-        this.rect_size = 449;
+        this.rect_size = 449; // 16 * 28 + 1
         this.col_width = (this.rect_size - 1) / this.image_size;
+
         this.canvas.width = this.rect_size;
         this.canvas.height = this.rect_size;
-        this.ctx = this.canvas.getContext('2d');
+        this.input.width = 5 * this.image_size;
+        this.input.height = 5 * this.image_size;
+
         this.canvas.addEventListener('mousedown', this.onMouseDown.bind(this));
         this.canvas.addEventListener('mouseup', this.onMouseUp.bind(this));
         this.canvas.addEventListener('mousemove', this.onMouseMove.bind(this));
@@ -19,9 +24,8 @@ class Main {
     initialize() {
         this.ctx.fillStyle = '#FFFFFF';
         this.ctx.fillRect(0, 0, this.rect_size, this.rect_size);
-        this.ctx.lineWidth = 1;
-        this.ctx.strokeRect(0, 0, this.rect_size, this.rect_size);
         this.ctx.lineWidth = 0.05;
+
         for (var i = 0; i < this.image_size; i++) {
             this.ctx.beginPath();
             this.ctx.moveTo((i + 1) * this.col_width, 0);
@@ -75,8 +79,6 @@ class Main {
 
     drawInput(cb) {
         var ctx = this.input.getContext('2d');
-        this.input.width = 5 * this.image_size;
-        this.input.height = 5 * this.image_size;
         var img = new Image();
         img.onload = () => {
             var inputs = [];
@@ -199,8 +201,6 @@ class Main {
         img.onload = () => {
             this.initialize();
             this.ctx.drawImage(img, 0, 0, this.rect_size, this.rect_size);
-            this.ctx.lineWidth = 1;
-            this.ctx.strokeRect(0, 0, this.rect_size, this.rect_size);
 
             this.drawInput((inputs) => {
                 this.loadOutput(inputs);
