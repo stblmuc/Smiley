@@ -6,6 +6,11 @@
     <link rel="stylesheet" href="{{ url_for('static', filename='css/bootstrap.min.css') }}">
     <script type="text/javascript" src="{{ url_for('static', filename='js/jquery.min.js') }}"></script>
     <script type="text/javascript" src="{{ url_for('static', filename='js/main.js') }}"></script>
+    
+    <script type="text/javascript">
+        var param = {{data|tojson}}; // Retrieve data from python main containing the image size
+    </script>
+    
 </head>
 <body>
 <a href="https://github.com/sugyan/tensorflow-mnist"><img style="position: absolute; top: 0; right: 0; border: 0;"
@@ -14,7 +19,12 @@
 <div class="container">
     <h1>Smiley Recognition</h1>
     <div class="row">
-        <div class="col-md-6">
+        <!-- <div class="col-lg-X">; X according to image size -->
+        <script>
+            var x = Math.ceil((param.image_size / 14) * 2 + 2);
+            var div = '<div class="col-lg-' + x + '">';
+            document.write(div);
+        </script>
             <p>draw a smiley here!</p>
             <canvas id="main"></canvas>
             <p>
@@ -39,9 +49,13 @@
                 </span>
             </p>
         </div>
-        <div class="col-md-6">
+        <div class="col-lg">
             <p>input:</p>
-            <canvas id="input" style="border:1px solid" width="140" height="140"></canvas>
+            <!-- <canvas id="input" style="border:1px solid" width="X" height="X"></canvas> ; X = image_size * 5 -->
+            <script>
+                var length = param.image_size * 5;
+                document.write('<canvas id="input" style="border:1px solid" width="' + length + '" height="' + length + '"></canvas>');
+            </script>
             <hr>
             <p>output:</p>
             <p class="error" id="error"></p>

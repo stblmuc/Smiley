@@ -5,7 +5,7 @@ import configparser
 config = configparser.ConfigParser()
 config.read(os.path.join(os.path.dirname(__file__), 'trainConfig.ini'))
 
-CATEGORIES_LOCATION = os.path.join(os.path.dirname(__file__), config['CATEGORIES']['DIRECTORY'])
+CATEGORIES_LOCATION = os.path.join(os.path.dirname(__file__), config['DIRECTORIES']['CATEGORIES'])
 CATEGORIES = None
 
 def update():

@@ -13,8 +13,9 @@ def train():
     config = configparser.ConfigParser()
     config.read(os.path.join(os.path.dirname(__file__), 'trainConfig.ini'))
 
-    MODEL_DIRECTORY = os.path.join(os.path.dirname(__file__), config['DEFAULT']['MODELS_DIRECTORY'] + config['CNN']['MODEL_FILENAME'])
-    LOGS_DIRECTORY = os.path.join(os.path.dirname(__file__), config['CNN']['LOGS_DIRECTORY'])
+    MODEL_DIRECTORY = os.path.join(os.path.dirname(__file__), config['DIRECTORIES']['MODELS'] + config['CNN']['MODEL_FILENAME'])
+    LOGS_DIRECTORY = os.path.join(os.path.dirname(__file__), config['DIRECTORIES']['LOGS'])
+    IMAGE_SIZE = int(config['DEFAULT']['IMAGE_SIZE'])
 
     print("\nCNN TRAINING STARTED.")
 
@@ -31,7 +32,7 @@ def train():
     batch_size = int(config['DEFAULT']['TRAIN_BATCH_SIZE'])    
     is_training = tf.placeholder(tf.bool)
 
-    x = tf.placeholder(tf.float32, [None, 784])  # CNN input
+    x = tf.placeholder(tf.float32, [None, IMAGE_SIZE * IMAGE_SIZE])  # CNN input
     y_ = tf.placeholder(tf.float32, [None, curr_number_of_categories])  # CNN output
 
     # CNN model

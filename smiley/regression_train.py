@@ -14,7 +14,8 @@ def train():
     config.read(os.path.join(os.path.dirname(__file__), 'trainConfig.ini'))
 
     BATCH_SIZE = int(config['DEFAULT']['TRAIN_BATCH_SIZE'])
-    MODEL_DIRECTORY = os.path.join(os.path.dirname(__file__), config['DEFAULT']['MODELS_DIRECTORY'] + config['REGRESSION']['MODEL_FILENAME'])
+    MODEL_DIRECTORY = os.path.join(os.path.dirname(__file__), config['DIRECTORIES']['MODELS'] + config['REGRESSION']['MODEL_FILENAME'])
+    IMAGE_SIZE = int(config['DEFAULT']['IMAGE_SIZE'])
 
     # get training/validation/testing data
     try:
@@ -24,7 +25,7 @@ def train():
         raise Exception("Error preparing training/validation/test data. Create more training examples.")
 
     # regression model
-    x = tf.placeholder(tf.float32, [None, 784])  # regression input
+    x = tf.placeholder(tf.float32, [None, IMAGE_SIZE * IMAGE_SIZE])  # regression input
     y_ = tf.placeholder(tf.float32, [None, curr_number_of_categories])  # regression output
     y, variables = regression_model.regression(x, categories=curr_number_of_categories)
 
@@ -63,7 +64,7 @@ def train():
             offset = (i * BATCH_SIZE) % (train_size)
             batch_xs = train_data_[offset:(offset + BATCH_SIZE), :]
             batch_ys = train_labels_[offset:(offset + BATCH_SIZE), :]
-            
+
             _, train_accuracy = sess.run([train_step, accuracy], feed_dict={x: batch_xs, y_: batch_ys})
 
             validation_accuracy = computeAccuracy(MODEL_DIRECTORY, saver, sess, accuracy, train_accuracy, i, total_batch, epoch, validation_data, x, 

@@ -1,33 +1,38 @@
 /* global $ */
 class Main {
+
     constructor() {
         this.canvas = document.getElementById('main');
         this.input = document.getElementById('input');
-        this.canvas.width = 449; // 16 * 28 + 1
-        this.canvas.height = 449; // 16 * 28 + 1
+        this.canvas.width = 449;
+        this.canvas.height = 449;
         this.ctx = this.canvas.getContext('2d');
         this.canvas.addEventListener('mousedown', this.onMouseDown.bind(this));
         this.canvas.addEventListener('mouseup', this.onMouseUp.bind(this));
         this.canvas.addEventListener('mousemove', this.onMouseMove.bind(this));
+        this.image_size = param.image_size;
         this.initialize();
     }
 
-    initialize() {
+    initialize() {  
+        var rect_size = 16 * this.image_size + 1;
+        this.canvas.width = rect_size;
+        this.canvas.height = rect_size;
         this.ctx.fillStyle = '#FFFFFF';
-        this.ctx.fillRect(0, 0, 449, 449);
+        this.ctx.fillRect(0, 0, rect_size, rect_size);
         this.ctx.lineWidth = 1;
-        this.ctx.strokeRect(0, 0, 449, 449);
+        this.ctx.strokeRect(0, 0, rect_size, rect_size);
         this.ctx.lineWidth = 0.05;
-        for (var i = 0; i < 27; i++) {
+        for (var i = 0; i < this.image_size; i++) {
             this.ctx.beginPath();
             this.ctx.moveTo((i + 1) * 16, 0);
-            this.ctx.lineTo((i + 1) * 16, 449);
+            this.ctx.lineTo((i + 1) * 16, rect_size);
             this.ctx.closePath();
             this.ctx.stroke();
 
             this.ctx.beginPath();
             this.ctx.moveTo(0, (i + 1) * 16);
-            this.ctx.lineTo(449, (i + 1) * 16);
+            this.ctx.lineTo(rect_size, (i + 1) * 16);
             this.ctx.closePath();
             this.ctx.stroke();
         }
@@ -41,7 +46,7 @@ class Main {
     }
 
     onMouseUp() {
-        this.drawing = false;
+        this.drawing = false; // TODO wrong drawInput
         this.drawInput((inputs) => {
             this.loadOutput(inputs);
         });
@@ -71,16 +76,18 @@ class Main {
 
     drawInput(cb) {
         var ctx = this.input.getContext('2d');
+        this.input.width = 5 * this.image_size;
+        this.input.height = 5 * this.image_size;
         var img = new Image();
         img.onload = () => {
             var inputs = [];
             var small = document.createElement('canvas').getContext('2d');
-            small.drawImage(img, 0, 0, img.width, img.height, 0, 0, 28, 28);
-            var data = small.getImageData(0, 0, 28, 28).data;
-            for (var i = 0; i < 28; i++) {
-                for (var j = 0; j < 28; j++) {
-                    var n = 4 * (i * 28 + j);
-                    inputs[i * 28 + j] = (data[n + 0] + data[n + 1] + data[n + 2]);
+            small.drawImage(img, 0, 0, img.width, img.height, 0, 0, this.image_size, this.image_size);
+            var data = small.getImageData(0, 0, this.image_size, this.image_size).data;
+            for (var i = 0; i < this.image_size; i++) {
+                for (var j = 0; j < this.image_size; j++) {
+                    var n = 4 * (i * this.image_size + j);
+                    inputs[i * this.image_size + j] = (data[n + 0] + data[n + 1] + data[n + 2]);
                     ctx.fillStyle = 'rgb(' + [data[n + 0], data[n + 1], data[n + 2]].join(',') + ')';
                     ctx.fillRect(j * 5, i * 5, 5, 5);
                 }
@@ -238,6 +245,7 @@ class Main {
 
 $(() => {
     var main = new Main();
+
     $('#clear').click(() => {
         main.initialize();
     });

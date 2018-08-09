@@ -13,7 +13,8 @@ import regression_model, cnn_model, category_manager, regression_train, cnn_trai
 config = configparser.ConfigParser()
 config.read('./smiley/trainConfig.ini')
 
-MODELS_DIRECTORY = config['DEFAULT']['LOGIC_DIRECTORY'] + config['DEFAULT']['MODELS_DIRECTORY']
+MODELS_DIRECTORY = config['DIRECTORIES']['LOGIC'] + config['DIRECTORIES']['MODELS']
+IMAGE_SIZE = int(config['DEFAULT']['IMAGE_SIZE'])
 
 # Initialize the mapping between categories and indices in the prediction vectors
 category_manager.update()
@@ -23,7 +24,7 @@ if not os.path.exists(MODELS_DIRECTORY):
     os.makedirs(MODELS_DIRECTORY)
 
 # Model variables
-x = tf.placeholder("float", [None, 784])
+x = tf.placeholder("float", [None, IMAGE_SIZE * IMAGE_SIZE])
 is_training = tf.placeholder("bool")
 
 # Tensorflow session
@@ -55,19 +56,21 @@ def cnn_predict(input):
 # Root
 @app.route('/')
 def main():
-    return render_template('index.html')
+    data = {'image_size': IMAGE_SIZE}
+    return render_template('index.html', data=data)
 
 # Predict
 @app.route('/api/smiley', methods=['POST'])
 def smiley():
     # input with pixel values between 0 (black) and 255 (white)
     data = np.array(request.json, dtype=np.uint8)
+    print(len(data)) # error: old size -> javascript
 
     # transform pixels to values between 0 (white) and 1 (black)
-    regression_input = ((255 - data) / 255.0).reshape(1, 784)
+    regression_input = ((255 - data) / 255.0).reshape(1, IMAGE_SIZE * IMAGE_SIZE)
 
     # transform pixels to values between -0.5 (white) and 0.5 (black)
-    cnn_input = (((255 - data) / 255.0) - 0.5).reshape(1, 784)
+    cnn_input = (((255 - data) / 255.0) - 0.5).reshape(1, IMAGE_SIZE * IMAGE_SIZE)
 
     try:
         regression_output = regression_predict(regression_input)
@@ -84,13 +87,13 @@ def smiley():
     if len(regression_output) == 0:
         if len(cnn_output) == 0:
             # error loading both models
-            err = "Models not found or incompatible number of categories. Please (re-)train the classifiers."
+            err = "Models not found or incompatible number of categories or incompatible image size. Please (re-)train the classifiers."
         else:
             # error loading regression model
-            err = "Model not found or incompatible number of categories. Please (re-)train the regression classifier."
+            err = "Model not found or incompatible number of categories or incompatible image size. Please (re-)train the regression classifier."
     elif len(cnn_output) == 0:
         # error loading CNN model
-        err = "Model not found or incompatible number of categories. Please (re-)train the CNN classifier."
+        err = "Model not found or incompatible number of categories or incompatible image size. Please (re-)train the CNN classifier."
 
     if len(err) > 0:
         print(err)
@@ -135,6 +138,6 @@ def delete_all_models():
 if __name__ == '__main__':
     # Open webbrowser tab for the app
     new = 2 # open in a new tab, if possible
-    webbrowser.open("http://localhost:5000", new=new)
+    #webbrowser.open("http://localhost:5000", new=new)
 
     app.run()

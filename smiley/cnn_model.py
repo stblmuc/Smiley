@@ -3,13 +3,14 @@ from __future__ import division
 from __future__ import print_function
 import tensorflow as tf
 import configparser
+import os
 
 # CNN with standard tensorflow
 def convolutional(x, nCategories, is_training=True):
     config = configparser.ConfigParser()
     config.read(os.path.join(os.path.dirname(__file__), 'trainConfig.ini'))
     image_size = int(config['DEFAULT']['IMAGE_SIZE'])
-    
+
     with tf.variable_scope('cnn'):
         x_image = tf.reshape(x, [-1, image_size, image_size, 1])
 

@@ -54,7 +54,7 @@ def add_data(model, train_images, train_labels, test_images, test_labels, train_
         label = int(item[1][0])
         number_per_category[label] += 1.0
         labels.append(label)
-        images.append(numpy.reshape(image, 784))
+        images.append(numpy.reshape(image, image_size * image_size))
         number_processed += 1
 
     # stores how many images of each category are in the training set
@@ -127,6 +127,7 @@ def create_validation_set(train_data, train_labels, VALIDATION_PROPORTION):
 def expand_training_data(images, labels):
     expanded_images = []
     expanded_labels = []
+    image_size = int(config['DEFAULT']['IMAGE_SIZE'])
     j = 0
     for x, y in zip(images, labels):
         j += 1
@@ -154,7 +155,7 @@ def expand_training_data(images, labels):
             new_img_ = ndimage.shift(new_img, shift, cval=bg_value)
 
             # register new training data
-            expanded_images.append(numpy.reshape(new_img_, 784))
+            expanded_images.append(numpy.reshape(new_img_, image_size * image_size))
             expanded_labels.append(y)
 
     # images and labels are concatenated for random-shuffle at each epoch
