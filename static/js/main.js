@@ -5,9 +5,10 @@ class Main {
         this.canvas = document.getElementById('main');
         this.input = document.getElementById('input');  
         this.image_size = param.image_size;
-        var rect_size = 16 * this.image_size + 1;
-        this.canvas.width = rect_size;
-        this.canvas.height = rect_size;
+        this.rect_size = 449;
+        this.col_width = (this.rect_size - 1) / this.image_size;
+        this.canvas.width = this.rect_size;
+        this.canvas.height = this.rect_size;
         this.ctx = this.canvas.getContext('2d');
         this.canvas.addEventListener('mousedown', this.onMouseDown.bind(this));
         this.canvas.addEventListener('mouseup', this.onMouseUp.bind(this));
@@ -17,21 +18,20 @@ class Main {
 
     initialize() {
         this.ctx.fillStyle = '#FFFFFF';
-        var rect_size = 16 * this.image_size + 1;
-        this.ctx.fillRect(0, 0, rect_size, rect_size);
+        this.ctx.fillRect(0, 0, this.rect_size, this.rect_size);
         this.ctx.lineWidth = 1;
-        this.ctx.strokeRect(0, 0, rect_size, rect_size);
+        this.ctx.strokeRect(0, 0, this.rect_size, this.rect_size);
         this.ctx.lineWidth = 0.05;
         for (var i = 0; i < this.image_size; i++) {
             this.ctx.beginPath();
-            this.ctx.moveTo((i + 1) * 16, 0);
-            this.ctx.lineTo((i + 1) * 16, rect_size);
+            this.ctx.moveTo((i + 1) * this.col_width, 0);
+            this.ctx.lineTo((i + 1) * this.col_width, this.rect_size);
             this.ctx.closePath();
             this.ctx.stroke();
 
             this.ctx.beginPath();
-            this.ctx.moveTo(0, (i + 1) * 16);
-            this.ctx.lineTo(rect_size, (i + 1) * 16);
+            this.ctx.moveTo(0, (i + 1) * this.col_width);
+            this.ctx.lineTo(this.rect_size, (i + 1) * this.col_width);
             this.ctx.closePath();
             this.ctx.stroke();
         }
@@ -54,7 +54,7 @@ class Main {
     onMouseMove(e) {
         if (this.drawing) {
             var curr = this.getPosition(e.clientX, e.clientY);
-            this.ctx.lineWidth = 32;
+            this.ctx.lineWidth = Math.max(5, 46 - (this.image_size / 2));
             this.ctx.lineCap = 'round';
             this.ctx.beginPath();
             this.ctx.moveTo(this.prev.x, this.prev.y);
@@ -198,10 +198,9 @@ class Main {
         var img = new Image();
         img.onload = () => {
             this.initialize();
-            var rect_size = 16 * this.image_size + 1;
-            this.ctx.drawImage(img, 0, 0, rect_size, rect_size);
+            this.ctx.drawImage(img, 0, 0, this.rect_size, this.rect_size);
             this.ctx.lineWidth = 1;
-            this.ctx.strokeRect(0, 0, rect_size, rect_size);
+            this.ctx.strokeRect(0, 0, this.rect_size, this.rect_size);
 
             this.drawInput((inputs) => {
                 this.loadOutput(inputs);
@@ -223,8 +222,7 @@ class Main {
                 $(button).text("Save");
                 this.video.play();
             } else {
-                var rect_size = 16 * this.image_size + 1;
-                var constraints = {video: {width: rect_size, height: rect_size, facingMode: "user", frameRate: 10}};
+                var constraints = {video: {width: this.rect_size, height: this.rect_size, facingMode: "user", frameRate: 10}};
 
                 navigator.mediaDevices.getUserMedia(constraints)
                 .then((mediaStream) => {
@@ -237,7 +235,7 @@ class Main {
                         var $this = this;
                         (function loop() {
                             if (!$this.paused && !$this.ended) {
-                                ctx.drawImage($this, 0, 0, rect_size, rect_size);
+                                ctx.drawImage($this, 0, 0, this.rect_size, this.rect_size);
                                 setTimeout(loop, 1000 / 10); // drawing at 10fps
                             }
                         })();

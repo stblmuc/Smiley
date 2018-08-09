@@ -120,6 +120,7 @@ def generate_training_example():
 # Train model
 @app.route('/api/train-models', methods=['POST'])
 def train_models():
+    category_manager.update()
     regression_train.train()
     cnn_train.train()
 
