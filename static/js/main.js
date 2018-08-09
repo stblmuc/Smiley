@@ -36,6 +36,7 @@ class Main {
             this.ctx.closePath();
             this.ctx.stroke();
         }
+        this.drawInput((inputs)=>{})
         this.clearOutput();
     }
 
@@ -92,7 +93,7 @@ class Main {
                     ctx.fillRect(j * 5, i * 5, 5, 5);
                 }
             }
-            if (Math.min(...inputs) === 255) {
+            if (Math.min(...inputs) === 765) {
                 return;
             }
             cb(inputs);
@@ -195,9 +196,65 @@ class Main {
         });
     }
 
+    loadImage(data) {
+        var img = new Image();
+        img.onload = () => {
+            this.initialize();
+
+            this.ctx.drawImage(img,0,0,449,449);
+            this.ctx.lineWidth = 1;
+            this.ctx.strokeRect(0, 0, 449, 449);
+
+            this.drawInput((inputs) => {
+                this.loadOutput(inputs);
+            });
+        }
+        img.src = window.URL.createObjectURL(data)
+    }
+
+    takePicture(button) {
+        if (!!(navigator.mediaDevices && navigator.mediaDevices.getUserMedia)) {
+            if (!!this.video && !this.video.paused) {
+                $(button).text("Camera");
+                this.video.pause();
+
+                this.drawInput((inputs)=>{
+                    this.loadOutput(inputs);
+                })
+            } else if (!!this.video && this.video.paused) {
+                $(button).text("Save");
+                this.video.play();
+            } else {
+                var constraints = {video: {width: 449, height: 449, facingMode: "user", frameRate: 10}};
+
+                navigator.mediaDevices.getUserMedia(constraints)
+                .then((mediaStream) => {
+                    $(button).text("Save!");
+
+                    const ctx = this.ctx
+                    this.video = document.createElement('video');
+                    this.video.srcObject = mediaStream;
+                    this.video.addEventListener('play', function(){
+                        var $this = this;
+                        (function loop() {
+                            if (!$this.paused && !$this.ended) {
+                                ctx.drawImage($this, 0, 0, 449, 449);
+                                setTimeout(loop, 1000 / 10); // drawing at 10fps
+                            }
+                        })();
+                    }, 0);
+                    this.video.play();
+                })
+                .catch(function(err) { console.log(err.name + ": " + err.message); }); // always check for errors at the end.
+            }
+        } else {
+            alert('getUserMedia() is not supported by your browser');
+        }
+    }
+
     trainModels(button) {
         $(button).prop('disabled', true);
-        $(button).text("Training...");
+        $(button).text("Training");
         $.ajax({
             url: '/api/train-models',
             method: 'POST',
@@ -263,6 +320,14 @@ $(() => {
         } else {
             alert("Please enter a name/label for the data");
         };
+    });
+
+    $('#importImage').change((e) => {
+        main.loadImage(e.target.files[0]);
+    });
+
+    $('#takePicture').click((e) => {
+        main.takePicture(e.target);
     });
 
     $('#trainModels').click((e) => {

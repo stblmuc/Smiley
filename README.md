@@ -4,7 +4,7 @@
 
 GIF - TO DO
 
-Project and parts of the code inspired by [this repo](https://github.com/sugyan/tensorflow-mnist).
+Parts of the code came from [this repo](https://github.com/sugyan/tensorflow-mnist).
 
 ## General knowledge
 
@@ -22,18 +22,22 @@ We try to provide easily understandable and concise backend and frontend capable
 From installing until running the application, simply follow the instructions:
 
 ```bash
-> # Creating and activating the environment
+> # Create and activate the environment
 > conda create --name smiley python=3.6.6
 > source activate smiley
 >
-> # To install requirements
+> # Install requirements
 > pip install -r requirements.txt
 > 
-> # Running the app
+> # Run the app
 > python main.py
 > 
 > # Navigate to localhost:5000 (webbrowser opens a new tab automatically)
 ```
+
+The logs from training can be accessed by TensorBoard:
+
+    > python -m tensorboard.main --logdir smiley/data/logs
 
 ### License ###
 

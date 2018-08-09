@@ -32,7 +32,7 @@ sess = tf.InteractiveSession()
 sess.run(tf.global_variables_initializer())
 
 # Regression model
-y1, variables = regression_model.regression(x, categories=len(category_manager.CATEGORIES))
+y1, variables = regression_model.regression(x, nCategories=len(category_manager.CATEGORIES))
 saver_regression = tf.train.Saver(variables)
 
 # CNN model
