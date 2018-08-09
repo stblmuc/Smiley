@@ -1,6 +1,3 @@
-from __future__ import absolute_import
-from __future__ import division
-from __future__ import print_function
 import numpy
 import tensorflow as tf
 from tensorflow.python.framework.errors_impl import InvalidArgumentError, NotFoundError
@@ -13,7 +10,7 @@ def train():
     config = configparser.ConfigParser()
     config.read(os.path.join(os.path.dirname(__file__), 'trainConfig.ini'))
 
-    MODEL_DIRECTORY = os.path.join(os.path.dirname(__file__), config['DIRECTORIES']['MODELS'] + config['DEFAULT']['IMAGE_SIZE'] + "/" + config['CNN']['MODEL_FILENAME'])
+    MODEL_DIRECTORY = os.path.join(os.path.dirname(__file__), config['DIRECTORIES']['MODELS'], config['DEFAULT']['IMAGE_SIZE'] + "/" + config['CNN']['MODEL_FILENAME'])
     LOGS_DIRECTORY = os.path.join(os.path.dirname(__file__), config['DIRECTORIES']['LOGS'])
     IMAGE_SIZE = int(config['DEFAULT']['IMAGE_SIZE'])
 

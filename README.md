@@ -1,10 +1,10 @@
 # Smiley Recognition using TensorFlow #
 
-###### A Python app for smiley recognition from images generated with the mouse or imported from cameras.
+###### A Python app for smiley recognition, in which the training and the classification can be done on the interface using images generated with the mouse, imported from files, or even acquired from a webcam.
 
 GIF - TO DO
 
-Parts of the code came from [this repo](https://github.com/sugyan/tensorflow-mnist).
+Parts of the code borrowed from [this repo](https://github.com/sugyan/tensorflow-mnist).
 
 ## General knowledge
 
@@ -12,9 +12,9 @@ We try to provide easily understandable and concise backend and frontend capable
 
 ### Requirements ###
 
-- We recommend to install [`anaconda`](https://docs.anaconda.com/anaconda/install/)
+- We recommend to install [`anaconda`](https://docs.anaconda.com/anaconda/install/).
 
-- Python >=2.7 or >=3.6 (recommended 3.6.6)
+- Python >=3.5 (recommended 3.6.6)
   - TensorFlow >=1.9 (recommended 1.9.0)
 
 ### Usage ###

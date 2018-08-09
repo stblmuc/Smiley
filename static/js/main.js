@@ -107,8 +107,8 @@ class Main {
                     // Threshold
                     const threshold = 51
                     const scale = 3
-                    var minus_factor = threshold - (threshold / scale)
-                    grayscale = grayscale > threshold ? Math.min(255,(grayscale-minus_factor)*scale) : grayscale
+                    var scaled_gray = Math.min(255,((grayscale - threshold)*scale) + threshold)
+                    grayscale = grayscale > threshold ? scaled_gray : grayscale
 
                     inputs[i * this.image_size + j] = grayscale;
                     ctx.fillStyle = 'rgb(' + Array(3).fill(grayscale) + ')';
@@ -248,7 +248,7 @@ class Main {
 
                 navigator.mediaDevices.getUserMedia(constraints)
                 .then((mediaStream) => {
-                    $(button).text("Save!");
+                    $(button).text("Save");
 
                     const ctx = this.ctx
                     const rect_size = this.rect_size
@@ -316,7 +316,7 @@ class Main {
     }
 
     checkConnection() {
-        const error = "<b>Please check the connection with the server.</b>";
+        const error = "<b>Please make sure the server is running and check its console for further information.</b>";
         $("#error").html(error);
     }
 }
