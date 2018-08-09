@@ -1,6 +1,5 @@
 /* global $ */
 class Main {
-
     constructor() {
         this.canvas = document.getElementById('main');
         this.ctx = this.canvas.getContext('2d');
@@ -49,7 +48,7 @@ class Main {
     }
 
     onMouseUp() {
-        this.drawing = false; // TODO wrong drawInput
+        this.drawing = false;
         this.drawInput((inputs) => {
             this.loadOutput(inputs);
         });
@@ -229,13 +228,15 @@ class Main {
                     $(button).text("Save!");
 
                     const ctx = this.ctx
+                    const rect_size = this.rect_size
+                    
                     this.video = document.createElement('video');
                     this.video.srcObject = mediaStream;
                     this.video.addEventListener('play', function(){
                         var $this = this;
                         (function loop() {
                             if (!$this.paused && !$this.ended) {
-                                ctx.drawImage($this, 0, 0, this.rect_size, this.rect_size);
+                                ctx.drawImage($this, 0, 0, rect_size, rect_size);
                                 setTimeout(loop, 1000 / 10); // drawing at 10fps
                             }
                         })();
@@ -262,7 +263,7 @@ class Main {
             }
         })
         .always(() => {
-            $(button).text("Training");
+            $(button).text("Train");
             $(button).prop('disabled', false);
         })
         .fail(() => {
