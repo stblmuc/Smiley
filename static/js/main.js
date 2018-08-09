@@ -3,22 +3,21 @@ class Main {
 
     constructor() {
         this.canvas = document.getElementById('main');
-        this.input = document.getElementById('input');
-        this.canvas.width = 449;
-        this.canvas.height = 449;
+        this.input = document.getElementById('input');  
+        this.image_size = param.image_size;
+        var rect_size = 16 * this.image_size + 1;
+        this.canvas.width = rect_size;
+        this.canvas.height = rect_size;
         this.ctx = this.canvas.getContext('2d');
         this.canvas.addEventListener('mousedown', this.onMouseDown.bind(this));
         this.canvas.addEventListener('mouseup', this.onMouseUp.bind(this));
         this.canvas.addEventListener('mousemove', this.onMouseMove.bind(this));
-        this.image_size = param.image_size;
         this.initialize();
     }
 
-    initialize() {  
-        var rect_size = 16 * this.image_size + 1;
-        this.canvas.width = rect_size;
-        this.canvas.height = rect_size;
+    initialize() {
         this.ctx.fillStyle = '#FFFFFF';
+        var rect_size = 16 * this.image_size + 1;
         this.ctx.fillRect(0, 0, rect_size, rect_size);
         this.ctx.lineWidth = 1;
         this.ctx.strokeRect(0, 0, rect_size, rect_size);
@@ -36,7 +35,6 @@ class Main {
             this.ctx.closePath();
             this.ctx.stroke();
         }
-        this.drawInput((inputs)=>{})
         this.clearOutput();
     }
 
@@ -200,10 +198,10 @@ class Main {
         var img = new Image();
         img.onload = () => {
             this.initialize();
-
-            this.ctx.drawImage(img,0,0,449,449);
+            var rect_size = 16 * this.image_size + 1;
+            this.ctx.drawImage(img, 0, 0, rect_size, rect_size);
             this.ctx.lineWidth = 1;
-            this.ctx.strokeRect(0, 0, 449, 449);
+            this.ctx.strokeRect(0, 0, rect_size, rect_size);
 
             this.drawInput((inputs) => {
                 this.loadOutput(inputs);
@@ -225,7 +223,8 @@ class Main {
                 $(button).text("Save");
                 this.video.play();
             } else {
-                var constraints = {video: {width: 449, height: 449, facingMode: "user", frameRate: 10}};
+                var rect_size = 16 * this.image_size + 1;
+                var constraints = {video: {width: rect_size, height: rect_size, facingMode: "user", frameRate: 10}};
 
                 navigator.mediaDevices.getUserMedia(constraints)
                 .then((mediaStream) => {
@@ -238,7 +237,7 @@ class Main {
                         var $this = this;
                         (function loop() {
                             if (!$this.paused && !$this.ended) {
-                                ctx.drawImage($this, 0, 0, 449, 449);
+                                ctx.drawImage($this, 0, 0, rect_size, rect_size);
                                 setTimeout(loop, 1000 / 10); // drawing at 10fps
                             }
                         })();
@@ -265,7 +264,7 @@ class Main {
             }
         })
         .always(() => {
-            $(button).text("Train");
+            $(button).text("Training");
             $(button).prop('disabled', false);
         })
         .fail(() => {
@@ -337,4 +336,5 @@ $(() => {
     $('#deleteModels').click((e) => {
         main.deleteAllModels(e.target);
     });
+
 });
