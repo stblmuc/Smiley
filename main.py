@@ -64,7 +64,6 @@ def main():
 def smiley():
     # input with pixel values between 0 (black) and 255 (white)
     data = np.array(request.json, dtype=np.uint8)
-    print(len(data)) # error: old size -> javascript
 
     # transform pixels to values between 0 (white) and 1 (black)
     regression_input = ((255 - data) / 255.0).reshape(1, IMAGE_SIZE * IMAGE_SIZE)

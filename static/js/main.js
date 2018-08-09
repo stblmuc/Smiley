@@ -6,8 +6,8 @@ class Main {
         this.input = document.getElementById('input');  
 
         this.image_size = param.image_size;
-        this.rect_size = 449; // 16 * 28 + 1
-        this.col_width = (this.rect_size - 1) / this.image_size;
+        this.rect_size = 448; // 16 * 28
+        this.col_width = this.rect_size / this.image_size;
 
         this.canvas.width = this.rect_size;
         this.canvas.height = this.rect_size;
@@ -84,15 +84,38 @@ class Main {
             var small = document.createElement('canvas').getContext('2d');
             small.drawImage(img, 0, 0, img.width, img.height, 0, 0, this.image_size, this.image_size);
             var data = small.getImageData(0, 0, this.image_size, this.image_size).data;
+
+            // get max and min for normalization
+            var max = 0
+            var min = 0
             for (var i = 0; i < this.image_size; i++) {
                 for (var j = 0; j < this.image_size; j++) {
                     var n = 4 * (i * this.image_size + j);
-                    inputs[i * this.image_size + j] = (data[n + 0] + data[n + 1] + data[n + 2]);
-                    ctx.fillStyle = 'rgb(' + [data[n + 0], data[n + 1], data[n + 2]].join(',') + ')';
+                    var grayscale = (data[n + 0]*.3 + data[n + 1]*.59 + data[n + 2]*.11)
+
+                    max = Math.max(max,grayscale)
+                    min = Math.min(min,grayscale)
+                }
+            }
+
+            for (var i = 0; i < this.image_size; i++) {
+                for (var j = 0; j < this.image_size; j++) {
+                    var n = 4 * (i * this.image_size + j);
+                    var grayscale = (data[n + 0]*.3 + data[n + 1]*.59 + data[n + 2]*.11)
+                    grayscale = 255 * (grayscale - min) / (max - min)
+
+                    // Threshold
+                    const threshold = 51
+                    const scale = 3
+                    var minus_factor = threshold - (threshold / scale)
+                    grayscale = grayscale > threshold ? Math.min(255,(grayscale-minus_factor)*scale) : grayscale
+
+                    inputs[i * this.image_size + j] = grayscale;
+                    ctx.fillStyle = 'rgb(' + Array(3).fill(grayscale) + ')';
                     ctx.fillRect(j * 5, i * 5, 5, 5);
                 }
             }
-            if (Math.min(...inputs) === 765) {
+            if (Math.min(...inputs) === 255) {
                 return;
             }
             cb(inputs);
@@ -229,7 +252,7 @@ class Main {
 
                     const ctx = this.ctx
                     const rect_size = this.rect_size
-                    
+
                     this.video = document.createElement('video');
                     this.video.srcObject = mediaStream;
                     this.video.addEventListener('play', function(){
