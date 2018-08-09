@@ -22,9 +22,10 @@ class Main {
 
     initialize() {
         this.ctx.fillStyle = '#FFFFFF';
-        this.ctx.fillRect(0, 0, this.rect_size, this.rect_size);
-        this.ctx.lineWidth = 0.05;
+        this.ctx.fillRect(0, 0, this.canvas.width, this.canvas.height);
+        this.input.getContext('2d').clearRect(0,0, this.input.width, this.input.height);
 
+        this.ctx.lineWidth = 0.05;
         for (var i = 0; i < this.image_size; i++) {
             this.ctx.beginPath();
             this.ctx.moveTo((i + 1) * this.col_width, 0);
@@ -38,6 +39,7 @@ class Main {
             this.ctx.closePath();
             this.ctx.stroke();
         }
+
         this.clearOutput();
     }
 
@@ -92,7 +94,6 @@ class Main {
                 for (var j = 0; j < this.image_size; j++) {
                     var n = 4 * (i * this.image_size + j);
                     var grayscale = (data[n + 0]*.3 + data[n + 1]*.59 + data[n + 2]*.11)
-
                     max = Math.max(max,grayscale)
                     min = Math.min(min,grayscale)
                 }
@@ -135,7 +136,6 @@ class Main {
             contentType: 'application/json',
             data: JSON.stringify(inputs),
             success: (data) => {
-
                 const categories = data.categories;
                 const classifiers = data.classifiers;
                 const error = data.error;
@@ -195,6 +195,7 @@ class Main {
             }
         })
         .fail(() => {
+            this.clearOutput();
             this.checkConnection();
         });
     }
@@ -214,6 +215,7 @@ class Main {
             }
         })
         .fail(() => {
+            this.clearOutput();
             this.checkConnection();
         });
     }
@@ -311,6 +313,7 @@ class Main {
             $(button).prop('disabled', false);
         })
         .fail(() => {
+            this.clearOutput();
             this.checkConnection();
         });
     }

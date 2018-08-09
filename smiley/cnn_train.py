@@ -10,7 +10,7 @@ def train():
     config = configparser.ConfigParser()
     config.read(os.path.join(os.path.dirname(__file__), 'trainConfig.ini'))
 
-    MODEL_DIRECTORY = os.path.join(os.path.dirname(__file__), config['DIRECTORIES']['MODELS'], config['DEFAULT']['IMAGE_SIZE'] + "/" + config['CNN']['MODEL_FILENAME'])
+    MODEL_PATH = os.path.join(os.path.dirname(__file__), config['DIRECTORIES']['MODELS'], config['DEFAULT']['IMAGE_SIZE'], config['CNN']['MODEL_FILENAME'])
     LOGS_DIRECTORY = os.path.join(os.path.dirname(__file__), config['DIRECTORIES']['LOGS'])
     IMAGE_SIZE = int(config['DEFAULT']['IMAGE_SIZE'])
 
@@ -85,7 +85,7 @@ def train():
     summary_writer = tf.summary.FileWriter(LOGS_DIRECTORY, graph=tf.get_default_graph())
 
     # restore stored CNN model if it exists and has the correct number of categories
-    max_acc = maybe_restore_model(MODEL_DIRECTORY, saver, sess, accuracy, validation_data, x, validation_labels, y_, is_training)
+    max_acc = maybe_restore_model(MODEL_PATH, saver, sess, accuracy, validation_data, x, validation_labels, y_, is_training)
 
     # loop for epoch
     for epoch in range(int(config['CNN']['EPOCHS'])):
@@ -110,12 +110,12 @@ def train():
             # Write logs at every iteration
             summary_writer.add_summary(summary, epoch * total_batch + i)
 
-            validation_accuracy = computeAccuracy(MODEL_DIRECTORY, saver, sess, accuracy, train_accuracy, i, total_batch, epoch, validation_data, x, 
+            validation_accuracy = computeAccuracy(sess, accuracy, train_accuracy, i, total_batch, epoch, validation_data, x, 
                 validation_labels, y_, is_training, int(config['LOGS']['TRAIN_ACCURACY_DISPLAY_STEP']), int(config['LOGS']['VALIDATION_STEP']))
             # save the current model if the maximum accuracy is updated
             if validation_accuracy > max_acc:
                 max_acc = validation_accuracy
-                save_path = saver.save(sess, MODEL_DIRECTORY, write_meta_graph=False, write_state=False)
+                save_path = saver.save(sess, MODEL_PATH, write_meta_graph=False, write_state=False)
                 print("Model updated and saved in file: %s" % save_path)
 
                 # saver.save(sess, LOGS_DIRECTORY + "CNN", epoch)
@@ -123,7 +123,7 @@ def train():
     print("Optimization Finished!")
 
     # restore variables from disk
-    saver.restore(sess, MODEL_DIRECTORY)
+    saver.restore(sess, MODEL_PATH)
 
     # calculate accuracy for all test images
     test_size = test_labels.shape[0]
@@ -161,7 +161,7 @@ def maybe_restore_model(model_path, saver, sess, accuracy, validation_data, x, v
         max_acc = 0.
     return max_acc
 
-def computeAccuracy(MODEL_DIRECTORY, saver, sess, accuracy, train_accuracy, i, total_batch, epoch, validation_data, x, validation_labels, y_, is_training, DISPLAY_STEP, VALIDATION_STEP):
+def computeAccuracy(sess, accuracy, train_accuracy, i, total_batch, epoch, validation_data, x, validation_labels, y_, is_training, DISPLAY_STEP, VALIDATION_STEP):
     if i % DISPLAY_STEP == 0:
         print("Epoch:", '%04d,' % (epoch + 1),
               "batch_index %4d/%4d, training accuracy %.5f" % (i, total_batch, train_accuracy))

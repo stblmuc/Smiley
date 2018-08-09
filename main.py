@@ -13,7 +13,7 @@ import regression_model, cnn_model, category_manager, regression_train, cnn_trai
 config = configparser.ConfigParser()
 config.read('./smiley/trainConfig.ini')
 
-MODELS_DIRECTORY = config['DIRECTORIES']['LOGIC'] + config['DIRECTORIES']['MODELS'] + config['DEFAULT']['IMAGE_SIZE'] + "/"
+MODELS_DIRECTORY = os.path.join(config['DIRECTORIES']['LOGIC'], config['DIRECTORIES']['MODELS'], config['DEFAULT']['IMAGE_SIZE'])
 IMAGE_SIZE = int(config['DEFAULT']['IMAGE_SIZE'])
 
 # Initialize the mapping between categories and indices in the prediction vectors
@@ -44,12 +44,12 @@ app = Flask(__name__)
 
 # Regression prediction
 def regression_predict(input):
-    saver_regression.restore(sess, MODELS_DIRECTORY + config['REGRESSION']['MODEL_FILENAME'])  # load saved model
+    saver_regression.restore(sess, os.path.join(MODELS_DIRECTORY, config['REGRESSION']['MODEL_FILENAME']))  # load saved model
     return sess.run(y1, feed_dict={x: input}).flatten().tolist()
 
 # CNN prediction
 def cnn_predict(input):
-    saver_cnn.restore(sess, MODELS_DIRECTORY + config['CNN']['MODEL_FILENAME'])  # load saved model
+    saver_cnn.restore(sess,os.path.join( MODELS_DIRECTORY, config['CNN']['MODEL_FILENAME']))  # load saved model
     result = sess.run(y2, feed_dict={x: input, is_training: False}).flatten().tolist()
     return result
 

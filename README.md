@@ -12,7 +12,7 @@ We try to provide easily understandable and concise backend and frontend capable
 
 ### Requirements ###
 
-- We recommend to install [`anaconda`](https://docs.anaconda.com/anaconda/install/).
+- We recommend to install [`anaconda`](https://docs.anaconda.com/anaconda/install/)
 
 - Python >=3.5 (recommended 3.6.6)
   - TensorFlow >=1.9 (recommended 1.9.0)
