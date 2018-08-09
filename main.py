@@ -138,6 +138,6 @@ def delete_all_models():
 if __name__ == '__main__':
     # Open webbrowser tab for the app
     new = 2 # open in a new tab, if possible
-    #webbrowser.open("http://localhost:5000", new=new)
+    webbrowser.open("http://localhost:5000", new=new)
 
     app.run()
