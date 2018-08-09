@@ -9,7 +9,8 @@ def regression(x, nCategories):
 	image_size = int(config['DEFAULT']['IMAGE_SIZE'])
 
 	with tf.variable_scope('regression'):
-		W = tf.Variable(tf.zeros([image_size * image_size, categories]), name="W")  # weights
-		b = tf.Variable(tf.zeros([categories]), name="b")  # biases		y = tf.nn.softmax(tf.matmul(x, W) + b)  # softmax function
+		W = tf.Variable(tf.zeros([image_size * image_size, nCategories]), name="W")  # weights
+		b = tf.Variable(tf.zeros([nCategories]), name="b")  # biases		
+		y = tf.nn.softmax(tf.matmul(x, W) + b)  # softmax function
 
 	return y, [W, b]
