@@ -13,7 +13,7 @@ import regression_model, cnn_model, category_manager, regression_train, cnn_trai
 config = configparser.ConfigParser()
 config.read('./smiley/trainConfig.ini')
 
-MODELS_DIRECTORY = config['DIRECTORIES']['LOGIC'] + config['DIRECTORIES']['MODELS']
+MODELS_DIRECTORY = config['DIRECTORIES']['LOGIC'] + config['DIRECTORIES']['MODELS'] + config['DEFAULT']['IMAGE_SIZE'] + "/"
 IMAGE_SIZE = int(config['DEFAULT']['IMAGE_SIZE'])
 
 # Initialize the mapping between categories and indices in the prediction vectors
