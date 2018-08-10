@@ -2,7 +2,7 @@
 
 ###### A Python app for smiley recognition, in which the training and the classification can be done on the interface using images generated with the mouse, imported from files, or even acquired from a webcam.
 
-GIF - TO DO
+![alt text](./gif.gif "Smiley Recognition")
 
 Parts of the code borrowed from [this repo](https://github.com/sugyan/tensorflow-mnist).
 
