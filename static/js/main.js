@@ -7,7 +7,7 @@ class Main {
 
         this.image_size = param.image_size;
         this.rect_size = 448; // 16 * 28
-        this.col_width = this.rect_size / this.image_size;
+        this.col_width = this.rect_size / this.image_size; // for the grid
 
         this.canvas.width = this.rect_size;
         this.canvas.height = this.rect_size;

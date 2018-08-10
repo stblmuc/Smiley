@@ -2,7 +2,7 @@ import tensorflow as tf
 import configparser
 import os
 
-# create definition of Softmax regression model: prediction = softmax(input * Weights + bias)
+# create definition of softmax regression model: prediction = softmax(input * Weights + bias)
 def regression(x, nCategories):
 	config = configparser.ConfigParser()
 	config.read(os.path.join(os.path.dirname(__file__), 'trainConfig.ini'))

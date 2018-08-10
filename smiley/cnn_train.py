@@ -124,7 +124,7 @@ def train():
 
     # calculate accuracy for all test images
     test_accuracy = sess.run(accuracy, feed_dict={x: test_data, y_: test_labels, is_training: False})
-    print("test accuracy for the stored model: %g" % numpy.mean(test_accuracy))
+    print("test accuracy for the stored model: %g" % test_accuracy)
 
     sess.close()
 
@@ -154,9 +154,9 @@ def computeAccuracy(sess, accuracy, train_accuracy, i, total_batch, epoch, valid
         validation_accuracy = sess.run(accuracy,
                                        feed_dict={x: validation_data, y_: validation_labels,
                                                   is_training: False})
-
         print("Epoch:", '%04d,' % (epoch + 1),
               "batch_index %4d/%4d, validation accuracy %.5f" % (i, total_batch, validation_accuracy))
+        
     return validation_accuracy
 
 if __name__ == '__main__':

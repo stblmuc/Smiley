@@ -111,9 +111,9 @@ def computeAccuracy(sess, accuracy, train_accuracy, i, total_batch, epoch, valid
     if i % VALIDATION_STEP == 0:
         # calculate accuracy
         validation_accuracy = sess.run(accuracy, feed_dict={x: validation_data, y_: validation_labels})
-
         print("Epoch:", '%04d,' % (epoch + 1),
               "batch_index %4d/%4d, validation accuracy %.5f" % (i, total_batch, validation_accuracy))
+        
     return validation_accuracy
 
 if __name__ == '__main__':

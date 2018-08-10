@@ -24,7 +24,7 @@ if not os.path.exists(MODELS_DIRECTORY):
     os.makedirs(MODELS_DIRECTORY)
 
 # Model variables
-x = tf.placeholder("float", [None, IMAGE_SIZE * IMAGE_SIZE])
+x = tf.placeholder("float", [None, IMAGE_SIZE * IMAGE_SIZE]) # image placeholder
 is_training = tf.placeholder("bool")
 
 # Tensorflow session

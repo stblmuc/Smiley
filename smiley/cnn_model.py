@@ -2,7 +2,9 @@ import tensorflow as tf
 import configparser
 import os
 
-# CNN with standard tensorflow
+# Convolutional Neural Network with two convolutional and max pool layers, 
+# followed by two fully connected layers with a dropout layer inbetween.
+# At he end softmax is applied to transform the values into probabilities per class.
 def convolutional(x, nCategories, is_training=True):
     config = configparser.ConfigParser()
     config.read(os.path.join(os.path.dirname(__file__), 'trainConfig.ini'))
