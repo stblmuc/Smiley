@@ -1,6 +1,5 @@
 import configparser
 import os
-
 import numpy
 import prepare_training_data
 import regression_model
@@ -54,6 +53,7 @@ def train():
     total_batch = int(train_size / BATCH_SIZE)
 
     # restore stored regression model if it exists and has the correct number of categories
+
     max_acc = maybe_restore_model(MODEL_PATH, saver, sess, accuracy, validation_data, x, validation_labels, y_)
 
     # loop for epoch

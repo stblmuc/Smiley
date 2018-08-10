@@ -1,6 +1,5 @@
 import configparser
 import os
-
 import cnn_model
 import numpy
 import prepare_training_data

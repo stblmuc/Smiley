@@ -1,6 +1,5 @@
 import configparser
 import os
-
 import category_manager
 import numpy
 from scipy import ndimage
