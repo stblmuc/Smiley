@@ -5,7 +5,7 @@ import configparser
 config = configparser.ConfigParser()
 config.read(os.path.join(os.path.dirname(__file__), 'trainConfig.ini'))
 
-CATEGORIES_LOCATION = os.path.join(os.path.dirname(__file__), config['DIRECTORIES']['CATEGORIES'] + config['DEFAULT']['IMAGE_SIZE'] + "/")
+CATEGORIES_LOCATION = os.path.join(os.path.dirname(__file__), config['DIRECTORIES']['CATEGORIES'], config['DEFAULT']['IMAGE_SIZE'] + "/")
 CATEGORIES = None
 
 def update():
