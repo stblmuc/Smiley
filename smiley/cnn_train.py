@@ -7,14 +7,15 @@ import configparser
 
 
 def train():
+    print("\nCNN TRAINING STARTED.")
+
     config = configparser.ConfigParser()
     config.read(os.path.join(os.path.dirname(__file__), 'trainConfig.ini'))
 
     MODEL_PATH = os.path.join(os.path.dirname(__file__), config['DIRECTORIES']['MODELS'], config['DEFAULT']['IMAGE_SIZE'], config['CNN']['MODEL_FILENAME'])
-    LOGS_DIRECTORY = os.path.join(os.path.dirname(__file__), config['DIRECTORIES']['LOGS'])
     IMAGE_SIZE = int(config['DEFAULT']['IMAGE_SIZE'])
-
-    print("\nCNN TRAINING STARTED.")
+    BATCH_SIZE = int(config['DEFAULT']['TRAIN_BATCH_SIZE'])  
+    LOGS_DIRECTORY = os.path.join(os.path.dirname(__file__), config['DIRECTORIES']['LOGS'])
 
     # get training/validation/testing data
     try:
@@ -23,16 +24,12 @@ def train():
     except TypeError:
         raise Exception("Error preparing training/validation/test data. Create more training examples.")
 
-    config = configparser.ConfigParser()
-    config.read(os.path.join(os.path.dirname(__file__), 'trainConfig.ini'))
-
-    batch_size = int(config['DEFAULT']['TRAIN_BATCH_SIZE'])    
-    is_training = tf.placeholder(tf.bool)
-
-    x = tf.placeholder(tf.float32, [None, IMAGE_SIZE * IMAGE_SIZE], name="image")  # CNN input
-    y_ = tf.placeholder(tf.float32, [None, curr_number_of_categories], name="labels")  # CNN output
     # CNN model
-    y, variables = cnn_model.convolutional(x, nCategories=curr_number_of_categories)
+    x = tf.placeholder(tf.float32, [None, IMAGE_SIZE * IMAGE_SIZE], name="image")  # CNN input placeholder
+    y_ = tf.placeholder(tf.float32, [None, curr_number_of_categories], name="labels")  # CNN output placeholder
+    y, variables = cnn_model.convolutional(x, nCategories=curr_number_of_categories) 
+
+    is_training = tf.placeholder(tf.bool) # used to apply dropout just in training phase
 
     # loss function
     with tf.name_scope("Loss"):
@@ -49,7 +46,7 @@ def train():
 
         learning_rate = tf.train.exponential_decay(
             float(config['CNN']['LEARNING_RATE']),  # base learning rate.
-            batch * batch_size,  # current index into the dataset.Sav
+            batch * BATCH_SIZE,  # current index into the dataset.Sav
             train_size,  # decay step.
             0.95,  # decay rate.
             staircase=True)
@@ -63,7 +60,7 @@ def train():
     # get accuracy of model
     with tf.name_scope("Acc"):
         correct_prediction = tf.equal(tf.argmax(y, 1), tf.argmax(y_, 1))
-        accuracy = tf.reduce_mean(tf.cast(correct_prediction, tf.float32))
+        accuracy = tf.reduce_mean(tf.cast(correct_prediction, tf.float32), 0)
 
     # create a summary to monitor accuracy tensor
     tf.summary.scalar('acc', accuracy)
@@ -77,7 +74,7 @@ def train():
     saver = tf.train.Saver(variables)
 
     # training cycle
-    total_batch = int(train_size / batch_size)
+    total_batch = int(train_size / BATCH_SIZE)
 
     # op to write logs to Tensorboard
     if not os.path.exists(LOGS_DIRECTORY):
@@ -97,11 +94,10 @@ def train():
 
         # loop over all batches
         for i in range(total_batch):
-
             # compute the offset of the current minibatch in the data.
-            offset = (i * batch_size) % (train_size)
-            batch_xs = train_data_[offset:(offset + batch_size), :]
-            batch_ys = train_labels_[offset:(offset + batch_size), :]
+            offset = (i * BATCH_SIZE) % (train_size)
+            batch_xs = train_data_[offset:(offset + BATCH_SIZE), :]
+            batch_ys = train_labels_[offset:(offset + BATCH_SIZE), :]
 
             # run optimization op (backprop), loss op (to get loss value) and summary nodes
             _, train_accuracy, summary = sess.run([train_step, accuracy, merged_summary_op],
@@ -112,6 +108,7 @@ def train():
 
             validation_accuracy = computeAccuracy(sess, accuracy, train_accuracy, i, total_batch, epoch, validation_data, x, 
                 validation_labels, y_, is_training, int(config['LOGS']['TRAIN_ACCURACY_DISPLAY_STEP']), int(config['LOGS']['VALIDATION_STEP']))
+
             # save the current model if the maximum accuracy is updated
             if validation_accuracy > max_acc:
                 max_acc = validation_accuracy
@@ -126,24 +123,8 @@ def train():
     saver.restore(sess, MODEL_PATH)
 
     # calculate accuracy for all test images
-    test_size = test_labels.shape[0]
-    batch_size = min(test_size, int(config['DEFAULT']['TEST_BATCH_SIZE']))
-    total_batch = int(test_size / batch_size)
-
-    acc_buffer = []
-
-    # loop over all batches
-    for i in range(total_batch):
-        # compute the offset of the current minibatch in the data.
-        offset = (i * batch_size) % (test_size)
-        batch_xs = test_data[offset:(offset + batch_size), :]
-        batch_ys = test_labels[offset:(offset + batch_size), :]
-
-        y_final = sess.run(y, feed_dict={x: batch_xs, y_: batch_ys, is_training: False})
-        correct_prediction = numpy.equal(numpy.argmax(y_final, 1), numpy.argmax(batch_ys, 1))
-        acc_buffer.append(numpy.sum(correct_prediction) / batch_size)
-
-    print("test accuracy for the stored model: %g" % numpy.mean(acc_buffer))
+    test_accuracy = sess.run(accuracy, feed_dict={x: test_data, y_: test_labels, is_training: False})
+    print("test accuracy for the stored model: %g" % numpy.mean(test_accuracy))
 
     sess.close()
 

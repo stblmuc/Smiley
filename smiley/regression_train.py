@@ -1,7 +1,6 @@
 import numpy
-import regression_model
 import tensorflow as tf
-import prepare_training_data, category_manager
+import prepare_training_data, regression_model
 from tensorflow.python.framework.errors_impl import InvalidArgumentError, NotFoundError
 import os
 import configparser
@@ -13,10 +12,10 @@ def train():
     config = configparser.ConfigParser()
     config.read(os.path.join(os.path.dirname(__file__), 'trainConfig.ini'))
 
-    BATCH_SIZE = int(config['DEFAULT']['TRAIN_BATCH_SIZE'])
     MODEL_PATH = os.path.join(os.path.dirname(__file__), config['DIRECTORIES']['MODELS'], config['DEFAULT']['IMAGE_SIZE'], config['REGRESSION']['MODEL_FILENAME'])
     IMAGE_SIZE = int(config['DEFAULT']['IMAGE_SIZE'])
-
+    BATCH_SIZE = int(config['DEFAULT']['TRAIN_BATCH_SIZE'])
+    
     # get training/validation/testing data
     try:
         curr_number_of_categories, train_total_data, train_size, validation_data, validation_labels, test_data, test_labels = prepare_training_data.prepare_data(
@@ -25,9 +24,10 @@ def train():
         raise Exception("Error preparing training/validation/test data. Create more training examples.")
 
     # regression model
-    x = tf.placeholder(tf.float32, [None, IMAGE_SIZE * IMAGE_SIZE], name="image")  # regression input
-    y_ = tf.placeholder(tf.float32, [None, curr_number_of_categories], name="labels")  # regression output
+    x = tf.placeholder(tf.float32, [None, IMAGE_SIZE * IMAGE_SIZE], name="image")  # regression input placeholder
+    y_ = tf.placeholder(tf.float32, [None, curr_number_of_categories], name="labels")  # regression output placeholder
     y, variables = regression_model.regression(x, nCategories=curr_number_of_categories)
+
     # training variables
     with tf.name_scope("Loss"):
         cross_entropy = -tf.reduce_sum(y_ * tf.log(y))
@@ -35,7 +35,7 @@ def train():
         train_step = tf.train.GradientDescentOptimizer(float(config['REGRESSION']['LEARNING_RATE'])).minimize(cross_entropy)
     with tf.name_scope("Acc"):
         correct_prediction = tf.equal(tf.argmax(y, 1), tf.argmax(y_, 1))
-        accuracy = tf.reduce_mean(tf.cast(correct_prediction, tf.float32))
+        accuracy = tf.reduce_mean(tf.cast(correct_prediction, tf.float32), 0)
 
     # merge training data and validation data
     validation_total_data = numpy.concatenate((validation_data, validation_labels), axis=1)
@@ -72,6 +72,7 @@ def train():
             validation_accuracy = computeAccuracy(sess, accuracy, train_accuracy, i, total_batch, epoch, validation_data, x, 
                 validation_labels, y_, int(config['LOGS']['TRAIN_ACCURACY_DISPLAY_STEP']), int(config['LOGS']['VALIDATION_STEP']))
 
+            # save the current model if the maximum accuracy is updated
             if validation_accuracy > max_acc:
                 max_acc = validation_accuracy
                 save_path = saver.save(sess, MODEL_PATH, write_meta_graph=False, write_state=False)
