@@ -1,8 +1,10 @@
-import tensorflow as tf
 import configparser
 import os
 
-# Convolutional Neural Network with two convolutional and max pool layers, 
+import tensorflow as tf
+
+
+# Convolutional Neural Network with two convolutional and max pool layers,
 # followed by two fully connected layers with a dropout layer inbetween.
 # At he end softmax is applied to transform the values into probabilities per class.
 def convolutional(x, nCategories, is_training=True):
@@ -30,5 +32,5 @@ def convolutional(x, nCategories, is_training=True):
         # Fully connected layer + softmax
         fc2 = tf.layers.dense(fc1, nCategories)
         out = tf.nn.softmax(fc2)
-        
+
     return out, tf.get_collection(tf.GraphKeys.TRAINABLE_VARIABLES, scope="cnn")

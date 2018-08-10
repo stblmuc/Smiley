@@ -1,9 +1,11 @@
+import configparser
+import os
+
+import cnn_model
 import numpy
+import prepare_training_data
 import tensorflow as tf
 from tensorflow.python.framework.errors_impl import InvalidArgumentError, NotFoundError
-import prepare_training_data, cnn_model
-import os
-import configparser
 
 
 def train():
@@ -12,9 +14,10 @@ def train():
     config = configparser.ConfigParser()
     config.read(os.path.join(os.path.dirname(__file__), 'trainConfig.ini'))
 
-    MODEL_PATH = os.path.join(os.path.dirname(__file__), config['DIRECTORIES']['MODELS'], config['DEFAULT']['IMAGE_SIZE'], config['CNN']['MODEL_FILENAME'])
+    MODEL_PATH = os.path.join(os.path.dirname(__file__), config['DIRECTORIES']['MODELS'],
+                              config['DEFAULT']['IMAGE_SIZE'], config['CNN']['MODEL_FILENAME'])
     IMAGE_SIZE = int(config['DEFAULT']['IMAGE_SIZE'])
-    BATCH_SIZE = int(config['DEFAULT']['TRAIN_BATCH_SIZE'])  
+    BATCH_SIZE = int(config['DEFAULT']['TRAIN_BATCH_SIZE'])
     LOGS_DIRECTORY = os.path.join(os.path.dirname(__file__), config['DIRECTORIES']['LOGS'])
 
     # get training/validation/testing data
@@ -27,9 +30,9 @@ def train():
     # CNN model
     x = tf.placeholder(tf.float32, [None, IMAGE_SIZE * IMAGE_SIZE], name="image")  # CNN input placeholder
     y_ = tf.placeholder(tf.float32, [None, curr_number_of_categories], name="labels")  # CNN output placeholder
-    y, variables = cnn_model.convolutional(x, nCategories=curr_number_of_categories) 
+    y, variables = cnn_model.convolutional(x, nCategories=curr_number_of_categories)
 
-    is_training = tf.placeholder(tf.bool) # used to apply dropout just in training phase
+    is_training = tf.placeholder(tf.bool)  # used to apply dropout just in training phase
 
     # loss function
     with tf.name_scope("Loss"):
@@ -82,7 +85,8 @@ def train():
     summary_writer = tf.summary.FileWriter(LOGS_DIRECTORY, graph=tf.get_default_graph())
 
     # restore stored CNN model if it exists and has the correct number of categories
-    max_acc = maybe_restore_model(MODEL_PATH, saver, sess, accuracy, validation_data, x, validation_labels, y_, is_training)
+    max_acc = maybe_restore_model(MODEL_PATH, saver, sess, accuracy, validation_data, x, validation_labels, y_,
+                                  is_training)
 
     # loop for epoch
     for epoch in range(int(config['CNN']['EPOCHS'])):
@@ -106,8 +110,11 @@ def train():
             # Write logs at every iteration
             summary_writer.add_summary(summary, epoch * total_batch + i)
 
-            validation_accuracy = computeAccuracy(sess, accuracy, train_accuracy, i, total_batch, epoch, validation_data, x, 
-                validation_labels, y_, is_training, int(config['LOGS']['TRAIN_ACCURACY_DISPLAY_STEP']), int(config['LOGS']['VALIDATION_STEP']))
+            validation_accuracy = computeAccuracy(sess, accuracy, train_accuracy, i, total_batch, epoch,
+                                                  validation_data, x,
+                                                  validation_labels, y_, is_training,
+                                                  int(config['LOGS']['TRAIN_ACCURACY_DISPLAY_STEP']),
+                                                  int(config['LOGS']['VALIDATION_STEP']))
 
             # save the current model if the maximum accuracy is updated
             if validation_accuracy > max_acc:
@@ -130,6 +137,7 @@ def train():
 
     print("CNN TRAINING END.")
 
+
 def maybe_restore_model(model_path, saver, sess, accuracy, validation_data, x, validation_labels, y_, is_training):
     try:
         saver.restore(sess, model_path)
@@ -142,7 +150,9 @@ def maybe_restore_model(model_path, saver, sess, accuracy, validation_data, x, v
         max_acc = 0.
     return max_acc
 
-def computeAccuracy(sess, accuracy, train_accuracy, i, total_batch, epoch, validation_data, x, validation_labels, y_, is_training, DISPLAY_STEP, VALIDATION_STEP):
+
+def computeAccuracy(sess, accuracy, train_accuracy, i, total_batch, epoch, validation_data, x, validation_labels, y_,
+                    is_training, DISPLAY_STEP, VALIDATION_STEP):
     if i % DISPLAY_STEP == 0:
         print("Epoch:", '%04d,' % (epoch + 1),
               "batch_index %4d/%4d, training accuracy %.5f" % (i, total_batch, train_accuracy))
@@ -156,8 +166,9 @@ def computeAccuracy(sess, accuracy, train_accuracy, i, total_batch, epoch, valid
                                                   is_training: False})
         print("Epoch:", '%04d,' % (epoch + 1),
               "batch_index %4d/%4d, validation accuracy %.5f" % (i, total_batch, validation_accuracy))
-        
+
     return validation_accuracy
+
 
 if __name__ == '__main__':
     train()

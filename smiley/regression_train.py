@@ -1,9 +1,11 @@
-import numpy
-import tensorflow as tf
-import prepare_training_data, regression_model
-from tensorflow.python.framework.errors_impl import InvalidArgumentError, NotFoundError
-import os
 import configparser
+import os
+
+import numpy
+import prepare_training_data
+import regression_model
+import tensorflow as tf
+from tensorflow.python.framework.errors_impl import InvalidArgumentError, NotFoundError
 
 
 def train():
@@ -12,10 +14,11 @@ def train():
     config = configparser.ConfigParser()
     config.read(os.path.join(os.path.dirname(__file__), 'trainConfig.ini'))
 
-    MODEL_PATH = os.path.join(os.path.dirname(__file__), config['DIRECTORIES']['MODELS'], config['DEFAULT']['IMAGE_SIZE'], config['REGRESSION']['MODEL_FILENAME'])
+    MODEL_PATH = os.path.join(os.path.dirname(__file__), config['DIRECTORIES']['MODELS'],
+                              config['DEFAULT']['IMAGE_SIZE'], config['REGRESSION']['MODEL_FILENAME'])
     IMAGE_SIZE = int(config['DEFAULT']['IMAGE_SIZE'])
     BATCH_SIZE = int(config['DEFAULT']['TRAIN_BATCH_SIZE'])
-    
+
     # get training/validation/testing data
     try:
         curr_number_of_categories, train_total_data, train_size, validation_data, validation_labels, test_data, test_labels = prepare_training_data.prepare_data(
@@ -32,7 +35,8 @@ def train():
     with tf.name_scope("Loss"):
         cross_entropy = -tf.reduce_sum(y_ * tf.log(y))
     with tf.name_scope("GradientDescent"):
-        train_step = tf.train.GradientDescentOptimizer(float(config['REGRESSION']['LEARNING_RATE'])).minimize(cross_entropy)
+        train_step = tf.train.GradientDescentOptimizer(float(config['REGRESSION']['LEARNING_RATE'])).minimize(
+            cross_entropy)
     with tf.name_scope("Acc"):
         correct_prediction = tf.equal(tf.argmax(y, 1), tf.argmax(y_, 1))
         accuracy = tf.reduce_mean(tf.cast(correct_prediction, tf.float32), 0)
@@ -69,8 +73,11 @@ def train():
 
             _, train_accuracy = sess.run([train_step, accuracy], feed_dict={x: batch_xs, y_: batch_ys})
 
-            validation_accuracy = computeAccuracy(sess, accuracy, train_accuracy, i, total_batch, epoch, validation_data, x, 
-                validation_labels, y_, int(config['LOGS']['TRAIN_ACCURACY_DISPLAY_STEP']), int(config['LOGS']['VALIDATION_STEP']))
+            validation_accuracy = computeAccuracy(sess, accuracy, train_accuracy, i, total_batch, epoch,
+                                                  validation_data, x,
+                                                  validation_labels, y_,
+                                                  int(config['LOGS']['TRAIN_ACCURACY_DISPLAY_STEP']),
+                                                  int(config['LOGS']['VALIDATION_STEP']))
 
             # save the current model if the maximum accuracy is updated
             if validation_accuracy > max_acc:
@@ -91,7 +98,8 @@ def train():
 
     print("LINEAR REGRESSION TRAINING END.")
 
-def maybe_restore_model(model_path, saver, sess, accuracy, validation_data, x, validation_labels, y_):    
+
+def maybe_restore_model(model_path, saver, sess, accuracy, validation_data, x, validation_labels, y_):
     try:
         saver.restore(sess, model_path)
         # save the current maximum accuracy value for validation data
@@ -101,7 +109,9 @@ def maybe_restore_model(model_path, saver, sess, accuracy, validation_data, x, v
         max_acc = 0.
     return max_acc
 
-def computeAccuracy(sess, accuracy, train_accuracy, i, total_batch, epoch, validation_data, x, validation_labels, y_, DISPLAY_STEP, VALIDATION_STEP):
+
+def computeAccuracy(sess, accuracy, train_accuracy, i, total_batch, epoch, validation_data, x, validation_labels, y_,
+                    DISPLAY_STEP, VALIDATION_STEP):
     if i % DISPLAY_STEP == 0:
         print("Epoch:", '%04d,' % (epoch + 1),
               "batch_index %4d/%4d, training accuracy %.5f" % (i, total_batch, train_accuracy))
@@ -113,8 +123,9 @@ def computeAccuracy(sess, accuracy, train_accuracy, i, total_batch, epoch, valid
         validation_accuracy = sess.run(accuracy, feed_dict={x: validation_data, y_: validation_labels})
         print("Epoch:", '%04d,' % (epoch + 1),
               "batch_index %4d/%4d, validation accuracy %.5f" % (i, total_batch, validation_accuracy))
-        
+
     return validation_accuracy
+
 
 if __name__ == '__main__':
     train()

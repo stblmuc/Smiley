@@ -1,12 +1,15 @@
-import os
-import png
 import configparser
+import os
+
+import png
 
 config = configparser.ConfigParser()
 config.read(os.path.join(os.path.dirname(__file__), 'trainConfig.ini'))
 
-CATEGORIES_LOCATION = os.path.join(os.path.dirname(__file__), config['DIRECTORIES']['CATEGORIES'], config['DEFAULT']['IMAGE_SIZE'] + "/")
+CATEGORIES_LOCATION = os.path.join(os.path.dirname(__file__), config['DIRECTORIES']['CATEGORIES'],
+                                   config['DEFAULT']['IMAGE_SIZE'] + "/")
 CATEGORIES = None
+
 
 def update():
     global CATEGORIES
@@ -22,10 +25,8 @@ def update():
                                         z[0].split("/")[-1]) > 0]))}
     return CATEGORIES
 
-def add_training_example(image, category):
-    # find path to category_manager.py
-    dir = os.path.dirname(__file__)
 
+def add_training_example(image, category):
     # create folder for category if it doesn't exist:
     if not os.path.exists(os.path.join(CATEGORIES_LOCATION, category)):
         os.makedirs(os.path.join(CATEGORIES_LOCATION, category))

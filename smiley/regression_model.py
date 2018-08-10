@@ -1,6 +1,8 @@
-import tensorflow as tf
 import configparser
 import os
+
+import tensorflow as tf
+
 
 # create definition of softmax regression model: prediction = softmax(input * Weights + bias)
 def regression(x, nCategories):

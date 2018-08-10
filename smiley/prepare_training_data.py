@@ -1,9 +1,9 @@
+import configparser
 import os
+
+import category_manager
 import numpy
 from scipy import ndimage
-import category_manager
-import tensorflow as tf
-import configparser
 
 # parameters
 NUM_LABELS = len(category_manager.update())
@@ -11,6 +11,7 @@ NUM_LABELS = len(category_manager.update())
 # load config params
 config = configparser.ConfigParser()
 config.read(os.path.join(os.path.dirname(__file__), 'trainConfig.ini'))
+
 
 # get images from category folders, add them to training/test images
 def add_data(model, train_images, train_labels, test_images, test_labels, train_ratio):
@@ -80,7 +81,7 @@ def add_data(model, train_images, train_labels, test_images, test_labels, train_
 
     if sum([1 for c in number_per_category.items() if
             c[0] not in [str(n) for n in range(10)] and
-                            c[1] != 0.0 and c[1] == number_per_category_in_training[c[0]]]) == 0:
+            c[1] != 0.0 and c[1] == number_per_category_in_training[c[0]]]) == 0:
         return train_images, train_labels, test_images, test_labels
     else:
         # at least one category has all examples in the training set (meaning there are not
@@ -172,10 +173,12 @@ def prepare_data(model, use_data_augmentation=True):
     train_ratio = float(config['DEFAULT']['TRAIN_RATIO'])
 
     # add  data from category folders
-    train_data, train_labels, test_data, test_labels = add_data(model, train_data, train_labels, test_data, test_labels, train_ratio)
+    train_data, train_labels, test_data, test_labels = add_data(model, train_data, train_labels, test_data, test_labels,
+                                                                train_ratio)
 
     # create a validation set
-    train_data, train_labels, validation_data, validation_labels = create_validation_set(train_data, train_labels, 1-train_ratio)
+    train_data, train_labels, validation_data, validation_labels = create_validation_set(train_data, train_labels,
+                                                                                         1 - train_ratio)
 
     # concatenate train_data and train_labels for random shuffle
     if use_data_augmentation:
