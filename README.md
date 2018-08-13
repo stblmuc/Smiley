@@ -29,10 +29,10 @@ From installing until running the application, simply follow the instructions:
 > # Install requirements
 > pip install -r requirements.txt
 > 
-> # Run the app
+> # Navigate to the directory and run the app
 > python main.py
 > 
-> # Navigate to localhost:5000 (webbrowser opens a new tab automatically)
+> # Navigate to localhost:5000 (opens automatically in your webbrowser)
 ```
 
 The logs from training can be accessed by TensorBoard:
