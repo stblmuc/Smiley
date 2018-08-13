@@ -8,7 +8,7 @@ Parts of the code borrowed from [this repo](https://github.com/sugyan/tensorflow
 
 ## General knowledge
 
-We try to provide easily understandable and concise backend and frontend capable of generating and importing data (i.e. images), as well as training and testing Machine Learning models for smiley recognition.
+We provide an easily understandable and concise backend and frontend capable of generating and importing data (i.e. images), as well as training and testing Machine Learning models for smiley recognition.
 
 ### Requirements ###
 
@@ -22,14 +22,16 @@ We try to provide easily understandable and concise backend and frontend capable
 From installing until running the application, simply follow the instructions:
 
 ```bash
+> # Start the anaconda prompt
+>
 > # Create and activate the environment
 > conda create --name smiley python=3.6.6
-> source activate smiley
+> activate smiley
 >
-> # Install requirements
+> # Navigate to the project directory and install zhe requirements
 > pip install -r requirements.txt
 > 
-> # Navigate to the directory and run the app
+> # Run the app
 > python main.py
 > 
 > # Navigate to localhost:5000 (opens automatically in your webbrowser)
