@@ -46,6 +46,18 @@
                     <button id="deleteModels" class="btn btn-danger">Delete</button>
                 </div>
             </div>
+            <div style="margin-top: 10px">
+                <div class="btn-group">
+                    <button class="btn" style="pointer-events: none;">Import data:</button>
+                    <!--
+                        <label id="importData2" class="btn btn-default btn-file">Folder<input id='file-input' type='file' multiple webkitdirectory style="display: none;"/></label>
+                        -->
+                    <form id='file-catcher'>
+                        <input id='file-input' type='file' multiple webkitdirectory/>
+                        <button class="btn" type='submit'>Submit</button>
+                    </form>
+                </div>
+            </div>
         </div>
         <br>
         <div class="col-md-6">

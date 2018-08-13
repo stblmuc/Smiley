@@ -201,6 +201,7 @@ class Main {
     }
 
     uploadTrainingData(inputs) {
+        alert("Uploading...");
         $.ajax({
             url: '/api/generate-training-example',
             method: 'POST',
@@ -233,6 +234,38 @@ class Main {
 
             this.drawInput((inputs) => {
                 this.loadOutput(inputs);
+            });
+        }
+        img.src = window.URL.createObjectURL(data)
+    }
+
+    loadAndUploadImage(data) {
+        var img = new Image();
+        img.onload = () => {
+            var imgSize = Math.min(img.width, img.height);
+    	    var left = (img.width - imgSize) / 2;
+    	    var top = (img.height - imgSize) / 2;
+
+            // draw squared-up image in canvas
+            this.ctx.drawImage(img, left, top, imgSize, imgSize, 0, 0, this.ctx.canvas.width, this.ctx.canvas.height);
+
+            this.drawInput((inputs) => {
+                var path = data.webkitRelativePath.split("/");
+    	        var label = path[path.length - 2];
+    	        //console.log(label);
+    	        //console.log(path);
+                const uploadData = {
+                    cat: label,
+                    img: inputs
+                };
+                $.ajax({
+                    url: '/api/generate-training-example',
+                    method: 'POST',
+                    contentType: 'application/json',
+                    data: JSON.stringify(uploadData),
+                    success: (data) => {
+                    }
+                })
             });
         }
         img.src = window.URL.createObjectURL(data)
@@ -281,6 +314,7 @@ class Main {
     }
 
     trainModels(button) {
+        $("#deleteModels").prop('disabled', true);
         $(button).prop('disabled', true);
         $(button).text("Training");
         $.ajax({
@@ -295,6 +329,7 @@ class Main {
         .always(() => {
             $(button).text("Train");
             $(button).prop('disabled', false);
+            $("#deleteModels").prop('disabled', false);
         })
         .fail(() => {
             this.clearOutput();
@@ -367,4 +402,15 @@ $(() => {
         main.deleteAllModels(e.target);
     });
 
+    $('#file-catcher').submit((e) => {
+        fileList = [];
+        var fileInput = document.getElementById('file-input');
+  	    for (var i = 0; i < fileInput.files.length; i++) {
+    	    fileList.push(fileInput.files[i]);
+    	    main.loadAndUploadImage(fileInput.files[i]);
+        }
+
+    });
+
 });
+
