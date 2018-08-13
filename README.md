@@ -28,7 +28,7 @@ From installing until running the application, simply follow the instructions:
 > conda create --name smiley python=3.6.6
 > activate smiley
 >
-> # Navigate to the project directory and install zhe requirements
+> # Navigate to the project directory and install the requirements
 > pip install -r requirements.txt
 > 
 > # Run the app

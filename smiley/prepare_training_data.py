@@ -152,7 +152,6 @@ def expand_training_data(images, labels):
             max_shift = math.floor(image_size * 0.2)
             shift = numpy.random.randint(-max_shift, max_shift, 2)
             new_img_ = ndimage.shift(new_img, shift, cval=bg_value)
-            print(numpy.shape(new_img_))
 
             # zoom image while keeping its dimensions
             zoom = numpy.random.uniform(0.5, 2)

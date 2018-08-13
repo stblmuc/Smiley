@@ -224,7 +224,12 @@ class Main {
         var img = new Image();
         img.onload = () => {
             this.initialize();
-            this.ctx.drawImage(img, 0, 0, this.rect_size, this.rect_size);
+            var imgSize = Math.min(img.width, img.height);
+    	    var left = (img.width - imgSize) / 2;
+    	    var top = (img.height - imgSize) / 2;
+
+            // draw squared-up image in canvas
+            this.ctx.drawImage(img, left, top, imgSize, imgSize, 0, 0, this.ctx.canvas.width, this.ctx.canvas.height);
 
             this.drawInput((inputs) => {
                 this.loadOutput(inputs);
