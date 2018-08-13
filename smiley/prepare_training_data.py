@@ -1,7 +1,9 @@
 import configparser
 import os
+import math
 import category_manager
 import numpy
+import cv2
 from scipy import ndimage
 
 # parameters
@@ -147,11 +149,17 @@ def expand_training_data(images, labels):
             new_img = ndimage.rotate(image, angle, reshape=False, cval=bg_value)
 
             # shift the image with random distance
-            shift = numpy.random.randint(-2, 2, 2)
+            max_shift = math.floor(image_size * 0.2)
+            shift = numpy.random.randint(-max_shift, max_shift, 2)
             new_img_ = ndimage.shift(new_img, shift, cval=bg_value)
+            print(numpy.shape(new_img_))
+
+            # zoom image while keeping its dimensions
+            zoom = numpy.random.uniform(0.5, 2)
+            new_img__ = cv2_clipped_zoom(new_img_, zoom)
 
             # register new training data
-            expanded_images.append(numpy.reshape(new_img_, image_size * image_size))
+            expanded_images.append(numpy.reshape(new_img__, image_size * image_size))
             expanded_labels.append(y)
 
     # images and labels are concatenated for random-shuffle at each epoch
@@ -160,6 +168,40 @@ def expand_training_data(images, labels):
     numpy.random.shuffle(expanded_train_total_data)
 
     return expanded_train_total_data
+
+
+# Source: https://stackoverflow.com/questions/37119071/scipy-rotate-and-zoom-an-image-without-changing-its-dimensions
+def cv2_clipped_zoom(img, zoom_factor):
+    """
+    Center zoom in/out of the given image and returning an enlarged/shrinked view of
+    the image without changing dimensions
+    Args:
+        img : Image array
+        zoom_factor : amount of zoom as a ratio (0 to Inf)
+    """
+    height, width = img.shape[:2]  # It's also the final desired shape
+    new_height, new_width = int(height * zoom_factor), int(width * zoom_factor)
+
+    ### Crop only the part that will remain in the result (more efficient)
+    # Centered bbox of the final desired size in resized (larger/smaller) image coordinates
+    y1, x1 = max(0, new_height - height) // 2, max(0, new_width - width) // 2
+    y2, x2 = y1 + height, x1 + width
+    bbox = numpy.array([y1, x1, y2, x2])
+    # Map back to original image coordinates
+    bbox = (bbox / zoom_factor).astype(numpy.int)
+    y1, x1, y2, x2 = bbox
+    cropped_img = img[y1:y2, x1:x2]
+
+    # Handle padding when downscaling
+    resize_height, resize_width = min(new_height, height), min(new_width, width)
+    pad_height1, pad_width1 = (height - resize_height) // 2, (width - resize_width) // 2
+    pad_height2, pad_width2 = (height - resize_height) - pad_height1, (width - resize_width) - pad_width1
+    pad_spec = [(pad_height1, pad_height2), (pad_width1, pad_width2)] + [(0, 0)] * (img.ndim - 2)
+
+    result = cv2.resize(cropped_img, (resize_width, resize_height))
+    result = numpy.pad(result, pad_spec, mode='constant')
+    assert result.shape[0] == height and result.shape[1] == width
+    return result
 
 
 # prepare training data (generated images)
