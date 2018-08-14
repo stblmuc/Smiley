@@ -149,7 +149,7 @@ def expand_training_data(images, labels):
             new_img = ndimage.rotate(image, angle, reshape=False, cval=bg_value)
 
             # shift the image with random distance
-            max_shift = math.floor(image_size * 0.1)
+            max_shift = int(math.floor(image_size * 0.1))
             shift = numpy.random.randint(-max_shift, max_shift, 2)
             new_img_ = ndimage.shift(new_img, shift, cval=bg_value)
 

@@ -9,6 +9,7 @@
     <script type="text/javascript">
         var param = {{data|tojson}}; // Retrieve data from main.py (i.e. image size)
 
+
     </script>
 </head>
 <body>
@@ -52,23 +53,21 @@
             <div style="margin-top: 10px">
                 <div class="btn-group">
                     <form id="file-catcher">
-                        <div class="form-group">
-                            <input type='file' class='input-ghost' id='files-input' multiple webkitdirectory
-                                   style='visibility:hidden; height:0'>
-                            <div class="input-group input-file">
-                                <span class="input-group-btn">
-        		                    <button class="btn" style="pointer-events: none;">Import multiple:</button>
-    		                    </span>
-                                <span class="input-group-btn">
-        		                    <button class="btn btn-default btn-choose" id="choose-dir" type="button"
+                        <input type='file' class='input-ghost' id='files-input' multiple webkitdirectory
+                               style='visibility:hidden; height:0'>
+                        <div class="input-group input-file">
+                            <span class="input-group-btn">
+                                <button class="btn" style="pointer-events: none;">Import multiple:</button>
+                            </span>
+                            <span class="input-group-btn">
+                                <button class="btn btn-default btn-choose" id="choose-dir" type="button"
                                             style="border-radius: 0;">Choose </button>
-    		                    </span>
-                                <input type="text" class="form-control" id="dir-text"
-                                       placeholder='Choose a directory...'/>
-                                <span class="input-group-btn">
-       			                    <button class="btn btn-primary" type="submit">Submit</button>
-    		                    </span>
-                            </div>
+                            </span>
+                            <input type="text" class="form-control" id="dir-text"
+                                   placeholder='Choose a directory...'/>
+                            <span class="input-group-btn">
+                                <button class="btn btn-primary" type="submit">Upload</button>
+                            </span>
                         </div>
                     </form>
                 </div>

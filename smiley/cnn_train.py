@@ -48,7 +48,7 @@ def train():
 
         learning_rate = tf.train.exponential_decay(
             float(config['CNN']['LEARNING_RATE']),  # base learning rate.
-            batch * BATCH_SIZE,  # current index into the dataset.Sav
+            tf.cast(batch, dtype=tf.int16) * BATCH_SIZE,  # current index into the dataset.Sav
             train_size,  # decay step.
             0.95,  # decay rate.
             staircase=True)
@@ -98,7 +98,7 @@ def train():
         # loop over all batches
         for i in range(total_batch):
             # compute the offset of the current minibatch in the data.
-            offset = (i * BATCH_SIZE) % (train_size)
+            offset = (i * BATCH_SIZE) % train_size
             batch_xs = train_data_[offset:(offset + BATCH_SIZE), :]
             batch_ys = train_labels_[offset:(offset + BATCH_SIZE), :]
 
@@ -109,11 +109,11 @@ def train():
             # Write logs at every iteration
             summary_writer.add_summary(summary, epoch * total_batch + i)
 
-            validation_accuracy = computeAccuracy(sess, accuracy, train_accuracy, i, total_batch, epoch,
-                                                  validation_data, x,
-                                                  validation_labels, y_, is_training,
-                                                  int(config['LOGS']['TRAIN_ACCURACY_DISPLAY_STEP']),
-                                                  int(config['LOGS']['VALIDATION_STEP']))
+            validation_accuracy = compute_accuracy(sess, accuracy, train_accuracy, i, total_batch, epoch,
+                                                   validation_data, x,
+                                                   validation_labels, y_, is_training,
+                                                   int(config['LOGS']['TRAIN_ACCURACY_DISPLAY_STEP']),
+                                                   int(config['LOGS']['VALIDATION_STEP']))
 
             # save the current model if the maximum accuracy is updated
             if validation_accuracy > max_acc:
@@ -150,8 +150,8 @@ def maybe_restore_model(model_path, saver, sess, accuracy, validation_data, x, v
     return max_acc
 
 
-def computeAccuracy(sess, accuracy, train_accuracy, i, total_batch, epoch, validation_data, x, validation_labels, y_,
-                    is_training, DISPLAY_STEP, VALIDATION_STEP):
+def compute_accuracy(sess, accuracy, train_accuracy, i, total_batch, epoch, validation_data, x, validation_labels, y_,
+                     is_training, DISPLAY_STEP, VALIDATION_STEP):
     if i % DISPLAY_STEP == 0:
         print("Epoch:", '%04d,' % (epoch + 1),
               "batch_index %4d/%4d, training accuracy %.5f" % (i, total_batch, train_accuracy))
