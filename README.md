@@ -39,6 +39,17 @@ The logs from training can be accessed by TensorBoard:
 
     > python -m tensorboard.main --logdir smiley/data/logs
 
+### Parameters ###
+Changing important parameters, e.g. learning rates and number of epochs, can be done easily in the config file `smiley/trainConfig.ini`. 
+
+### Implementation details ###
+
+##### Linear regression #####
+This method uses just one weight matrix which is multiplied with the input. After that, a bias is added.
+
+##### Convolutional Neural Network #####
+It consists of two convolutional + max-pool layers and two fully connected layers with a dropout layer in between.
+
 ### License ###
 
-TO DO
+TODO
