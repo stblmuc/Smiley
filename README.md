@@ -4,21 +4,18 @@
 
 ![alt text](./gif.gif "Smiley Recognition")
 
-Parts of the code borrowed from [this repo](https://github.com/sugyan/tensorflow-mnist).
+Parts of the code are based on [this repo](https://github.com/sugyan/tensorflow-mnist).
 
-## General knowledge
-
+## General knowledge ##
 We provide an easily understandable and concise backend and frontend capable of generating and importing data (i.e. images), as well as training and testing Machine Learning models for smiley recognition.
 
 ### Requirements ###
-
 - We recommend to install [`anaconda`](https://docs.anaconda.com/anaconda/install/)
 
 - Python >=3.5 (recommended 3.6.6)
   - TensorFlow >=1.9 (recommended 1.9.0)
 
 ### Usage ###
-
 Start the anaconda prompt and simply follow the these instructions:
 
 ```bash
@@ -45,11 +42,10 @@ Changing important parameters, e.g. learning rates and number of epochs, can be 
 ### Implementation details ###
 
 ##### Linear regression #####
-This method uses just one weight matrix which is multiplied with the input. After that, a bias is added.
+This method uses just one weight matrix which is multiplied with the input. After that, a bias is added and softmax is applied to obtain a probability.
 
 ##### Convolutional Neural Network #####
 It consists of two convolutional + max-pool layers and two fully connected layers with a dropout layer in between.
 
 ### License ###
-
 TODO

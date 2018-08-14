@@ -1,11 +1,11 @@
+import configparser
+import math
+import os
+import sys
 import numpy as np
 import tensorflow as tf
 from flask import Flask, jsonify, render_template, request
 from tensorflow.python.framework.errors_impl import InvalidArgumentError, NotFoundError
-import webbrowser
-import os, sys
-import math
-import configparser
 
 sys.path.append("smiley")
 import regression_model, cnn_model, category_manager, regression_train, cnn_train

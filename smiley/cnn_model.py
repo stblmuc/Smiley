@@ -4,7 +4,7 @@ import tensorflow as tf
 
 
 # Convolutional Neural Network with two convolutional and max pool layers,
-# followed by two fully connected layers with a dropout layer inbetween.
+# followed by two fully connected layers with a dropout layer in between.
 # At the end, softmax is applied to transform the values into probabilities for each class.
 def convolutional(x, nCategories, is_training=True):
     config = configparser.ConfigParser()
