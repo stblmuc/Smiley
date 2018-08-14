@@ -252,20 +252,22 @@ class Main {
             this.drawInput((inputs) => {
                 var path = data.webkitRelativePath.split("/");
     	        var label = path[path.length - 2];
-    	        //console.log(label);
-    	        //console.log(path);
-                const uploadData = {
-                    cat: label,
-                    img: inputs
+    	        if (label) {
+                    const uploadData = {
+                        cat: label,
+                        img: inputs
+                    };
+                    $.ajax({
+                        url: '/api/generate-training-example',
+                        method: 'POST',
+                        contentType: 'application/json',
+                        data: JSON.stringify(uploadData),
+                        success: (data) => {
+                        }
+                    })
+                } else {
+                    alert("Please select a folder of one category or of one image size");
                 };
-                $.ajax({
-                    url: '/api/generate-training-example',
-                    method: 'POST',
-                    contentType: 'application/json',
-                    data: JSON.stringify(uploadData),
-                    success: (data) => {
-                    }
-                })
             });
         }
         img.src = window.URL.createObjectURL(data)
@@ -403,14 +405,29 @@ $(() => {
     });
 
     $('#file-catcher').submit((e) => {
-        fileList = [];
-        var fileInput = document.getElementById('file-input');
+        var fileInput = document.getElementById('files-input');
   	    for (var i = 0; i < fileInput.files.length; i++) {
-    	    fileList.push(fileInput.files[i]);
     	    main.loadAndUploadImage(fileInput.files[i]);
         }
 
     });
 
+    prepareDirInput();
+    
 });
 
+function prepareDirInput() {
+    var element = $("#files-input");
+	element.attr("name",$(this).attr("name"));
+	element.change(function(){
+		element.next(element).find('input').val((element.val()).split('\\').pop());
+	});
+	$("#choose-dir").click(function(){
+		element.click();
+	});
+	$("#dir-text").css("cursor","pointer");
+	$("#dir-text").mousedown(function() {
+		element.click();
+		return false;
+	});
+}
