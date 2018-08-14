@@ -13,7 +13,8 @@ import regression_model, cnn_model, category_manager, regression_train, cnn_trai
 config = configparser.ConfigParser()
 config.read('./smiley/trainConfig.ini')
 
-MODELS_DIRECTORY = os.path.join(config['DIRECTORIES']['LOGIC'], config['DIRECTORIES']['MODELS'], config['DEFAULT']['IMAGE_SIZE'])
+MODELS_DIRECTORY = os.path.join(config['DIRECTORIES']['LOGIC'], config['DIRECTORIES']['MODELS'],
+                                config['DEFAULT']['IMAGE_SIZE'])
 IMAGE_SIZE = int(config['DEFAULT']['IMAGE_SIZE'])
 
 # Initialize the mapping between categories and indices in the prediction vectors
@@ -24,7 +25,7 @@ if not os.path.exists(MODELS_DIRECTORY):
     os.makedirs(MODELS_DIRECTORY)
 
 # Model variables
-x = tf.placeholder("float", [None, IMAGE_SIZE * IMAGE_SIZE]) # image placeholder
+x = tf.placeholder("float", [None, IMAGE_SIZE * IMAGE_SIZE])  # image placeholder
 is_training = tf.placeholder("bool")
 
 # Tensorflow session
@@ -42,22 +43,27 @@ saver_cnn = tf.train.Saver(variables)
 # Webapp definition
 app = Flask(__name__)
 
+
 # Regression prediction
 def regression_predict(input):
-    saver_regression.restore(sess, os.path.join(MODELS_DIRECTORY, config['REGRESSION']['MODEL_FILENAME']))  # load saved model
+    saver_regression.restore(sess,
+                             os.path.join(MODELS_DIRECTORY, config['REGRESSION']['MODEL_FILENAME']))  # load saved model
     return sess.run(y1, feed_dict={x: input}).flatten().tolist()
+
 
 # CNN prediction
 def cnn_predict(input):
-    saver_cnn.restore(sess,os.path.join( MODELS_DIRECTORY, config['CNN']['MODEL_FILENAME']))  # load saved model
+    saver_cnn.restore(sess, os.path.join(MODELS_DIRECTORY, config['CNN']['MODEL_FILENAME']))  # load saved model
     result = sess.run(y2, feed_dict={x: input, is_training: False}).flatten().tolist()
     return result
+
 
 # Root
 @app.route('/')
 def main():
     data = {'image_size': IMAGE_SIZE}
     return render_template('index.html', data=data)
+
 
 # Predict
 @app.route('/api/smiley', methods=['POST'])
@@ -97,9 +103,10 @@ def smiley():
     if len(err) > 0:
         print(err)
 
-    category_names = ["" for x in range(len(category_manager.CATEGORIES))]
+    category_names = ["" for _ in range(len(category_manager.CATEGORIES))]
     for ind in range(len(category_names)):
-        category_names[ind] = [x for x in category_manager.CATEGORIES.keys() if category_manager.CATEGORIES[x] == ind][0]
+        category_names[ind] = [x for x in category_manager.CATEGORIES.keys() if category_manager.CATEGORIES[x] == ind][
+            0]
 
     return jsonify(classifiers=["Linear Regression", "CNN"], results=[regression_output, cnn_output],
                    error=err, categories=category_names)
@@ -115,6 +122,7 @@ def generate_training_example():
 
     return "ok"
 
+
 # Train model
 @app.route('/api/train-models', methods=['POST'])
 def train_models():
@@ -123,6 +131,7 @@ def train_models():
     cnn_train.train()
 
     return "ok"
+
 
 # Delete all saved models
 @app.route('/api/delete-all-models', methods=['POST'])
@@ -133,10 +142,11 @@ def delete_all_models():
 
     return "ok"
 
+
 # main
 if __name__ == '__main__':
     # Open webbrowser tab for the app
-    new = 2 # open in a new tab, if possible
-    # webbrowser.open("http://localhost:5000", new=new)
+    new = 2  # open in a new tab, if possible
+    webbrowser.open("http://localhost:5000", new=new)
 
     app.run()
