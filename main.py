@@ -2,6 +2,7 @@ import configparser
 import math
 import os
 import sys
+import webbrowser
 import numpy as np
 import tensorflow as tf
 from flask import Flask, jsonify, render_template, request
