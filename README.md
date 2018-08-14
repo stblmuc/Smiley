@@ -19,11 +19,9 @@ We provide an easily understandable and concise backend and frontend capable of 
 
 ### Usage ###
 
-From installing until running the application, simply follow the instructions:
+Start the anaconda prompt and simply follow the these instructions:
 
 ```bash
-> # Start the anaconda prompt
->
 > # Create and activate the environment
 > conda create --name smiley python=3.6.6
 > activate smiley

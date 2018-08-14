@@ -26,7 +26,7 @@ def convolutional(x, nCategories, is_training=True):
 
         # Fully connected layer + dropout
         fc1 = tf.layers.dense(flatten, 1024)
-        fc1 = tf.layers.dropout(fc1, rate=0.5, training=is_training)
+        fc1 = tf.layers.dropout(fc1, rate=0.25, training=is_training)
 
         # Fully connected layer + softmax
         fc2 = tf.layers.dense(fc1, nCategories)

@@ -201,7 +201,6 @@ class Main {
     }
 
     uploadTrainingData(inputs) {
-        alert("Uploading...");
         $.ajax({
             url: '/api/generate-training-example',
             method: 'POST',
@@ -413,13 +412,14 @@ $(() => {
     });
 
     prepareDirInput();
-    
+
 });
 
 function prepareDirInput() {
     var element = $("#files-input");
 	element.attr("name",$(this).attr("name"));
 	element.change(function(){
+	    // Show directory name of selection
 		element.next(element).find('input').val((element.val()).split('\\').pop());
 	});
 	$("#choose-dir").click(function(){
