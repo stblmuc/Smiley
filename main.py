@@ -12,7 +12,7 @@ sys.path.append("smiley")
 import regression_model, cnn_model, category_manager, regression_train, cnn_train
 
 config = configparser.ConfigParser()
-config.read('./smiley/trainConfig.ini')
+config.read('./smiley/config.ini')
 
 MODELS_DIRECTORY = os.path.join(config['DIRECTORIES']['LOGIC'], config['DIRECTORIES']['MODELS'],
                                 config['DEFAULT']['IMAGE_SIZE'])

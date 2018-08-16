@@ -8,7 +8,7 @@ import tensorflow as tf
 # At the end, softmax is applied to transform the values into probabilities for each class.
 def convolutional(x, nCategories, is_training=True):
     config = configparser.ConfigParser()
-    config.read(os.path.join(os.path.dirname(__file__), 'trainConfig.ini'))
+    config.read(os.path.join(os.path.dirname(__file__), 'config.ini'))
     image_size = int(config['DEFAULT']['IMAGE_SIZE'])
 
     with tf.variable_scope('cnn'):

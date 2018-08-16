@@ -3,7 +3,7 @@ import os
 import png
 
 config = configparser.ConfigParser()
-config.read(os.path.join(os.path.dirname(__file__), 'trainConfig.ini'))
+config.read(os.path.join(os.path.dirname(__file__), 'config.ini'))
 
 CATEGORIES_LOCATION = os.path.join(os.path.dirname(__file__), config['DIRECTORIES']['CATEGORIES'],
                                    config['DEFAULT']['IMAGE_SIZE'] + "/")

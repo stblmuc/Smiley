@@ -11,7 +11,7 @@ def train():
     print("\nLINEAR REGRESSION TRAINING STARTED.")
 
     config = configparser.ConfigParser()
-    config.read(os.path.join(os.path.dirname(__file__), 'trainConfig.ini'))
+    config.read(os.path.join(os.path.dirname(__file__), 'config.ini'))
 
     MODEL_PATH = os.path.join(os.path.dirname(__file__), config['DIRECTORIES']['MODELS'],
                               config['DEFAULT']['IMAGE_SIZE'], config['REGRESSION']['MODEL_FILENAME'])

@@ -6,7 +6,7 @@ import tensorflow as tf
 # create definition of softmax regression model: prediction = softmax(input * Weights + bias)
 def regression(x, nCategories):
     config = configparser.ConfigParser()
-    config.read(os.path.join(os.path.dirname(__file__), 'trainConfig.ini'))
+    config.read(os.path.join(os.path.dirname(__file__), 'config.ini'))
     image_size = int(config['DEFAULT']['IMAGE_SIZE'])
 
     with tf.variable_scope('regression'):

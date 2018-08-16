@@ -11,7 +11,7 @@ NUM_LABELS = len(category_manager.update())
 
 # load config params
 config = configparser.ConfigParser()
-config.read(os.path.join(os.path.dirname(__file__), 'trainConfig.ini'))
+config.read(os.path.join(os.path.dirname(__file__), 'config.ini'))
 
 
 # get images from category folders, add them to training/test images

@@ -37,7 +37,7 @@ The logs from training can be accessed by TensorBoard:
     > python -m tensorboard.main --logdir smiley/data/logs
 
 ### Parameters ###
-Changing important parameters, e.g. learning rates and number of epochs, can be done easily in the config file `smiley/trainConfig.ini`. 
+Changing important parameters, e.g. learning rates and number of epochs, can be done in the config file `smiley/config.ini`. 
 
 ### Implementation details ###
 
