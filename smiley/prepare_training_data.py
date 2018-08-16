@@ -113,7 +113,7 @@ def create_validation_set(train_data, train_labels, VALIDATION_PROPORTION):
             train_data_result.append(x)
             train_labels_result.append(train_labels[i])
 
-    if min(number_per_category_in_validation.values()) == 0:
+    if not number_per_category_in_validation.values() or min(number_per_category_in_validation.values()) == 0:
         # at least one of the categories has no items in the validation set (not enough training examples)
         return None
     else:
@@ -181,7 +181,7 @@ def cv2_clipped_zoom(img, zoom_factor):
     height, width = img.shape[:2]  # It's also the final desired shape
     new_height, new_width = int(height * zoom_factor), int(width * zoom_factor)
 
-    ### Crop only the part that will remain in the result (more efficient)
+    # Crop only the part that will remain in the result (more efficient)
     # Centered bbox of the final desired size in resized (larger/smaller) image coordinates
     y1, x1 = max(0, new_height - height) // 2, max(0, new_width - width) // 2
     y2, x2 = y1 + height, x1 + width
@@ -205,6 +205,8 @@ def cv2_clipped_zoom(img, zoom_factor):
 
 # prepare training data (generated images)
 def prepare_data(model, use_data_augmentation=True):
+    global NUM_LABELS
+    NUM_LABELS = len(category_manager.update())
     train_data = []
     train_labels = []
     test_data = []

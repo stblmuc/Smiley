@@ -6,19 +6,6 @@ class Main {
         this.input = document.getElementById('input');  
 
         this.image_size = param.image_size;
-
-        var catsList = document.getElementById('trainingDataLabelOptions');
-        this.cats = param.categories;
-        /*for(var i = 0; i < cats.length; i++) {
-            var obj = cats[i];
-            console.log(obj);
-        }*/
-        this.cats.forEach(function(item){
-            var option = document.createElement('option');
-            option.value = item;
-            catsList.appendChild(option);
-        });
-        //alert(param.categories);
         this.rect_size = 448; // 16 * 28
         this.col_width = this.rect_size / this.image_size; // for the grid
 
@@ -26,6 +13,14 @@ class Main {
         this.canvas.height = this.rect_size;
         this.input.width = 5 * this.image_size;
         this.input.height = 5 * this.image_size;
+
+        var catsList = document.getElementById('trainingDataLabelOptions');
+        this.cats = param.categories;
+        this.cats.forEach(function(item){
+            var option = document.createElement('option');
+            option.value = item;
+            catsList.appendChild(option);
+        });
 
         this.canvas.addEventListener('mousedown', this.onMouseDown.bind(this));
         this.canvas.addEventListener('mouseup', this.onMouseUp.bind(this));
@@ -180,8 +175,8 @@ class Main {
                     cell.text(classifiers[classifierIdx]);
                 }
 
-                const mostSuccessfullCells = [];
-                const mostSuccessfullValues = [];
+                const mostSuccessfulCells = [];
+                const mostSuccessfulValues = [];
 
                 for (let categoryIdx = 0; categoryIdx < categories.length; categoryIdx++) {
                     const row = $("<tr>");
@@ -194,16 +189,16 @@ class Main {
                         row.append(cell);
                         const result = results[classifierIdx][categoryIdx];
                         cell.text((result*100).toFixed(3)+"%");
-                        const mostSuccessfullValue = mostSuccessfullValues[classifierIdx];
-                        if (!mostSuccessfullValue || result > mostSuccessfullValue) {
-                            mostSuccessfullValues[classifierIdx] = result;
-                            mostSuccessfullCells[classifierIdx] = cell;
+                        const mostSuccessfulValue = mostSuccessfulValues[classifierIdx];
+                        if (!mostSuccessfulValue || result > mostSuccessfulValue) {
+                            mostSuccessfulValues[classifierIdx] = result;
+                            mostSuccessfulCells[classifierIdx] = cell;
                         }
                     }
                 }
 
-                for (let index = 0; index < mostSuccessfullCells.length; index++){
-                    mostSuccessfullCells[index].addClass("success");
+                for (let index = 0; index < mostSuccessfulCells.length; index++){
+                    mostSuccessfulCells[index].addClass("success");
                 }
             }
         })
@@ -224,6 +219,7 @@ class Main {
                 this.uploadTrainingData(uploadData);
             });
             if (!this.cats.includes(label)) {
+                this.cats.push(label)
                 var catsList = document.getElementById('trainingDataLabelOptions');
                 var option = document.createElement('option');
                 option.value = label;
@@ -349,16 +345,22 @@ class Main {
     }
 
     trainModels(button) {
-        $("#deleteModels").prop('disabled', true);
         $(button).prop('disabled', true);
         $(button).text("Training");
+        $("#deleteModels").prop('disabled', true);
         $.ajax({
             url: '/api/train-models',
             method: 'POST',
             success: (data) => {
-                this.drawInput((inputs) => {
-                    this.loadOutput(inputs);
-                });
+                const error = data.error;
+                if (error) {
+                    $("#error").text(error);
+                } else {
+                    $("#error").text("");
+                    this.drawInput((inputs) => {
+                        this.loadOutput(inputs);
+                    });
+                }
             }
         })
         .always(() => {

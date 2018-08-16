@@ -20,6 +20,7 @@ IMAGE_SIZE = int(config['DEFAULT']['IMAGE_SIZE'])
 
 # Initialize the mapping between categories and indices in the prediction vectors
 category_manager.update()
+num_categories = len(category_manager.CATEGORIES)
 
 # create folder for models if it doesn't exist
 if not os.path.exists(MODELS_DIRECTORY):
@@ -34,15 +35,34 @@ sess = tf.InteractiveSession()
 sess.run(tf.global_variables_initializer())
 
 # Regression model
-y1, variables = regression_model.regression(x, nCategories=len(category_manager.CATEGORIES))
+y1, variables = regression_model.regression(x, nCategories=num_categories)
 saver_regression = tf.train.Saver(variables)
 
 # CNN model
-y2, variables = cnn_model.convolutional(x, nCategories=len(category_manager.CATEGORIES), is_training=is_training)
+y2, variables = cnn_model.convolutional(x, nCategories=num_categories, is_training=is_training)
 saver_cnn = tf.train.Saver(variables)
 
 # Webapp definition
 app = Flask(__name__)
+
+
+# updates the models if the number of classes changed
+def maybe_update_models():
+    global y1, variables, saver_regression, y2, saver_cnn, x, is_training, sess, num_categories
+    if num_categories != len(category_manager.update()):
+        num_categories = len(category_manager.CATEGORIES)
+        x = tf.placeholder("float", [None, IMAGE_SIZE * IMAGE_SIZE])  # image placeholder
+        is_training = tf.placeholder("bool")
+
+        # Tensorflow session
+        sess = tf.InteractiveSession()
+        sess.run(tf.global_variables_initializer())
+
+        y1, variables = regression_model.regression(x, nCategories=num_categories)
+        saver_regression = tf.train.Saver(variables)
+
+        y2, variables = cnn_model.convolutional(x, nCategories=num_categories, is_training=is_training)
+        saver_cnn = tf.train.Saver(variables)
 
 
 # Regression prediction
@@ -55,8 +75,7 @@ def regression_predict(input):
 # CNN prediction
 def cnn_predict(input):
     saver_cnn.restore(sess, os.path.join(MODELS_DIRECTORY, config['CNN']['MODEL_FILENAME']))  # load saved model
-    result = sess.run(y2, feed_dict={x: input, is_training: False}).flatten().tolist()
-    return result
+    return sess.run(y2, feed_dict={x: input, is_training: False}).flatten().tolist()
 
 
 # Root
@@ -69,6 +88,7 @@ def main():
 # Predict
 @app.route('/api/smiley', methods=['POST'])
 def smiley():
+    maybe_update_models()
     # input with pixel values between 0 (black) and 255 (white)
     data = np.array(request.json, dtype=np.uint8)
 
@@ -128,8 +148,12 @@ def generate_training_example():
 @app.route('/api/train-models', methods=['POST'])
 def train_models():
     category_manager.update()
-    regression_train.train()
-    cnn_train.train()
+    try:
+        regression_train.train()
+        cnn_train.train()
+    except Exception as inst:
+        err = inst.args[0]
+        return jsonify(error=err)
 
     return "ok"
 
