@@ -8,8 +8,6 @@
     <script type="text/javascript" src="{{ url_for('static', filename='js/main.js') }}"></script>
     <script type="text/javascript">
         var param = {{data|tojson}}; // Retrieve data from main.py (i.e. image size)
-
-
     </script>
 </head>
 <body>
@@ -25,16 +23,10 @@
             <canvas id="main" style="border:1px solid"></canvas>
             <p>
                 <button id="clear" class="btn btn-default">Clear</button>
-                <label for="trainigDataLabel">&nbsp;Add Training Data To:
-                    <input list="trainigDataLabelOptions" id="trainigDataLabel" placeholder="E.g. smile">
-                    <datalist id="trainigDataLabelOptions">
-                        <option value="cool">
-                        <option value="onHead">
-                        <option value="sad">
-                        <option value="smile">
-                    </datalist>
-                    <button id="addTrainingData" class="btn btn-default">Add
-                    </button>
+                <label for="trainingDataLabel">&nbsp;Add Training Data To:
+                    <input list="trainingDataLabelOptions" id="trainingDataLabel" placeholder="E.g. smile">
+                    <datalist id="trainingDataLabelOptions"></datalist>
+                    <button id="addTrainingData" class="btn btn-default">Add</button>
                 </label>
             </p>
             <div style="margin-top: 10px">

@@ -6,6 +6,19 @@ class Main {
         this.input = document.getElementById('input');  
 
         this.image_size = param.image_size;
+
+        var catsList = document.getElementById('trainingDataLabelOptions');
+        this.cats = param.categories;
+        /*for(var i = 0; i < cats.length; i++) {
+            var obj = cats[i];
+            console.log(obj);
+        }*/
+        this.cats.forEach(function(item){
+            var option = document.createElement('option');
+            option.value = item;
+            catsList.appendChild(option);
+        });
+        //alert(param.categories);
         this.rect_size = 448; // 16 * 28
         this.col_width = this.rect_size / this.image_size; // for the grid
 
@@ -200,6 +213,27 @@ class Main {
         });
     }
 
+    addTrainingData() {
+        const label = $("#trainingDataLabel").val();
+        if (label) {
+            this.drawInput((inputs) => {
+                const uploadData = {
+                    cat: label,
+                    img: inputs
+                };
+                this.uploadTrainingData(uploadData);
+            });
+            if (!this.cats.includes(label)) {
+                var catsList = document.getElementById('trainingDataLabelOptions');
+                var option = document.createElement('option');
+                option.value = label;
+                catsList.appendChild(option);
+            }
+        } else {
+            alert("Please enter a name/label for the data");
+        };
+    }
+
     uploadTrainingData(inputs) {
         $.ajax({
             url: '/api/generate-training-example',
@@ -373,18 +407,7 @@ $(() => {
     });
 
     $('#addTrainingData').click(() => {
-        const label = $("#trainigDataLabel").val();
-        if (label) {
-            main.drawInput((inputs) => {
-                const uploadData = {
-                    cat: label,
-                    img: inputs
-                };
-                main.uploadTrainingData(uploadData);
-            });
-        } else {
-            alert("Please enter a name/label for the data");
-        };
+        main.addTrainingData();
     });
 
     $('#importImage').change((e) => {

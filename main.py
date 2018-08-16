@@ -62,7 +62,7 @@ def cnn_predict(input):
 # Root
 @app.route('/')
 def main():
-    data = {'image_size': IMAGE_SIZE}
+    data = {'image_size': IMAGE_SIZE, 'categories': list(category_manager.CATEGORIES.keys())}
     return render_template('index.html', data=data)
 
 
@@ -147,7 +147,6 @@ def delete_all_models():
 # main
 if __name__ == '__main__':
     # Open webbrowser tab for the app
-    new = 2  # open in a new tab, if possible
-    webbrowser.open("http://localhost:5000", new=new)
+    webbrowser.open_new_tab("http://localhost:5000")
 
     app.run()
