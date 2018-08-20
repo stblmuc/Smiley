@@ -17,11 +17,9 @@ config.read(os.path.join(os.path.dirname(__file__), 'config.ini'))
 # get images from category folders, add them to training/test images
 def add_data(model, train_images, train_labels, test_images, test_labels, train_ratio):
     from tensorflow.contrib.keras.api.keras.preprocessing.image import ImageDataGenerator
-
-    datagen = ImageDataGenerator()
-
     image_size = int(config['DEFAULT']['IMAGE_SIZE'])
 
+    datagen = ImageDataGenerator()
     generator = datagen.flow_from_directory(
         category_manager.CATEGORIES_LOCATION,
         color_mode='grayscale',

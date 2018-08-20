@@ -8,7 +8,7 @@
     <script rel="text/javascript" src="{{ url_for('static', filename='js/bootstrap.min.js') }}"></script>
     <script type="text/javascript" src="{{ url_for('static', filename='js/main.js') }}"></script>
     <script type="text/javascript">
-        var param = {{data|tojson}}; // Retrieve data from main.py (i.e. image size)
+        var param = {{data|tojson}}; // Retrieve data from main.py (i.e. image size, config parameters)
     </script>
 </head>
 <body>
@@ -25,7 +25,7 @@
             <p>
                 <button id="clear" class="btn btn-outline-secondary">Clear</button>
                 <label for="trainingDataLabel">&nbsp;Add Training Data To:
-                    <input list="trainingDataLabelOptions" id="trainingDataLabel" placeholder="E.g. smile">
+                    <input list="trainingDataLabelOptions" id="trainingDataLabel" placeholder="e.g. smile">
                     <datalist id="trainingDataLabelOptions"></datalist>
                     <button id="addTrainingData" class="btn btn-outline-secondary">Add</button>
                 </label>

@@ -67,14 +67,13 @@ def maybe_update_models():
 
 # Regression prediction
 def regression_predict(input):
-    saver_regression.restore(sess,
-                             os.path.join(MODELS_DIRECTORY, config['REGRESSION']['MODEL_FILENAME']))  # load saved model
+    saver_regression.restore(sess, os.path.join(MODELS_DIRECTORY, config['REGRESSION']['MODEL_FILENAME']))
     return sess.run(y1, feed_dict={x: input}).flatten().tolist()
 
 
 # CNN prediction
 def cnn_predict(input):
-    saver_cnn.restore(sess, os.path.join(MODELS_DIRECTORY, config['CNN']['MODEL_FILENAME']))  # load saved model
+    saver_cnn.restore(sess, os.path.join(MODELS_DIRECTORY, config['CNN']['MODEL_FILENAME']))
     return sess.run(y2, feed_dict={x: input, is_training: False}).flatten().tolist()
 
 
@@ -155,19 +154,14 @@ def generate_training_example():
 # Update config parameters
 @app.route('/api/update-config', methods=['POST'])
 def update_config():
-    numAugm = request.json["numberAugmentations"]
-    batchSize = request.json["batchSize"]
-    lrRate = request.json["lrLearningRate"]
-    lrEpochs = request.json["lrEpochs"]
-    cnnRate = request.json["cnnLearningRate"]
-    cnnEpochs = request.json["cnnEpochs"]
+    config.set("CNN", "LEARNING_RATE", request.json["cnnLearningRate"])
+    config.set("REGRESSION", "LEARNING_RATE", request.json["lrLearningRate"])
+    config.set("CNN", "EPOCHS", request.json["cnnEpochs"])
+    config.set("REGRESSION", "EPOCHS", request.json["lrEpochs"])
+    config.set("DEFAULT", "number_augmentations_per_image", request.json["numberAugmentations"])
+    config.set("DEFAULT", "train_batch_size", request.json["batchSize"])
 
-    config.set("CNN", "LEARNING_RATE", cnnRate)
-    config.set("REGRESSION", "LEARNING_RATE", lrRate)
-    config.set("CNN", "EPOCHS", cnnEpochs)
-    config.set("REGRESSION", "EPOCHS", lrEpochs)
-    config.set("DEFAULT", "number_augmentations_per_image", numAugm)
-    config.set("DEFAULT", "train_batch_size", batchSize)
+    # Write config back to file
     with open(os.path.join(os.path.dirname(__file__), 'smiley/config.ini'), "w") as f:
         config.write(f)
 
