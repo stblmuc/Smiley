@@ -467,8 +467,15 @@ $(() => {
         main.addTrainingData();
     });
 
-    $('#importImage').change((e) => {
+    $('#importFile').change((e) => {
         main.loadImage(e.target.files[0]);
+    });
+
+    $('#importFolder').change((e) => {
+        fileList = e.target.files;
+        for (var i = 0; i < fileList.length; i++) {
+            main.loadAndUploadImage(fileList[i]);
+        }
     });
 
     $('#takePicture').click((e) => {
@@ -483,39 +490,12 @@ $(() => {
         main.deleteAllModels(e.target);
     });
 
-    $('#file-catcher').submit((e) => {
-        var fileInput = document.getElementById('files-input');
-  	    for (var i = 0; i < fileInput.files.length; i++) {
-    	    main.loadAndUploadImage(fileInput.files[i]);
-        }
-
-    });
-
     $('#show-config').click((e) => {
         main.showConfig();
     });
-
-    prepareDirInput();
 
     $('#config-form').submit((e) => {
         main.updateConfig();
     });
 
 });
-
-function prepareDirInput() {
-    var element = $("#files-input");
-	element.attr("name",$(this).attr("name"));
-	element.change(function(){
-	    // Show directory name of selection
-		element.next(element).find('input').val((element.val()).split('\\').pop());
-	});
-	$("#choose-dir").click(function(){
-		element.click();
-	});
-	$("#dir-text").css("cursor","pointer");
-	$("#dir-text").mousedown(function() {
-		element.click();
-		return false;
-	});
-}

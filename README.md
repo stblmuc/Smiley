@@ -42,10 +42,10 @@ Changing important parameters, e.g. learning rates and number of epochs, can be 
 ### Implementation details ###
 
 ##### Linear regression #####
-This method uses just one weight matrix which is multiplied with the input. After that, a bias is added and softmax is applied to obtain a probability.
+This method uses a single weight matrix which is multiplied with the input. After that, a bias is added and softmax is applied to obtain class probabilities.
 
 ##### Convolutional Neural Network #####
-It consists of two convolutional + max-pool layers and two fully connected layers with a dropout layer in between.
+It consists of two convolutional + max-pool layers followed by two fully connected layers with dropout on the first one. Softmax is also applied in the end to obtain class probabilities.
 
 ### License ###
 TODO
