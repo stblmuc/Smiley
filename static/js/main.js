@@ -6,6 +6,7 @@ class Main {
         this.input = document.getElementById('input');  
 
         this.numAugm = param.numAugm;
+        this.batchSize = param.batchSize;
         this.lrRate = param.lrRate;
         this.lrEpochs = param.lrEpochs;
         this.cnnRate = param.cnnRate;
@@ -59,6 +60,7 @@ class Main {
 
     initializeConfigValues() {
         document.getElementById('num-augm').value = this.numAugm;
+        document.getElementById('batch-size').value = this.batchSize;
         document.getElementById('lr-rate').value = this.lrRate;
         document.getElementById('lr-epochs').value = this.lrEpochs;
         document.getElementById('cnn-rate').value = this.cnnRate;
@@ -412,13 +414,15 @@ class Main {
     }
 
     updateConfig() {
-        this.numAugm = document.getElementById('num-augm').value;
+        this.numAugm = document.getElementById('num-augm').value
+        this.batchSize = document.getElementById('batch-size').value;
         this.lrRate = document.getElementById('lr-rate').value;
         this.lrEpochs = document.getElementById('lr-epochs').value;
         this.cnnRate = document.getElementById('cnn-rate').value;
         this.cnnEpochs = document.getElementById('cnn-epochs').value;
         const conf = {
                     numberAugmentations: this.numAugm,
+                    batchSize: this.batchSize,
                     lrLearningRate: this.lrRate,
                     lrEpochs: this.lrEpochs,
                     cnnEpochs: this.cnnEpochs,

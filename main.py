@@ -82,12 +82,14 @@ def cnn_predict(input):
 @app.route('/')
 def main():
     numAugm = config['DEFAULT']['NUMBER_AUGMENTATIONS_PER_IMAGE']
+    batchSize = config['DEFAULT']['train_batch_size']
     lrRate = config['REGRESSION']['LEARNING_RATE']
     lrEpochs = config['REGRESSION']['EPOCHS']
     cnnRate = config['CNN']['LEARNING_RATE']
     cnnEpochs = config['CNN']['EPOCHS']
-    data = {'image_size': IMAGE_SIZE, 'numAugm': numAugm, 'lrRate': lrRate, 'lrEpochs': lrEpochs, 'cnnRate': cnnRate,
-            'cnnEpochs': cnnEpochs, 'categories': list(category_manager.CATEGORIES.keys())}
+    data = {'image_size': IMAGE_SIZE, 'numAugm': numAugm, 'batchSize': batchSize, 'lrRate': lrRate,
+            'lrEpochs': lrEpochs, 'cnnRate': cnnRate, 'cnnEpochs': cnnEpochs,
+            'categories': list(category_manager.CATEGORIES.keys())}
     return render_template('index.html', data=data)
 
 
@@ -149,10 +151,12 @@ def generate_training_example():
 
     return "ok"
 
+
 # Update config parameters
 @app.route('/api/update-config', methods=['POST'])
 def update_config():
     numAugm = request.json["numberAugmentations"]
+    batchSize = request.json["batchSize"]
     lrRate = request.json["lrLearningRate"]
     lrEpochs = request.json["lrEpochs"]
     cnnRate = request.json["cnnLearningRate"]
@@ -163,6 +167,7 @@ def update_config():
     config.set("CNN", "EPOCHS", cnnEpochs)
     config.set("REGRESSION", "EPOCHS", lrEpochs)
     config.set("DEFAULT", "number_augmentations_per_image", numAugm)
+    config.set("DEFAULT", "train_batch_size", batchSize)
     with open(os.path.join(os.path.dirname(__file__), 'smiley/config.ini'), "w") as f:
         config.write(f)
 
