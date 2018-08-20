@@ -57,6 +57,8 @@ class Main {
         }
 
         this.clearOutput();
+        $('.loader').hide();
+        $('.checkmark').hide();
     }
 
     initializeConfigValues() {
@@ -309,6 +311,7 @@ class Main {
                         contentType: 'application/json',
                         data: JSON.stringify(uploadData),
                         success: (data) => {
+                            $('.checkmark').show();
                         }
                     })
                 } else {
@@ -363,6 +366,8 @@ class Main {
 
     trainModels(button) {
         $(button).prop('disabled', true);
+        $('.loader').show();
+        $('.checkmark').hide();
         $("#deleteModels").prop('disabled', true);
         $.ajax({
             url: '/api/train-models',
@@ -382,10 +387,13 @@ class Main {
         .always(() => {
             $(button).prop('disabled', false);
             $("#deleteModels").prop('disabled', false);
+            $('.loader').hide();
+            $('.checkmark').show();
         })
         .fail(() => {
             this.clearOutput();
             this.checkConnection();
+            $('.checkmark').hide();
         });
     }
 
@@ -434,7 +442,7 @@ class Main {
             data: JSON.stringify(conf),
             success: (data) => {
                 $(button).parent('#trainParameters').collapse('hide');
-                this.initialize();
+                $('.checkmark').show();
             }
         })
         .fail(() => {
@@ -465,10 +473,12 @@ $(() => {
     });
 
     $('#importFolder').change((e) => {
+        $('.loader').show();
         fileList = e.target.files;
         for (var i = 0; i < fileList.length; i++) {
             main.loadAndUploadImage(fileList[i]);
         }
+        $('.loader').hide();
     });
 
     $('#takePicture').click((e) => {

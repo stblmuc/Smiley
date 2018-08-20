@@ -8,8 +8,50 @@
     <script rel="text/javascript" src="{{ url_for('static', filename='js/bootstrap.min.js') }}"></script>
     <script type="text/javascript" src="{{ url_for('static', filename='js/main.js') }}"></script>
     <script type="text/javascript">
-        var param = {{data|tojson}}; // Retrieve data from main.py (i.e. image size)
+        var param = {{data|tojson}}; // Retrieve data from main.py (i.e. image size, config parameters)
     </script>
+    <style>
+.loader {
+    border: 4px solid #f3f3f3; /* Light grey */
+    border-top: 4px solid #3498db; /* Blue */
+    border-radius: 50%;
+    width: 30px;
+    height: 30px;
+    animation: spin 2s linear infinite;
+}
+
+@keyframes spin {
+    0% { transform: rotate(0deg); }
+    100% { transform: rotate(360deg); }
+}
+
+.checkmark {
+    display:inline-block;
+    width: 30px;
+    height:30px;
+    -ms-transform: rotate(45deg); /* IE 9 */
+    -webkit-transform: rotate(45deg); /* Chrome, Safari, Opera */
+    transform: rotate(45deg);
+}
+
+.checkmark_stem {
+    position: absolute;
+    width:6px;
+    height:18px;
+    background-color:#ccc;
+    left:22px;
+    top:12px;
+}
+
+.checkmark_kick {
+    position: absolute;
+    width:6px;
+    height:6px;
+    background-color:#ccc;
+    left:16px;
+    top:24px;
+}
+    </style>
 </head>
 <body>
 <a href="https://github.com/sugyan/tensorflow-mnist"><img style="position: absolute; top: 0; right: 0; border: 0;"
@@ -25,7 +67,7 @@
             <p>
                 <button id="clear" class="btn btn-outline-secondary">Clear</button>
                 <label for="trainingDataLabel">&nbsp;Add Training Data To:
-                    <input list="trainingDataLabelOptions" id="trainingDataLabel" placeholder="E.g. smile">
+                    <input list="trainingDataLabelOptions" id="trainingDataLabel" placeholder="e.g. smile">
                     <datalist id="trainingDataLabelOptions"></datalist>
                     <button id="addTrainingData" class="btn btn-outline-secondary">Add</button>
                 </label>
@@ -91,7 +133,13 @@
             <p>input:</p>
             <canvas id="input" style="border:1px solid" width="140" height="140"></canvas>
             <hr>
-            <p>output:</p>
+            <span><span>output:&nbsp;&nbsp;&nbsp;</span>
+                <span style='display:inline-block;'><div class="loader"></div></span>
+                <span class="checkmark">
+                    <div class="checkmark_stem"></div>
+                    <div class="checkmark_kick"></div>
+                </span>
+            </span>
             <p class="error" id="error"></p>
             <table id="output" class="table"></table>
         </div>
