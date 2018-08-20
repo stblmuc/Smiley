@@ -35,7 +35,7 @@ Start the anaconda prompt and simply follow these instructions:
 > # Navigate to localhost:5000 (opens automatically in your webbrowser)
 ```
 
-The logs from training can be accessed by TensorBoard:
+The logs from training can be accessed on the Tensorboard webapp by running the following command and navigating to the indicated site:
 
     > python -m tensorboard.main --logdir smiley/data/logs
 
