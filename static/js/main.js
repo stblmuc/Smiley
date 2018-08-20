@@ -79,6 +79,8 @@ class Main {
         this.drawInput((inputs) => {
             this.loadOutput(inputs);
         });
+
+        if (!!this.video && !this.video.paused) $('#takePicture').click();
     }
 
     onMouseMove(e) {
@@ -225,7 +227,7 @@ class Main {
         });
     }
 
-    addTrainingData() {
+    addTrainingData(button) {
         const label = $("#trainingDataLabel").val();
         if (label) {
             this.drawInput((inputs) => {
@@ -267,7 +269,7 @@ class Main {
         });
     }
 
-    loadImage(data) {
+    loadImage(data, cb) {
         var img = new Image();
         img.onload = () => {
             this.initialize();
@@ -279,44 +281,40 @@ class Main {
             this.ctx.drawImage(img, left, top, imgSize, imgSize, 0, 0, this.ctx.canvas.width, this.ctx.canvas.height);
 
             this.drawInput((inputs) => {
-                this.loadOutput(inputs);
+                if (typeof cb == 'function')
+                    cb(data, inputs);
+                else
+                    this.loadOutput(inputs);
             });
         }
         img.src = window.URL.createObjectURL(data)
     }
 
-    loadAndUploadImage(data) {
-        var img = new Image();
-        img.onload = () => {
-            var imgSize = Math.min(img.width, img.height);
-    	    var left = (img.width - imgSize) / 2;
-    	    var top = (img.height - imgSize) / 2;
-
-            // draw squared-up image in canvas
-            this.ctx.drawImage(img, left, top, imgSize, imgSize, 0, 0, this.ctx.canvas.width, this.ctx.canvas.height);
-
-            this.drawInput((inputs) => {
-                var path = data.webkitRelativePath.split("/");
-    	        var label = path[path.length - 2];
-    	        if (label) {
-                    const uploadData = {
-                        cat: label,
-                        img: inputs
-                    };
-                    $.ajax({
-                        url: '/api/generate-training-example',
-                        method: 'POST',
-                        contentType: 'application/json',
-                        data: JSON.stringify(uploadData),
-                        success: (data) => {
-                        }
-                    })
-                } else {
-                    alert("Please select a folder of one category or of one image size");
+    loadAndUploadImages(target) {
+        function cb(data, inputs) {
+            var path = data.webkitRelativePath.split("/");
+            var label = path[path.length - 2];
+            if (label) {
+                const uploadData = {
+                    cat: label,
+                    img: inputs
                 };
-            });
+                $.ajax({
+                    url: '/api/generate-training-example',
+                    method: 'POST',
+                    contentType: 'application/json',
+                    data: JSON.stringify(uploadData),
+                    success: (data) => {
+                    }
+                })
+            } else {
+                alert("Please select a folder of one category or of one image size");
+            };
         }
-        img.src = window.URL.createObjectURL(data)
+
+        for (var i = 0; i < target.files.length; i++) {
+            this.loadImage(target.files[i], cb);
+        }
     }
 
     takePicture(button) {
@@ -364,6 +362,10 @@ class Main {
     trainModels(button) {
         $(button).prop('disabled', true);
         $("#deleteModels").prop('disabled', true);
+        var blink = setInterval(function(){
+            $(button).fadeOut(400).fadeIn(400);
+        }, 1000);
+
         $.ajax({
             url: '/api/train-models',
             method: 'POST',
@@ -380,6 +382,7 @@ class Main {
             }
         })
         .always(() => {
+            clearInterval(blink);
             $(button).prop('disabled', false);
             $("#deleteModels").prop('disabled', false);
         })
@@ -394,6 +397,10 @@ class Main {
             return;
 
         $(button).prop('disabled', true);
+        var blink = setInterval(function(){
+            $(button).fadeOut(400).fadeIn(400);
+        }, 1000);
+
         $.ajax({
             url: '/api/delete-all-models',
             method: 'POST',
@@ -402,6 +409,7 @@ class Main {
             }
         })
         .always(() => {
+            clearInterval(blink);
             $(button).prop('disabled', false);
         })
         .fail(() => {
@@ -411,7 +419,7 @@ class Main {
     }
 
     updateConfig(button) {
-        this.numAugm = document.getElementById('num-augm').value
+        this.numAugm = document.getElementById('num-augm').value;
         this.batchSize = document.getElementById('batch-size').value;
         this.lrRate = document.getElementById('lr-rate').value;
         this.lrEpochs = document.getElementById('lr-epochs').value;
@@ -465,10 +473,7 @@ $(() => {
     });
 
     $('#importFolder').change((e) => {
-        fileList = e.target.files;
-        for (var i = 0; i < fileList.length; i++) {
-            main.loadAndUploadImage(fileList[i]);
-        }
+        main.loadAndUploadImages(e.target);
     });
 
     $('#takePicture').click((e) => {
