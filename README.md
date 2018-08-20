@@ -16,14 +16,17 @@ We provide an easily understandable and concise backend and frontend capable of 
   - TensorFlow >=1.9 (recommended 1.9.0)
 
 ### Usage ###
-Start the anaconda prompt and simply follow the these instructions:
+Start the anaconda prompt and simply follow these instructions:
 
 ```bash
 > # Create and activate the environment
 > conda create --name smiley python=3.6.6
 > activate smiley
 >
-> # Navigate to the project directory and install the requirements
+> # Set working directory to project directory
+> cd <path_to_project>
+>
+> # Install the required packages
 > pip install -r requirements.txt
 > 
 > # Run the app
@@ -32,12 +35,12 @@ Start the anaconda prompt and simply follow the these instructions:
 > # Navigate to localhost:5000 (opens automatically in your webbrowser)
 ```
 
-The logs from training can be accessed by TensorBoard:
+The logs from training can be accessed on the Tensorboard webapp by running the following command and navigating to the indicated site:
 
     > python -m tensorboard.main --logdir smiley/data/logs
 
 ### Parameters ###
-Changing important parameters, e.g. learning rates and number of epochs, can be done in the config file `smiley/config.ini`. 
+Changing important parameters, e.g. learning rates and number of epochs, can be done on the webapp or in the config file `smiley/config.ini`. 
 
 ### Implementation details ###
 
