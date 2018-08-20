@@ -5,6 +5,7 @@
     <link rel="shortcut icon" href="{{ url_for('static', filename='favicon.ico') }}">
     <link rel="stylesheet" href="{{ url_for('static', filename='css/bootstrap.min.css') }}">
     <script type="text/javascript" src="{{ url_for('static', filename='js/jquery.min.js') }}"></script>
+    <script rel="text/javascript" src="{{ url_for('static', filename='js/bootstrap.min.js') }}"></script>
     <script type="text/javascript" src="{{ url_for('static', filename='js/main.js') }}"></script>
     <script type="text/javascript">
         var param = {{data|tojson}}; // Retrieve data from main.py (i.e. image size)
@@ -18,85 +19,75 @@
 <div class="container">
     <h1>Smiley Recognition</h1>
     <div class="row">
-        <div class="col-md-6">
+        <div class="col-lg-6">
             <p>Draw a smiley here:</p>
             <canvas id="main" style="border:1px solid"></canvas>
             <p>
-                <button id="clear" class="btn btn-default">Clear</button>
+                <button id="clear" class="btn btn-outline-secondary">Clear</button>
                 <label for="trainingDataLabel">&nbsp;Add Training Data To:
                     <input list="trainingDataLabelOptions" id="trainingDataLabel" placeholder="E.g. smile">
                     <datalist id="trainingDataLabelOptions"></datalist>
-                    <button id="addTrainingData" class="btn btn-default">Add</button>
+                    <button id="addTrainingData" class="btn btn-outline-secondary">Add</button>
                 </label>
             </p>
-            <div style="margin-top: 10px">
+            <hr>
+            <div style="margin-top: 1rem">
                 <div class="btn-group">
                     <button class="btn" style="pointer-events: none;">Import from:</button>
-                    <label id="importFile" class="btn btn-default btn-file">File<input type="file" id='file-input' style="display: none;"/></label>
-                    <label id="importFolder" class="btn btn-default btn-file">Folder<input type="file" id='folder-input' multiple webkitdirectory style="display: none;"/></label>
-                    <button id="takePicture" class="btn btn-default">Camera</button>
+                    <label id="importFile" class="btn btn-outline-secondary" style="margin-bottom: 0px;">File<input type="file" hidden></label>
+                    <label id="importFolder" class="btn btn-outline-secondary" style="margin-bottom: 0px;">Folder<input type="file" multiple webkitdirectory hidden></label>
+                    <button id="takePicture" class="btn btn-outline-secondary">Camera</button>
                 </div>&nbsp;
                 <div class="btn-group">
                     <button class="btn" style="pointer-events: none;">Models:</button>
-                    <button id="trainModels" class="btn btn-primary">Train</button>
-                    <button id="deleteModels" class="btn btn-danger">Delete</button>
+                    <button id="trainModels" class="btn btn-outline-primary">Train</button>
+                    <button id="deleteModels" class="btn btn-outline-danger">Delete</button>
                 </div>
             </div>
-            <div style="margin-top: 10px">
-                <div class="btn-group">
-                    <button class="btn btn-primary" id="show-config">Change train parameters</button>
-                    <form id="config-form">
-                        <div class="input-group conf">
-                            <span class="input-group-btn conf" title="Import a folder of data">
-                                <button class="btn conf" style="pointer-events: none;">Number of augmentations per image:</button>
-                            </span>
-                            <input type="number" class="form-control conf" id="num-augm"
-                                   value="10"/>
-                        </div>
-                        <div class="input-group conf">
-                            <span class="input-group-btn conf" title="Import a folder of data">
-                                <button class="btn conf" style="pointer-events: none;">Batch size:</button>
-                            </span>
-                            <input type="number" class="form-control conf" id="batch-size"
-                                   value="10"/>
-                        </div>
-                        <div class="input-group conf">
-                            <span class="input-group-btn conf" title="Import a folder of data">
-                                <button class="btn conf" style="pointer-events: none;">Linear regression learning rate:</button>
-                            </span>
-                            <input type="number" class="form-control conf" id="lr-rate"
-                                   value="0.01" step="0.00001"/>
-                        </div>
-                        <div class="input-group conf">
-                            <span class="input-group-btn conf" title="Import a folder of data">
-                                <button class="btn conf" style="pointer-events: none;">Linear regression number of epochs:</button>
-                            </span>
-                            <input type="number" class="form-control conf" id="lr-epochs"
-                                   value="3"/>
-                        </div>
-                        <div class="input-group conf">
-                            <span class="input-group-btn conf" title="Import a folder of data">
-                                <button class="btn conf" style="pointer-events: none;">CNN learning rate:</button>
-                            </span>
-                            <input type="number" class="form-control conf" id="cnn-rate"
-                                   value="0.0001" step="0.00001"/>
-                        </div>
-                        <div class="input-group conf">
-                            <span class="input-group-btn conf" title="Import a folder of data">
-                                <button class="btn conf" style="pointer-events: none;">CNN number of epochs:</button>
-                            </span>
-                            <input type="number" class="form-control conf" id="cnn-epochs"
-                                   value="3"/>
-                        </div>
-                        <span class="input-group-btn conf">
-                            <button class="btn btn-primary conf" type="submit">Save parameters</button>
-                        </span>
-                    </form>
+            <div style="margin: 1rem 0 1rem 0">
+                <div class="card">
+                    <div class="card-header" data-toggle="collapse" href="#trainParameters">
+                        <span>Train Parameters Panel</span>
+                        <span class="float-right text-muted">Click to toggle</span>
+                    </div>
+                    <div id="trainParameters" class="collapse">
+                        <form id="config-form">
+                            <div class="card-body" style="padding: 0; border: 0;">
+                                <div class="input-group">
+                                    <div class="input-group-prepend"><label class="input-group-text" for="num-augm" style="border-radius: 0">Augmentations per image:</label></div>
+                                    <input type="number" id="num-augm" class="form-control" value="10" style="border-radius: 0">
+                                </div>
+                                <div class="input-group">
+                                    <div class="input-group-prepend"><label class="input-group-text" for="batch-size" style="border-radius: 0">Batch size:</label></div>
+                                    <input type="number" id="batch-size" class="form-control" value="10" style="border-radius: 0">
+                                </div>
+                                <div class="input-group">
+                                    <div class="input-group-prepend"><label class="input-group-text" for="lr-rate" style="border-radius: 0">Linear regression learning rate:</label></div>
+                                    <input type="number" id="lr-rate" class="form-control" value="0.01" step="0.00001" style="border-radius: 0">
+                                </div>
+                                <div class="input-group">
+                                    <div class="input-group-prepend"><label class="input-group-text" for="lr-epochs" style="border-radius: 0">Linear regression epochs:</label></div>
+                                    <input type="number" id="lr-epochs" class="form-control" value="3" style="border-radius: 0">
+                                </div>
+                                <div class="input-group">
+                                    <div class="input-group-prepend"><label class="input-group-text" for="cnn-rate" style="border-radius: 0">CNN learning rate:</label></div>
+                                    <input type="number" id="cnn-rate" class="form-control" value="0.0001" step="0.00001" style="border-radius: 0">
+                                </div>
+                                <div class="input-group">
+                                    <div class="input-group-prepend"><label class="input-group-text" for="cnn-epochs" style="border-radius: 0">CNN epochs:</label></div>
+                                    <input type="number" id="cnn-epochs" class="form-control" value="3" style="border-radius: 0">
+                                </div>
+                            </div>
+                            <div class="card-footer">
+                                <button class="btn btn-outline-primary" type="submit">Save parameters</button>
+                            </div>
+                        </form>
+                    </div>
                 </div>
             </div>
         </div>
         <br>
-        <div class="col-md-6">
+        <div class="col-lg-6">
             <p>input:</p>
             <canvas id="input" style="border:1px solid" width="140" height="140"></canvas>
             <hr>

@@ -11,7 +11,6 @@ class Main {
         this.lrEpochs = param.lrEpochs;
         this.cnnRate = param.cnnRate;
         this.cnnEpochs = param.cnnEpochs;
-        this.initializeConfigValues();
         this.image_size = param.image_size;
         this.rect_size = 448; // 16 * 28
         this.col_width = this.rect_size / this.image_size; // for the grid
@@ -32,6 +31,8 @@ class Main {
         this.canvas.addEventListener('mousedown', this.onMouseDown.bind(this));
         this.canvas.addEventListener('mouseup', this.onMouseUp.bind(this));
         this.canvas.addEventListener('mousemove', this.onMouseMove.bind(this));
+
+        this.initializeConfigValues();
         this.initialize();
     }
 
@@ -65,8 +66,6 @@ class Main {
         document.getElementById('lr-epochs').value = this.lrEpochs;
         document.getElementById('cnn-rate').value = this.cnnRate;
         document.getElementById('cnn-epochs').value = this.cnnEpochs;
-        $('.conf').hide();
-        $('#show-config').show();
     }
 
     onMouseDown(e) {
@@ -188,7 +187,7 @@ class Main {
                 thead.append(headRow);
                 headRow.append("<td>");
                 for (let classifierIdx = 0; classifierIdx < classifiers.length; classifierIdx++) {
-                    const cell = $("<th>");
+                    const cell = $("<th scope='col'>");
                     headRow.append(cell);
                     cell.text(classifiers[classifierIdx]);
                 }
@@ -199,7 +198,7 @@ class Main {
                 for (let categoryIdx = 0; categoryIdx < categories.length; categoryIdx++) {
                     const row = $("<tr>");
                     tbody.append(row);
-                    const categoryNameCell = $("<td>");
+                    const categoryNameCell = $("<th scope='row'>");
                     row.append(categoryNameCell);
                     categoryNameCell.text(categories[categoryIdx]);
                     for (let classifierIdx = 0; classifierIdx < classifiers.length; classifierIdx++) {
@@ -216,7 +215,7 @@ class Main {
                 }
 
                 for (let index = 0; index < mostSuccessfulCells.length; index++){
-                    mostSuccessfulCells[index].addClass("success");
+                    mostSuccessfulCells[index].addClass("table-success");
                 }
             }
         })
@@ -364,7 +363,6 @@ class Main {
 
     trainModels(button) {
         $(button).prop('disabled', true);
-        $(button).text("Training");
         $("#deleteModels").prop('disabled', true);
         $.ajax({
             url: '/api/train-models',
@@ -382,7 +380,6 @@ class Main {
             }
         })
         .always(() => {
-            $(button).text("Train");
             $(button).prop('disabled', false);
             $("#deleteModels").prop('disabled', false);
         })
@@ -413,13 +410,14 @@ class Main {
         });
     }
 
-    updateConfig() {
+    updateConfig(button) {
         this.numAugm = document.getElementById('num-augm').value
         this.batchSize = document.getElementById('batch-size').value;
         this.lrRate = document.getElementById('lr-rate').value;
         this.lrEpochs = document.getElementById('lr-epochs').value;
         this.cnnRate = document.getElementById('cnn-rate').value;
         this.cnnEpochs = document.getElementById('cnn-epochs').value;
+
         const conf = {
             numberAugmentations: this.numAugm,
             batchSize: this.batchSize,
@@ -428,14 +426,14 @@ class Main {
             cnnEpochs: this.cnnEpochs,
             cnnLearningRate: this.cnnRate
         };
+
         $.ajax({
             url: '/api/update-config',
             method: 'POST',
             contentType: 'application/json',
             data: JSON.stringify(conf),
             success: (data) => {
-                $('.conf').hide();
-                $('#show-config').show();
+                $(button).parent('#trainParameters').collapse('hide');
                 this.initialize();
             }
         })
@@ -443,11 +441,6 @@ class Main {
             this.clearOutput();
             this.checkConnection();
         });
-    }
-
-    showConfig() {
-        $('.conf').show();
-        $('#show-config').hide();
     }
 
     checkConnection() {
@@ -490,12 +483,9 @@ $(() => {
         main.deleteAllModels(e.target);
     });
 
-    $('#show-config').click((e) => {
-        main.showConfig();
-    });
-
     $('#config-form').submit((e) => {
-        main.updateConfig();
+        main.updateConfig(e.target);
+        return false;
     });
 
 });
