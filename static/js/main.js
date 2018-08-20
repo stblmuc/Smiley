@@ -421,12 +421,12 @@ class Main {
         this.cnnRate = document.getElementById('cnn-rate').value;
         this.cnnEpochs = document.getElementById('cnn-epochs').value;
         const conf = {
-                    numberAugmentations: this.numAugm,
-                    batchSize: this.batchSize,
-                    lrLearningRate: this.lrRate,
-                    lrEpochs: this.lrEpochs,
-                    cnnEpochs: this.cnnEpochs,
-                    cnnLearningRate: this.cnnRate
+            numberAugmentations: this.numAugm,
+            batchSize: this.batchSize,
+            lrLearningRate: this.lrRate,
+            lrEpochs: this.lrEpochs,
+            cnnEpochs: this.cnnEpochs,
+            cnnLearningRate: this.cnnRate
         };
         $.ajax({
             url: '/api/update-config',
