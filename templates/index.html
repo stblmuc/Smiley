@@ -64,6 +64,51 @@
                     </form>
                 </div>
             </div>
+            <div style="margin-top: 10px">
+                <div class="btn-group">
+                    <button class="btn btn-primary" id="show-config">Change train parameters</button>
+                    <form id="config-form">
+                        <div class="input-group conf">
+                            <span class="input-group-btn conf" title="Import a folder of data">
+                                <button class="btn conf" style="pointer-events: none;">Number of augmentations per image:</button>
+                            </span>
+                            <input type="number" class="form-control conf" id="num-augm"
+                                   value="10"/>
+                        </div>
+                        <div class="input-group conf">
+                            <span class="input-group-btn conf" title="Import a folder of data">
+                                <button class="btn conf" style="pointer-events: none;">Linear regression learning rate:</button>
+                            </span>
+                            <input type="number" class="form-control conf" id="lr-rate"
+                                   value="0.01" step="0.00001"/>
+                        </div>
+                        <div class="input-group conf">
+                            <span class="input-group-btn conf" title="Import a folder of data">
+                                <button class="btn conf" style="pointer-events: none;">Linear regression number of epochs:</button>
+                            </span>
+                            <input type="number" class="form-control conf" id="lr-epochs"
+                                   value="3"/>
+                        </div>
+                        <div class="input-group conf">
+                            <span class="input-group-btn conf" title="Import a folder of data">
+                                <button class="btn conf" style="pointer-events: none;">CNN learning rate:</button>
+                            </span>
+                            <input type="number" class="form-control conf" id="cnn-rate"
+                                   value="0.0001" step="0.00001"/>
+                        </div>
+                        <div class="input-group conf">
+                            <span class="input-group-btn conf" title="Import a folder of data">
+                                <button class="btn conf" style="pointer-events: none;">CNN number of epochs:</button>
+                            </span>
+                            <input type="number" class="form-control conf" id="cnn-epochs"
+                                   value="3"/>
+                        </div>
+                        <span class="input-group-btn conf">
+                            <button class="btn btn-primary conf" type="submit">Save parameters</button>
+                        </span>
+                    </form>
+                </div>
+            </div>
         </div>
         <br>
         <div class="col-md-6">

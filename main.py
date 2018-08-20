@@ -12,7 +12,7 @@ sys.path.append("smiley")
 import regression_model, cnn_model, category_manager, regression_train, cnn_train
 
 config = configparser.ConfigParser()
-config.read('./smiley/config.ini')
+config.read(os.path.join(os.path.dirname(__file__), 'smiley/config.ini'))
 
 MODELS_DIRECTORY = os.path.join(config['DIRECTORIES']['LOGIC'], config['DIRECTORIES']['MODELS'],
                                 config['DEFAULT']['IMAGE_SIZE'])
@@ -81,7 +81,13 @@ def cnn_predict(input):
 # Root
 @app.route('/')
 def main():
-    data = {'image_size': IMAGE_SIZE, 'categories': list(category_manager.CATEGORIES.keys())}
+    numAugm = config['DEFAULT']['NUMBER_AUGMENTATIONS_PER_IMAGE']
+    lrRate = config['REGRESSION']['LEARNING_RATE']
+    lrEpochs = config['REGRESSION']['EPOCHS']
+    cnnRate = config['CNN']['LEARNING_RATE']
+    cnnEpochs = config['CNN']['EPOCHS']
+    data = {'image_size': IMAGE_SIZE, 'numAugm': numAugm, 'lrRate': lrRate, 'lrEpochs': lrEpochs, 'cnnRate': cnnRate,
+            'cnnEpochs': cnnEpochs, 'categories': list(category_manager.CATEGORIES.keys())}
     return render_template('index.html', data=data)
 
 
@@ -143,6 +149,25 @@ def generate_training_example():
 
     return "ok"
 
+# Update config parameters
+@app.route('/api/update-config', methods=['POST'])
+def update_config():
+    numAugm = request.json["numberAugmentations"]
+    lrRate = request.json["lrLearningRate"]
+    lrEpochs = request.json["lrEpochs"]
+    cnnRate = request.json["cnnLearningRate"]
+    cnnEpochs = request.json["cnnEpochs"]
+
+    config.set("CNN", "LEARNING_RATE", cnnRate)
+    config.set("REGRESSION", "LEARNING_RATE", lrRate)
+    config.set("CNN", "EPOCHS", cnnEpochs)
+    config.set("REGRESSION", "EPOCHS", lrEpochs)
+    config.set("DEFAULT", "number_augmentations_per_image", numAugm)
+    with open(os.path.join(os.path.dirname(__file__), 'smiley/config.ini'), "w") as f:
+        config.write(f)
+
+    return "ok"
+
 
 # Train model
 @app.route('/api/train-models', methods=['POST'])
@@ -152,7 +177,10 @@ def train_models():
         regression_train.train()
         cnn_train.train()
     except Exception as inst:
-        err = inst.args[0]
+        if len(inst.args) > 0:
+            err = inst.args[0]
+        else:
+            err = "Unknown error."
         return jsonify(error=err)
 
     return "ok"

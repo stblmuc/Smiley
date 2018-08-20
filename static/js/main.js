@@ -5,6 +5,12 @@ class Main {
         this.ctx = this.canvas.getContext('2d');
         this.input = document.getElementById('input');  
 
+        this.numAugm = param.numAugm;
+        this.lrRate = param.lrRate;
+        this.lrEpochs = param.lrEpochs;
+        this.cnnRate = param.cnnRate;
+        this.cnnEpochs = param.cnnEpochs;
+        this.initializeConfigValues();
         this.image_size = param.image_size;
         this.rect_size = 448; // 16 * 28
         this.col_width = this.rect_size / this.image_size; // for the grid
@@ -49,6 +55,16 @@ class Main {
         }
 
         this.clearOutput();
+    }
+
+    initializeConfigValues() {
+        document.getElementById('num-augm').value = this.numAugm;
+        document.getElementById('lr-rate').value = this.lrRate;
+        document.getElementById('lr-epochs').value = this.lrEpochs;
+        document.getElementById('cnn-rate').value = this.cnnRate;
+        document.getElementById('cnn-epochs').value = this.cnnEpochs;
+        $('.conf').hide();
+        $('#show-config').show();
     }
 
     onMouseDown(e) {
@@ -395,6 +411,41 @@ class Main {
         });
     }
 
+    updateConfig() {
+        this.numAugm = document.getElementById('num-augm').value;
+        this.lrRate = document.getElementById('lr-rate').value;
+        this.lrEpochs = document.getElementById('lr-epochs').value;
+        this.cnnRate = document.getElementById('cnn-rate').value;
+        this.cnnEpochs = document.getElementById('cnn-epochs').value;
+        const conf = {
+                    numberAugmentations: this.numAugm,
+                    lrLearningRate: this.lrRate,
+                    lrEpochs: this.lrEpochs,
+                    cnnEpochs: this.cnnEpochs,
+                    cnnLearningRate: this.cnnRate
+        };
+        $.ajax({
+            url: '/api/update-config',
+            method: 'POST',
+            contentType: 'application/json',
+            data: JSON.stringify(conf),
+            success: (data) => {
+                $('.conf').hide();
+                $('#show-config').show();
+                this.initialize();
+            }
+        })
+        .fail(() => {
+            this.clearOutput();
+            this.checkConnection();
+        });
+    }
+
+    showConfig() {
+        $('.conf').show();
+        $('#show-config').hide();
+    }
+
     checkConnection() {
         const error = "<b>Please make sure the server is running and check its console for further information.</b>";
         $("#error").html(error);
@@ -436,7 +487,15 @@ $(() => {
 
     });
 
+    $('#show-config').click((e) => {
+        main.showConfig();
+    });
+
     prepareDirInput();
+
+    $('#config-form').submit((e) => {
+        main.updateConfig();
+    });
 
 });
 

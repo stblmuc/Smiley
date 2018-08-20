@@ -149,7 +149,7 @@ def expand_training_data(images, labels):
             new_img = ndimage.rotate(image, angle, reshape=False, cval=bg_value)
 
             # shift the image with random distance
-            max_shift = int(math.floor(image_size * 0.1))
+            max_shift = int(math.floor(image_size * 0.2))
             shift = numpy.random.randint(-max_shift, max_shift, 2)
             new_img_ = ndimage.shift(new_img, shift, cval=bg_value)
 
@@ -205,13 +205,13 @@ def cv2_clipped_zoom(img, zoom_factor):
 
 # prepare training data (generated images)
 def prepare_data(model, use_data_augmentation=True):
-    global NUM_LABELS
+    global NUM_LABELS, config
     NUM_LABELS = len(category_manager.update())
+    config.read(os.path.join(os.path.dirname(__file__), 'config.ini'))
     train_data = []
     train_labels = []
     test_data = []
     test_labels = []
-
     train_ratio = float(config['DEFAULT']['TRAIN_RATIO'])
 
     # add data from category folders
