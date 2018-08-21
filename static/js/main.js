@@ -55,7 +55,6 @@ class Main {
             this.ctx.closePath();
             this.ctx.stroke();
         }
-
         this.clearOutput();
     }
 
@@ -187,7 +186,7 @@ class Main {
 
                 const headRow = $("<tr>");
                 thead.append(headRow);
-                headRow.append("<td>");
+                headRow.append("<th>");
                 for (let classifierIdx = 0; classifierIdx < classifiers.length; classifierIdx++) {
                     const cell = $("<th scope='col'>");
                     headRow.append(cell);
@@ -442,7 +441,14 @@ class Main {
             data: JSON.stringify(conf),
             success: (data) => {
                 $(button).parent('#trainParameters').collapse('hide');
-                this.initialize();
+                $('#toggle-text').fadeOut(400, function() {
+                    $(this).text('Saved').fadeIn(400);
+                })
+                setTimeout(function(){
+                    $('#toggle-text').fadeOut(500, function() {
+                        $(this).text('Click to toggle').fadeIn(500);
+                    });
+                },2000);
             }
         })
         .fail(() => {
