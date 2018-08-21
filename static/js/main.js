@@ -37,6 +37,10 @@ class Main {
     }
 
     initialize() {
+        if (typeof this.video !== 'undefined' && this.video !== null) {
+            this.video.pause();
+            $('#takePicture').text("Camera");
+        }
         this.ctx.fillStyle = '#FFFFFF';
         this.ctx.fillRect(0, 0, this.canvas.width, this.canvas.height);
         this.input.getContext('2d').clearRect(0,0, this.input.width, this.input.height);
@@ -361,6 +365,7 @@ class Main {
     trainModels(button) {
         $(button).prop('disabled', true);
         $("#deleteModels").prop('disabled', true);
+        $(button).fadeOut(400).fadeIn(400);
         var blink = setInterval(function(){
             $(button).fadeOut(400).fadeIn(400);
         }, 1000);
