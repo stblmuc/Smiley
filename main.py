@@ -18,39 +18,17 @@ MODELS_DIRECTORY = os.path.join(config['DIRECTORIES']['LOGIC'], config['DIRECTOR
                                 config['DEFAULT']['IMAGE_SIZE'])
 IMAGE_SIZE = int(config['DEFAULT']['IMAGE_SIZE'])
 
-# Initialize the mapping between categories and indices in the prediction vectors
-category_manager.update()
-num_categories = len(category_manager.CATEGORIES)
-
 # create folder for models if it doesn't exist
 if not os.path.exists(MODELS_DIRECTORY):
     os.makedirs(MODELS_DIRECTORY)
 
-# Model variables
-x = tf.placeholder("float", [None, IMAGE_SIZE * IMAGE_SIZE])  # image placeholder
-is_training = tf.placeholder("bool")
-
-# Tensorflow session
-sess = tf.InteractiveSession()
-sess.run(tf.global_variables_initializer())
-
-# Regression model
-y1, variables = regression_model.regression(x, nCategories=num_categories)
-saver_regression = tf.train.Saver(variables)
-
-# CNN model
-y2, variables = cnn_model.convolutional(x, nCategories=num_categories, is_training=is_training)
-saver_cnn = tf.train.Saver(variables)
-
-# Webapp definition
-app = Flask(__name__)
-
-
 # updates the models if the number of classes changed
 def maybe_update_models():
     global y1, variables, saver_regression, y2, saver_cnn, x, is_training, sess, num_categories
-    if num_categories != len(category_manager.update()):
+    if 'num_categories' not in globals() or num_categories != len(category_manager.update()):
         num_categories = len(category_manager.CATEGORIES)
+
+        # Model variables
         x = tf.placeholder("float", [None, IMAGE_SIZE * IMAGE_SIZE])  # image placeholder
         is_training = tf.placeholder("bool")
 
@@ -58,24 +36,29 @@ def maybe_update_models():
         sess = tf.InteractiveSession()
         sess.run(tf.global_variables_initializer())
 
+        # Regression model
         y1, variables = regression_model.regression(x, nCategories=num_categories)
         saver_regression = tf.train.Saver(variables)
 
+        # CNN model
         y2, variables = cnn_model.convolutional(x, nCategories=num_categories, is_training=is_training)
         saver_cnn = tf.train.Saver(variables)
 
+# Initialize the categories mapping, the tensorflow session and the models
+maybe_update_models()
 
 # Regression prediction
 def regression_predict(input):
     saver_regression.restore(sess, os.path.join(MODELS_DIRECTORY, config['REGRESSION']['MODEL_FILENAME']))
     return sess.run(y1, feed_dict={x: input}).flatten().tolist()
 
-
 # CNN prediction
 def cnn_predict(input):
     saver_cnn.restore(sess, os.path.join(MODELS_DIRECTORY, config['CNN']['MODEL_FILENAME']))
     return sess.run(y2, feed_dict={x: input, is_training: False}).flatten().tolist()
 
+# Webapp definition
+app = Flask(__name__)
 
 # Root
 @app.route('/')
