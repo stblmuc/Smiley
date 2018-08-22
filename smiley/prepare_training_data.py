@@ -35,7 +35,7 @@ def add_data(model, train_images, train_labels, test_images, test_labels, train_
 
     # is there any data?
     if number_of_images == 0:
-        return train_images, train_labels, test_images, test_labels
+        return None
 
     # stores how many images of each category are present
     number_per_category = {c: 0.0 for c in range(number_of_categories)}
@@ -54,42 +54,57 @@ def add_data(model, train_images, train_labels, test_images, test_labels, train_
         images.append(numpy.reshape(image, image_size * image_size))
         number_processed += 1
 
+    # Code with test set
     # stores how many images of each category are in the training set
-    number_per_category_in_training = {c: 0.0 for c in range(NUM_LABELS)}
+    #number_per_category_in_training = {c: 0.0 for c in range(NUM_LABELS)}
 
     for i, x in enumerate(images):
-        category = labels[i]
-        if number_per_category_in_training[category] < number_per_category[category] * train_ratio:
-            number_per_category_in_training[category] += 1.0
-            train_images.append(x)
-            train_labels.append(labels[i])
-        else:
-            test_images.append(x)
-            test_labels.append(labels[i])
+        # Code without test set
+        train_images.append(x)
+        train_labels.append(labels[i])
+
+        # Code with test set
+        #if number_per_category_in_training[category] < number_per_category[category] * train_ratio:
+        #    number_per_category_in_training[category] += 1.0
+        #    train_images.append(x)
+        #    train_labels.append(labels[i])
+        #else:
+        #    test_images.append(x)
+        #    test_labels.append(labels[i])
 
     train_images = numpy.array(train_images)
-    test_images = numpy.array(test_images)
+    #test_images = numpy.array(test_images)
 
     # transform labels into one-hot vectors
     one_hot_encoding = numpy.zeros((len(train_images), number_of_categories))
     one_hot_encoding[numpy.arange(len(train_images)), train_labels] = 1
     train_labels = numpy.reshape(one_hot_encoding, [-1, number_of_categories])
-    one_hot_encoding = numpy.zeros((len(test_images), number_of_categories))
-    one_hot_encoding[numpy.arange(len(test_images)), test_labels] = 1
-    test_labels = numpy.reshape(one_hot_encoding, [-1, number_of_categories])
 
-    if sum([1 for c in number_per_category.items() if
-            c[0] not in [str(n) for n in range(10)] and
-            c[1] != 0.0 and c[1] == number_per_category_in_training[c[0]]]) == 0:
-        return train_images, train_labels, test_images, test_labels
-    else:
-        # at least one category has all examples in the training set (meaning there are not
-        # enough examples for a training set and a testing set)
-        return None
+    # Code with test set
+    #one_hot_encoding = numpy.zeros((len(test_images), number_of_categories))
+    #one_hot_encoding[numpy.arange(len(test_images)), test_labels] = 1
+    #test_labels = numpy.reshape(one_hot_encoding, [-1, number_of_categories])
+
+    # Code without test set
+    return train_images, train_labels, None, None
+
+    # Code with test set
+    #if sum([1 for c in number_per_category.items() if
+    #        c[0] not in [str(n) for n in range(10)] and
+    #        c[1] != 0.0 and c[1] == number_per_category_in_training[c[0]]]) == 0:
+    #    return train_images, train_labels, test_images, test_labels
+    #else:
+    #    # at least one category has all examples in the training set (meaning there are not
+    #    # enough examples for a training set and a testing set)
+    #    for i in range(0, len(number_per_category)):
+    #        if number_per_category[i] == number_per_category_in_training[i]:
+    #            idx = i
+    #    raise Exception("Error while preparing data. Category '" + category_manager.get_category_names()[idx]
+    #                    + "' has just %d images but needs at least %d images." % (int(number_per_category[idx]), 5))
 
 
 # create a validation set from part of the training data
-def create_validation_set(train_data, train_labels, VALIDATION_PROPORTION):
+def create_validation_set(train_data, train_labels, train_ratio):
     train_data_result = []
     train_labels_result = []
     validation_data_result = []
@@ -101,19 +116,24 @@ def create_validation_set(train_data, train_labels, VALIDATION_PROPORTION):
         number_per_category[category] += 1.0
 
     number_per_category_in_validation = {c: 0.0 for c in range(NUM_LABELS)}
+    number_per_category_in_training = {c: 0.0 for c in range(NUM_LABELS)}
+
     for i, x in enumerate(train_data):
         category = [z for z in range(len(train_labels[i])) if train_labels[i][z] == 1.0][0]
-        if number_per_category_in_validation[category] < number_per_category[category] * VALIDATION_PROPORTION:
+        if number_per_category_in_training[category] < number_per_category[category] * train_ratio:
+            number_per_category_in_training[category] += 1.0
+            train_data_result.append(x)
+            train_labels_result.append(train_labels[i])
+        else:
             number_per_category_in_validation[category] += 1.0
             validation_data_result.append(x)
             validation_labels_result.append(train_labels[i])
-        else:
-            train_data_result.append(x)
-            train_labels_result.append(train_labels[i])
 
     if not number_per_category_in_validation.values() or min(number_per_category_in_validation.values()) == 0:
         # at least one of the categories has no items in the validation set (not enough training examples)
-        return None
+        val, idx = min((val, idx) for (idx, val) in enumerate(list(number_per_category_in_validation.values())))
+        raise Exception("Error while preparing data. Category '" + category_manager.get_category_names()[idx]
+                        + "' has just %d images but needs at least %d images." % (int(number_per_category[idx]), 5))
     else:
         return numpy.array(train_data_result), numpy.array(train_labels_result), \
                numpy.array(validation_data_result), numpy.array(validation_labels_result)
@@ -218,7 +238,7 @@ def prepare_data(model, use_data_augmentation=True):
 
     # create a validation set
     train_data, train_labels, validation_data, validation_labels = create_validation_set(train_data, train_labels,
-                                                                                         1 - train_ratio)
+                                                                                         train_ratio)
 
     # concatenate train_data and train_labels for random shuffle
     if use_data_augmentation:

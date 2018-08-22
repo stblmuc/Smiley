@@ -128,6 +128,10 @@ def smiley():
         # error loading CNN model
         err = "Model not found or incompatible number of categories or incompatible image size. Please (re-)train the CNN classifier."
 
+    # if no categories are added, print error
+    if (num_categories == 0):
+        err = "Please add at least one category (by adding images in that category)."
+
     if len(err) > 0:
         print(err)
 

@@ -23,8 +23,10 @@ def train():
     try:
         curr_number_of_categories, train_total_data, train_size, validation_data, validation_labels, test_data, test_labels = prepare_training_data.prepare_data(
             "CNN", True)
-    except TypeError:
-        raise Exception("Error preparing training/validation/test data. Create more training examples.")
+    except Exception as inst:
+        raise Exception(inst.args[0])
+    #except TypeError:
+        #raise Exception("Error preparing training/validation/test data. Create more training examples.")
 
     # CNN model
     x = tf.placeholder(tf.float32, [None, IMAGE_SIZE * IMAGE_SIZE], name="image")  # CNN input placeholder
@@ -48,7 +50,7 @@ def train():
 
         learning_rate = tf.train.exponential_decay(
             float(config['CNN']['LEARNING_RATE']),  # base learning rate.
-            tf.cast(batch, dtype=tf.int16) * BATCH_SIZE,  # current index into the dataset.Sav
+            tf.cast(batch, dtype=tf.int16) * BATCH_SIZE,  # current index in the dataset.
             train_size,  # decay step.
             0.95,  # decay rate.
             staircase=True)
@@ -125,12 +127,14 @@ def train():
 
     print("Optimization Finished!")
 
+    # Code with test set
     # restore variables from disk
-    saver.restore(sess, MODEL_PATH)
+    # saver.restore(sess, MODEL_PATH)
 
+    # Code with test set
     # calculate accuracy for all test images
-    test_accuracy = sess.run(accuracy, feed_dict={x: test_data, y_: test_labels, is_training: False})
-    print("test accuracy for the stored model: %g" % test_accuracy)
+    #test_accuracy = sess.run(accuracy, feed_dict={x: test_data, y_: test_labels, is_training: False})
+    #print("test accuracy for the stored model: %g" % test_accuracy)
 
     sess.close()
 
