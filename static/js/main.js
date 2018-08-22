@@ -511,4 +511,17 @@ $(() => {
         return false;
     });
 
+    setInterval(function() {
+        obj = $('#consoleOutput .card-body');
+        $.ajax({
+            url: '/api/get-console-output',
+            success: (data) => {
+                obj.html(data.replace(/(\r\n|\n|\r)/gm, "<br>"));
+                // obj[0].scrollTop = obj[0].scrollHeight;
+            }
+        })
+        .fail(() => {
+            obj.html('Connection failed.');
+        });
+    },2000);
 });

@@ -5,8 +5,10 @@ import sys
 import webbrowser
 import numpy as np
 import tensorflow as tf
-from flask import Flask, jsonify, render_template, request
+from flask import Flask, jsonify, render_template, request, send_file
 from tensorflow.python.framework.errors_impl import InvalidArgumentError, NotFoundError
+from io import StringIO
+from functools import wraps
 
 sys.path.append('smiley')
 import regression_model, cnn_model, category_manager, regression_train, cnn_train
@@ -60,8 +62,34 @@ def cnn_predict(input):
 # Webapp definition
 app = Flask(__name__)
 
+# Delete last console output
+if os.path.isfile(os.path.join(config['DIRECTORIES']['LOGIC'], config['DIRECTORIES']['LOGS'], 'console.txt')):
+    os.remove(os.path.join(config['DIRECTORIES']['LOGIC'], config['DIRECTORIES']['LOGS'], 'console.txt'))
+
+# Decorator to capture standard output
+def capture(f):
+    @wraps(f)
+    def captured(*args, **kwargs):
+        backup = sys.stdout # setup the environment
+
+        try:
+            sys.stdout = StringIO()     # capture output
+            result = f(*args, **kwargs)
+            out = sys.stdout.getvalue() # release output
+        finally:
+            sys.stdout.close()  # close the stream 
+            sys.stdout = backup # restore original stdout
+
+        with open(os.path.join(config['DIRECTORIES']['LOGIC'], config['DIRECTORIES']['LOGS'], 'console.txt'), "a") as file:
+            file.write(out) # write output to file
+            file.close()
+
+        return result # captured output wrapped in a string
+    return captured
+
 # Root
 @app.route('/')
+@capture
 def main():
     numAugm = config['DEFAULT']['NUMBER_AUGMENTATIONS_PER_IMAGE']
     batchSize = config['DEFAULT']['train_batch_size']
@@ -77,6 +105,7 @@ def main():
 
 # Predict
 @app.route('/api/smiley', methods=['POST'])
+@capture
 def smiley():
     maybe_update_models()
 
@@ -110,15 +139,13 @@ def smiley():
     if (num_categories == 0):
         err = "Please add at least one category (by adding N images in that category)."
 
-    if len(err) > 0:
-        print(err)
-
     return jsonify(classifiers=["Softmax Regression", "CNN"], results=[regression_output, cnn_output],
                    error=err, categories=category_manager.get_category_names())
 
 
 # Add training example
 @app.route('/api/generate-training-example', methods=['POST'])
+@capture
 def generate_training_example():
     image_size = int(config['DEFAULT']['IMAGE_SIZE'])
     image = np.array(request.json["img"], dtype=np.uint8).reshape(image_size, image_size, 1)
@@ -129,6 +156,7 @@ def generate_training_example():
 
 # Update config parameters
 @app.route('/api/update-config', methods=['POST'])
+@capture
 def update_config():
     config.set("CNN", "LEARNING_RATE", request.json["cnnLearningRate"])
     config.set("REGRESSION", "LEARNING_RATE", request.json["srLearningRate"])
@@ -145,6 +173,7 @@ def update_config():
 
 # Train model
 @app.route('/api/train-models', methods=['POST'])
+@capture
 def train_models():
     maybe_update_models()
 
@@ -166,6 +195,7 @@ def train_models():
     return "ok"
 
 # Delete all saved models
+@capture
 @app.route('/api/delete-all-models', methods=['POST'])
 def delete_all_models():
     filelist = [f for f in os.listdir(MODELS_DIRECTORY)]
@@ -173,6 +203,15 @@ def delete_all_models():
         os.remove(os.path.join(MODELS_DIRECTORY, f))
 
     return "ok"
+
+@app.route('/api/get-console-output')
+def console_output():
+    console_file = os.path.join(config['DIRECTORIES']['LOGIC'], config['DIRECTORIES']['LOGS'], 'console.txt')
+    if (os.path.isfile(console_file) and os.path.getsize(console_file) > 0):
+        print(os.path.getsize(console_file))
+        return send_file(console_file)
+    else:
+        return 'No entries (yet)'
 
 # main
 if __name__ == '__main__':
