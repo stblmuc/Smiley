@@ -168,9 +168,9 @@ class Main {
             data: JSON.stringify(inputs),
             success: (data) => {
                 const categories = data.categories;
-                const classifiers = data.classifiers;
                 const error = data.error;
-                const results = data.results;
+                var classifiers = data.classifiers;
+                var results = data.results;
 
                 if (error) {
                     $("#error").text(error);
@@ -181,6 +181,12 @@ class Main {
                 // Don't display table if results contain empty arrays
                 if (!results.filter((e)=>{return e.length}).length)
                     return;
+                else {
+                    // concat average to results
+                    const average = arr => arr[0].map((v,i) => (v+arr[1][i]) / 2);
+                    classifiers = classifiers.concat(["Average"]);
+                    results = results.concat([average(results)]);
+                }
 
                 const table = $("#output");
                 const thead = $("<thead>");
