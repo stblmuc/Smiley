@@ -79,6 +79,7 @@ def main():
 @app.route('/api/smiley', methods=['POST'])
 def smiley():
     maybe_update_models()
+
     # input with pixel values between 0 (black) and 255 (white)
     data = np.array(request.json, dtype=np.uint8)
 
@@ -88,39 +89,28 @@ def smiley():
     # transform pixels to values between -0.5 (white) and 0.5 (black)
     cnn_input = (((255 - data) / 255.0) - 0.5).reshape(1, IMAGE_SIZE * IMAGE_SIZE)
 
+    err = ""  # string with error messages
+    err_retrain = "Models not found or incompatible number of categories or incompatible image size. Please (re-)train the classifiers."
+    
     try:
         regression_output = regression_predict(regression_input)
         regression_output = [-1.0 if math.isnan(b) else b for b in regression_output]
     except (NotFoundError, InvalidArgumentError):
         regression_output = []
+        err = err_retrain
+
     try:
         cnn_output = cnn_predict(cnn_input)
         cnn_output = [-1.0 if math.isnan(f) else f for f in cnn_output]
     except (NotFoundError, InvalidArgumentError):
         cnn_output = []
-
-    err = ""  # string with error messages
-    if len(regression_output) == 0:
-        if len(cnn_output) == 0:
-            # error loading both models
-            err = "Models not found or incompatible number of categories or incompatible image size. Please (re-)train the classifiers."
-        else:
-            # error loading regression model
-            err = "Model not found or incompatible number of categories or incompatible image size. Please (re-)train the regression classifier."
-    elif len(cnn_output) == 0:
-        # error loading CNN model
-        err = "Model not found or incompatible number of categories or incompatible image size. Please (re-)train the CNN classifier."
+        err = err_retrain
 
     if len(err) > 0:
         print(err)
 
-    category_names = ["" for _ in range(len(category_manager.CATEGORIES))]
-    for ind in range(len(category_names)):
-        category_names[ind] = [x for x in category_manager.CATEGORIES.keys() if category_manager.CATEGORIES[x] == ind][
-            0]
-
     return jsonify(classifiers=["Linear Regression", "CNN"], results=[regression_output, cnn_output],
-                   error=err, categories=category_names)
+                   error=err, categories=category_manager.get_category_names())
 
 
 # Add training example
@@ -132,7 +122,6 @@ def generate_training_example():
     category_manager.add_training_example(image, category)
 
     return "ok"
-
 
 # Update config parameters
 @app.route('/api/update-config', methods=['POST'])
@@ -150,7 +139,6 @@ def update_config():
 
     return "ok"
 
-
 # Train model
 @app.route('/api/train-models', methods=['POST'])
 def train_models():
@@ -167,7 +155,6 @@ def train_models():
 
     return "ok"
 
-
 # Delete all saved models
 @app.route('/api/delete-all-models', methods=['POST'])
 def delete_all_models():
@@ -177,10 +164,8 @@ def delete_all_models():
 
     return "ok"
 
-
 # main
 if __name__ == '__main__':
     # Open webbrowser tab for the app
     webbrowser.open_new_tab("http://localhost:5000")
-
     app.run()

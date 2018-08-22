@@ -37,10 +37,11 @@ class Main {
     }
 
     initialize() {
-        if (typeof this.video !== 'undefined' && this.video !== null) {
-            this.video.pause();
+        if (!!this.video) {
             $('#takePicture').text("Camera");
+            this.video.pause();
         }
+
         this.ctx.fillStyle = '#FFFFFF';
         this.ctx.fillRect(0, 0, this.canvas.width, this.canvas.height);
         this.input.getContext('2d').clearRect(0,0, this.input.width, this.input.height);
