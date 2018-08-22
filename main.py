@@ -146,7 +146,13 @@ def update_config():
 # Train model
 @app.route('/api/train-models', methods=['POST'])
 def train_models():
-    category_manager.update()
+    maybe_update_models()
+
+    # if no categories are added, print error
+    if (num_categories == 0):
+        err = "Please add at least one category (by adding images in that category)."
+        return jsonify(error=err)
+
     try:
         regression_train.train()
         cnn_train.train()
@@ -172,4 +178,5 @@ def delete_all_models():
 if __name__ == '__main__':
     # Open webbrowser tab for the app
     webbrowser.open_new_tab("http://localhost:5000")
+
     app.run()
