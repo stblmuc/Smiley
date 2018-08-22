@@ -24,8 +24,6 @@ def train():
             "regression", True)
     except Exception as inst:
         raise Exception(inst.args[0])
-    #except TypeError:
-        #raise Exception("Error preparing training/validation/test data. Create more training examples.")
 
     # regression model
     x = tf.placeholder(tf.float32, [None, IMAGE_SIZE * IMAGE_SIZE], name="image")  # regression input placeholder

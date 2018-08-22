@@ -25,8 +25,6 @@ def train():
             "CNN", True)
     except Exception as inst:
         raise Exception(inst.args[0])
-    #except TypeError:
-        #raise Exception("Error preparing training/validation/test data. Create more training examples.")
 
     # CNN model
     x = tf.placeholder(tf.float32, [None, IMAGE_SIZE * IMAGE_SIZE], name="image")  # CNN input placeholder
