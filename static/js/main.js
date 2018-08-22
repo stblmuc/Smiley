@@ -7,8 +7,8 @@ class Main {
 
         this.numAugm = param.numAugm;
         this.batchSize = param.batchSize;
-        this.lrRate = param.lrRate;
-        this.lrEpochs = param.lrEpochs;
+        this.srRate = param.srRate;
+        this.srEpochs = param.srEpochs;
         this.cnnRate = param.cnnRate;
         this.cnnEpochs = param.cnnEpochs;
         this.image_size = param.image_size;
@@ -66,8 +66,8 @@ class Main {
     initializeConfigValues() {
         document.getElementById('num-augm').value = this.numAugm;
         document.getElementById('batch-size').value = this.batchSize;
-        document.getElementById('lr-rate').value = this.lrRate;
-        document.getElementById('lr-epochs').value = this.lrEpochs;
+        document.getElementById('sr-rate').value = this.srRate;
+        document.getElementById('sr-epochs').value = this.srEpochs;
         document.getElementById('cnn-rate').value = this.cnnRate;
         document.getElementById('cnn-epochs').value = this.cnnEpochs;
     }
@@ -432,16 +432,16 @@ class Main {
     updateConfig(button) {
         this.numAugm = document.getElementById('num-augm').value;
         this.batchSize = document.getElementById('batch-size').value;
-        this.lrRate = document.getElementById('lr-rate').value;
-        this.lrEpochs = document.getElementById('lr-epochs').value;
+        this.srRate = document.getElementById('sr-rate').value;
+        this.srEpochs = document.getElementById('sr-epochs').value;
         this.cnnRate = document.getElementById('cnn-rate').value;
         this.cnnEpochs = document.getElementById('cnn-epochs').value;
 
         const conf = {
             numberAugmentations: this.numAugm,
             batchSize: this.batchSize,
-            lrLearningRate: this.lrRate,
-            lrEpochs: this.lrEpochs,
+            srLearningRate: this.srRate,
+            srEpochs: this.srEpochs,
             cnnEpochs: this.cnnEpochs,
             cnnLearningRate: this.cnnRate
         };

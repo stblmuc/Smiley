@@ -65,12 +65,12 @@ app = Flask(__name__)
 def main():
     numAugm = config['DEFAULT']['NUMBER_AUGMENTATIONS_PER_IMAGE']
     batchSize = config['DEFAULT']['train_batch_size']
-    lrRate = config['REGRESSION']['LEARNING_RATE']
-    lrEpochs = config['REGRESSION']['EPOCHS']
+    srRate = config['REGRESSION']['LEARNING_RATE']
+    srEpochs = config['REGRESSION']['EPOCHS']
     cnnRate = config['CNN']['LEARNING_RATE']
     cnnEpochs = config['CNN']['EPOCHS']
-    data = {'image_size': IMAGE_SIZE, 'numAugm': numAugm, 'batchSize': batchSize, 'lrRate': lrRate,
-            'lrEpochs': lrEpochs, 'cnnRate': cnnRate, 'cnnEpochs': cnnEpochs,
+    data = {'image_size': IMAGE_SIZE, 'numAugm': numAugm, 'batchSize': batchSize, 'srRate': srRate,
+            'srEpochs': srEpochs, 'cnnRate': cnnRate, 'cnnEpochs': cnnEpochs,
             'categories': list(category_manager.CATEGORIES.keys())}
     return render_template('index.html', data=data)
 
@@ -113,7 +113,7 @@ def smiley():
     if len(err) > 0:
         print(err)
 
-    return jsonify(classifiers=["Linear Regression", "CNN"], results=[regression_output, cnn_output],
+    return jsonify(classifiers=["Softmax Regression", "CNN"], results=[regression_output, cnn_output],
                    error=err, categories=category_manager.get_category_names())
 
 
@@ -131,9 +131,9 @@ def generate_training_example():
 @app.route('/api/update-config', methods=['POST'])
 def update_config():
     config.set("CNN", "LEARNING_RATE", request.json["cnnLearningRate"])
-    config.set("REGRESSION", "LEARNING_RATE", request.json["lrLearningRate"])
+    config.set("REGRESSION", "LEARNING_RATE", request.json["srLearningRate"])
     config.set("CNN", "EPOCHS", request.json["cnnEpochs"])
-    config.set("REGRESSION", "EPOCHS", request.json["lrEpochs"])
+    config.set("REGRESSION", "EPOCHS", request.json["srEpochs"])
     config.set("DEFAULT", "number_augmentations_per_image", request.json["numberAugmentations"])
     config.set("DEFAULT", "train_batch_size", request.json["batchSize"])
 

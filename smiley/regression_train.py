@@ -8,7 +8,7 @@ from tensorflow.python.framework.errors_impl import InvalidArgumentError, NotFou
 
 
 def train():
-    print("\nLINEAR REGRESSION TRAINING STARTED.")
+    print("\nSOFTMAX REGRESSION TRAINING STARTED.")
 
     config = configparser.ConfigParser()
     config.read(os.path.join(os.path.dirname(__file__), 'config.ini'))
@@ -97,7 +97,7 @@ def train():
 
     sess.close()
 
-    print("LINEAR REGRESSION TRAINING END.")
+    print("SOFTMAX REGRESSION TRAINING END.")
 
 
 def maybe_restore_model(model_path, saver, sess, accuracy, validation_data, x, validation_labels, y_):
