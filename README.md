@@ -40,7 +40,7 @@ The logs from training can be accessed on the Tensorboard webapp by running the 
     > python -m tensorboard.main --logdir smiley/data/logs
 
 ### Parameters ###
-Changing important parameters, e.g. learning rates and number of epochs, can be done on the webapp or in the config file `smiley/config.ini`. 
+Changing important parameters, e.g. learning rates and number of epochs, can be done on the webapp or in the config file `smiley/config.ini`.
 
 ### Implementation details ###
 
@@ -51,4 +51,4 @@ This method uses a single weight matrix which is multiplied with the input. Afte
 It consists of two convolutional + max-pool layers followed by two fully connected layers with dropout on the first one. Softmax is also applied in the end to obtain class probabilities.
 
 ### License ###
-TODO
+[MIT License](LICENSE)

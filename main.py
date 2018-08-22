@@ -18,39 +18,17 @@ MODELS_DIRECTORY = os.path.join(config['DIRECTORIES']['LOGIC'], config['DIRECTOR
                                 config['DEFAULT']['IMAGE_SIZE'])
 IMAGE_SIZE = int(config['DEFAULT']['IMAGE_SIZE'])
 
-# Initialize the mapping between categories and indices in the prediction vectors
-category_manager.update()
-num_categories = len(category_manager.CATEGORIES)
-
 # create folder for models if it doesn't exist
 if not os.path.exists(MODELS_DIRECTORY):
     os.makedirs(MODELS_DIRECTORY)
 
-# Model variables
-x = tf.placeholder("float", [None, IMAGE_SIZE * IMAGE_SIZE])  # image placeholder
-is_training = tf.placeholder("bool")
-
-# Tensorflow session
-sess = tf.InteractiveSession()
-sess.run(tf.global_variables_initializer())
-
-# Regression model
-y1, variables = regression_model.regression(x, nCategories=num_categories)
-saver_regression = tf.train.Saver(variables)
-
-# CNN model
-y2, variables = cnn_model.convolutional(x, nCategories=num_categories, is_training=is_training)
-saver_cnn = tf.train.Saver(variables)
-
-# Webapp definition
-app = Flask(__name__)
-
-
 # updates the models if the number of classes changed
 def maybe_update_models():
     global y1, variables, saver_regression, y2, saver_cnn, x, is_training, sess, num_categories
-    if num_categories != len(category_manager.update()):
+    if 'num_categories' not in globals() or num_categories != len(category_manager.update()):
         num_categories = len(category_manager.CATEGORIES)
+
+        # Model variables
         x = tf.placeholder("float", [None, IMAGE_SIZE * IMAGE_SIZE])  # image placeholder
         is_training = tf.placeholder("bool")
 
@@ -58,24 +36,29 @@ def maybe_update_models():
         sess = tf.InteractiveSession()
         sess.run(tf.global_variables_initializer())
 
+        # Regression model
         y1, variables = regression_model.regression(x, nCategories=num_categories)
         saver_regression = tf.train.Saver(variables)
 
+        # CNN model
         y2, variables = cnn_model.convolutional(x, nCategories=num_categories, is_training=is_training)
         saver_cnn = tf.train.Saver(variables)
 
+# Initialize the categories mapping, the tensorflow session and the models
+maybe_update_models()
 
 # Regression prediction
 def regression_predict(input):
     saver_regression.restore(sess, os.path.join(MODELS_DIRECTORY, config['REGRESSION']['MODEL_FILENAME']))
     return sess.run(y1, feed_dict={x: input}).flatten().tolist()
 
-
 # CNN prediction
 def cnn_predict(input):
     saver_cnn.restore(sess, os.path.join(MODELS_DIRECTORY, config['CNN']['MODEL_FILENAME']))
     return sess.run(y2, feed_dict={x: input, is_training: False}).flatten().tolist()
 
+# Webapp definition
+app = Flask(__name__)
 
 # Root
 @app.route('/')
@@ -96,6 +79,7 @@ def main():
 @app.route('/api/smiley', methods=['POST'])
 def smiley():
     maybe_update_models()
+
     # input with pixel values between 0 (black) and 255 (white)
     data = np.array(request.json, dtype=np.uint8)
 
@@ -105,28 +89,22 @@ def smiley():
     # transform pixels to values between -0.5 (white) and 0.5 (black)
     cnn_input = (((255 - data) / 255.0) - 0.5).reshape(1, IMAGE_SIZE * IMAGE_SIZE)
 
+    err = ""  # string with error messages
+    err_retrain = "Models not found or incompatible number of categories or incompatible image size. Please (re-)train the classifiers."
+    
     try:
         regression_output = regression_predict(regression_input)
         regression_output = [-1.0 if math.isnan(b) else b for b in regression_output]
     except (NotFoundError, InvalidArgumentError):
         regression_output = []
+        err = err_retrain
+
     try:
         cnn_output = cnn_predict(cnn_input)
         cnn_output = [-1.0 if math.isnan(f) else f for f in cnn_output]
     except (NotFoundError, InvalidArgumentError):
         cnn_output = []
-
-    err = ""  # string with error messages
-    if len(regression_output) == 0:
-        if len(cnn_output) == 0:
-            # error loading both models
-            err = "Models not found or incompatible number of categories or incompatible image size. Please (re-)train the classifiers."
-        else:
-            # error loading regression model
-            err = "Model not found or incompatible number of categories or incompatible image size. Please (re-)train the regression classifier."
-    elif len(cnn_output) == 0:
-        # error loading CNN model
-        err = "Model not found or incompatible number of categories or incompatible image size. Please (re-)train the CNN classifier."
+        err = err_retrain
 
     # if no categories are added, print error
     if (num_categories == 0):
@@ -135,13 +113,8 @@ def smiley():
     if len(err) > 0:
         print(err)
 
-    category_names = ["" for _ in range(len(category_manager.CATEGORIES))]
-    for ind in range(len(category_names)):
-        category_names[ind] = [x for x in category_manager.CATEGORIES.keys() if category_manager.CATEGORIES[x] == ind][
-            0]
-
     return jsonify(classifiers=["Linear Regression", "CNN"], results=[regression_output, cnn_output],
-                   error=err, categories=category_names)
+                   error=err, categories=category_manager.get_category_names())
 
 
 # Add training example
@@ -153,7 +126,6 @@ def generate_training_example():
     category_manager.add_training_example(image, category)
 
     return "ok"
-
 
 # Update config parameters
 @app.route('/api/update-config', methods=['POST'])
@@ -171,7 +143,6 @@ def update_config():
 
     return "ok"
 
-
 # Train model
 @app.route('/api/train-models', methods=['POST'])
 def train_models():
@@ -188,7 +159,6 @@ def train_models():
 
     return "ok"
 
-
 # Delete all saved models
 @app.route('/api/delete-all-models', methods=['POST'])
 def delete_all_models():
@@ -198,10 +168,8 @@ def delete_all_models():
 
     return "ok"
 
-
 # main
 if __name__ == '__main__':
     # Open webbrowser tab for the app
     webbrowser.open_new_tab("http://localhost:5000")
-
     app.run()
