@@ -8,7 +8,7 @@ import tensorflow as tf
 from flask import Flask, jsonify, render_template, request
 from tensorflow.python.framework.errors_impl import InvalidArgumentError, NotFoundError
 
-sys.path.append("smiley")
+sys.path.append('smiley')
 import regression_model, cnn_model, category_manager, regression_train, cnn_train
 
 config = configparser.ConfigParser()

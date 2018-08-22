@@ -453,12 +453,12 @@ class Main {
             data: JSON.stringify(conf),
             success: (data) => {
                 $(button).parent('#trainParameters').collapse('hide');
-                $('#toggle-text').fadeOut(400, function() {
+                $('#train-toggle-text').fadeOut(400, function() {
                     $(this).text('Saved').fadeIn(400);
                 })
                 setTimeout(function(){
-                    $('#toggle-text').fadeOut(500, function() {
-                        $(this).text('Click to toggle').fadeIn(500);
+                    $('#train-toggle-text').fadeOut(400, function() {
+                        $(this).text('Click to toggle').fadeIn(400);
                     });
                 },2000);
             }

@@ -10,7 +10,7 @@ Parts of the code are based on [this repo](https://github.com/sugyan/tensorflow-
 We provide an easily understandable and concise backend and frontend capable of generating and importing data (i.e. images), as well as training and testing Machine Learning models for smiley recognition.
 
 ### Requirements ###
-- We recommend to install [`anaconda`](https://docs.anaconda.com/anaconda/install/)
+- We recommend to install [`miniconda`](https://conda.io/miniconda.html)
 
 - Python >=3.5 (recommended 3.6.6)
   - TensorFlow >=1.9 (recommended 1.9.0)

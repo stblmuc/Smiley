@@ -48,7 +48,7 @@
                 <div class="card">
                     <div class="card-header" data-toggle="collapse" href="#trainParameters">
                         <span>Train Parameters Panel</span>
-                        <span class="float-right text-muted" id="toggle-text">Click to toggle</span>
+                        <span class="float-right text-muted" id="train-toggle-text">Click to toggle</span>
                     </div>
                     <div id="trainParameters" class="collapse">
                         <form id="config-form">
@@ -90,6 +90,18 @@
         <div class="col-lg-6">
             <p>input:</p>
             <canvas id="input" style="border:1px solid" width="140" height="140"></canvas>
+            <hr>
+            <div class="card">
+                <div class="card-header" data-toggle="collapse" href="#consoleOutput">
+                    <span>Console Output</span>
+                    <span class="float-right text-muted" id="console-toggle-text">Click to toggle</span>
+                </div>
+                <div id="consoleOutput" class="collapse">
+                    <div class="card-body" style="border: 0; max-height: 200px; overflow-y: scroll;">
+                        Waiting for connection to be established...
+                    </div>
+                </div>
+            </div>
             <hr>
             <p>output:</p>
             <p class="error" id="error"></p>
