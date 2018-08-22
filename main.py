@@ -30,7 +30,7 @@ def maybe_update_models():
 
         # Model variables
         x = tf.placeholder("float", [None, IMAGE_SIZE * IMAGE_SIZE])  # image placeholder
-        is_training = tf.placeholder("bool")
+        is_training = tf.placeholder("bool") # used for activating the dropout
 
         # Tensorflow session
         sess = tf.InteractiveSession()
@@ -108,7 +108,7 @@ def smiley():
 
     # if no categories are added, print error
     if (num_categories == 0):
-        err = "Please add at least one category (by adding images in that category)."
+        err = "Please add at least one category (by adding N images in that category)."
 
     if len(err) > 0:
         print(err)
