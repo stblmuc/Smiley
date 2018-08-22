@@ -81,10 +81,10 @@ def capture(f):
             sys.stdout = backup # restore original stdout
 
         with open(os.path.join(config['DIRECTORIES']['LOGIC'], config['DIRECTORIES']['LOGS'], 'console.txt'), "a") as file:
-            file.write(out) # write output to file
+            file.write(out) # write print output to file
             file.close()
 
-        return result # captured output wrapped in a string
+        return result # captured result from function
     return captured
 
 # Root
@@ -205,6 +205,7 @@ def delete_all_models():
     return "ok"
 
 @app.route('/api/get-console-output')
+@capture
 def console_output():
     console_file = os.path.join(config['DIRECTORIES']['LOGIC'], config['DIRECTORIES']['LOGS'], 'console.txt')
     if (os.path.isfile(console_file) and os.path.getsize(console_file) > 0):
