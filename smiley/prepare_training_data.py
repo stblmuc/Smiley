@@ -1,13 +1,13 @@
 import configparser
 import os
 import math
-import category_manager
+import utils
 import numpy
 import cv2
 from scipy import ndimage
 
 # parameters
-NUM_LABELS = len(category_manager.update())
+NUM_LABELS = len(utils.update())
 
 # load config params
 config = configparser.ConfigParser()
@@ -21,7 +21,7 @@ def add_data(model, train_images, train_labels, test_images, test_labels, train_
 
     datagen = ImageDataGenerator()
     generator = datagen.flow_from_directory(
-        category_manager.CATEGORIES_LOCATION,
+        utils.CATEGORIES_LOCATION,
         color_mode='grayscale',
         target_size=(image_size, image_size),
         batch_size=1,
@@ -99,7 +99,7 @@ def add_data(model, train_images, train_labels, test_images, test_labels, train_
     #    for i in range(0, len(number_per_category)):
     #        if number_per_category[i] == number_per_category_in_training[i]:
     #            idx = i
-    #    raise Exception("Error while preparing data. Category '" + category_manager.get_category_names()[idx]
+    #    raise Exception("Error while preparing data. Category '" + utils.get_category_names()[idx]
     #                    + "' has just %d images but needs at least %d images." % (int(number_per_category[idx]), 5))
 
 
@@ -132,7 +132,7 @@ def create_validation_set(train_data, train_labels, train_ratio):
     if not number_per_category_in_validation.values() or min(number_per_category_in_validation.values()) == 0:
         # at least one of the categories has no items in the validation set (not enough training examples)
         val, idx = min((val, idx) for (idx, val) in enumerate(list(number_per_category_in_validation.values())))
-        raise Exception("Error while preparing data. Category '" + category_manager.get_category_names()[idx]
+        raise Exception("Error while preparing data. Category '" + utils.get_category_names()[idx]
                         + "' has just %d images but needs at least %d images." % (int(number_per_category[idx]), 5))
     else:
         return numpy.array(train_data_result), numpy.array(train_labels_result), \
@@ -224,7 +224,7 @@ def cv2_clipped_zoom(img, zoom_factor):
 # prepare training data (generated images)
 def prepare_data(model, use_data_augmentation=True):
     global NUM_LABELS, config
-    NUM_LABELS = len(category_manager.update())
+    NUM_LABELS = len(utils.update())
     config.read(os.path.join(os.path.dirname(__file__), 'config.ini'))
     train_data = []
     train_labels = []

@@ -11,7 +11,7 @@ from io import StringIO
 from functools import wraps
 
 sys.path.append('smiley')
-import regression_model, cnn_model, category_manager, regression_train, cnn_train
+import regression_model, cnn_model, utils, regression_train, cnn_train
 
 config = configparser.ConfigParser()
 config.read(os.path.join(os.path.dirname(__file__), 'smiley/config.ini'))
@@ -27,8 +27,8 @@ if not os.path.exists(MODELS_DIRECTORY):
 # updates the models if the number of classes changed
 def maybe_update_models():
     global y1, variables, saver_regression, y2, saver_cnn, x, is_training, sess, num_categories
-    if 'num_categories' not in globals() or num_categories != len(category_manager.update()):
-        num_categories = len(category_manager.CATEGORIES)
+    if 'num_categories' not in globals() or num_categories != len(utils.update()):
+        num_categories = len(utils.CATEGORIES)
 
         # Model variables
         x = tf.placeholder("float", [None, IMAGE_SIZE * IMAGE_SIZE])  # image placeholder
@@ -99,7 +99,7 @@ def main():
     cnnEpochs = config['CNN']['EPOCHS']
     data = {'image_size': IMAGE_SIZE, 'numAugm': numAugm, 'batchSize': batchSize, 'srRate': srRate,
             'srEpochs': srEpochs, 'cnnRate': cnnRate, 'cnnEpochs': cnnEpochs,
-            'categories': list(category_manager.CATEGORIES.keys())}
+            'categories': list(utils.CATEGORIES.keys())}
     return render_template('index.html', data=data)
 
 
@@ -140,7 +140,7 @@ def smiley():
         err = "Please add at least one category (by adding N images in that category)."
 
     return jsonify(classifiers=["Softmax Regression", "CNN"], results=[regression_output, cnn_output],
-                   error=err, categories=category_manager.get_category_names())
+                   error=err, categories=utils.get_category_names())
 
 
 # Add training example
@@ -150,7 +150,7 @@ def generate_training_example():
     image_size = int(config['DEFAULT']['IMAGE_SIZE'])
     image = np.array(request.json["img"], dtype=np.uint8).reshape(image_size, image_size, 1)
     category = request.json["cat"]
-    category_manager.add_training_example(image, category)
+    utils.add_training_example(image, category)
 
     return "ok"
 
