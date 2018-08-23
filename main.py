@@ -62,34 +62,35 @@ def cnn_predict(input):
 # Webapp definition
 app = Flask(__name__)
 
-# Delete last console output
-if os.path.isfile(os.path.join(config['DIRECTORIES']['LOGIC'], config['DIRECTORIES']['LOGS'], 'console.txt')):
-    os.remove(os.path.join(config['DIRECTORIES']['LOGIC'], config['DIRECTORIES']['LOGS'], 'console.txt'))
+# Class for log handling
+class Logger(object):
+    def __init__(self):
+        self.buffer = ""
+    def start(self):
+        self.stdout = sys.stdout
+        sys.stdout = self
+    def end(self):
+        sys.stdout = self.stdout
+    def write(self, data):
+        self.buffer += data
+        self.stdout.write(data)
+    def flush(self):
+        pass
+logger = Logger()
 
 # Decorator to capture standard output
 def capture(f):
-    @wraps(f)
     def captured(*args, **kwargs):
-        backup = sys.stdout # setup the environment
-
+        logger.start()
         try:
-            sys.stdout = StringIO()     # capture output
             result = f(*args, **kwargs)
-            out = sys.stdout.getvalue() # release output
         finally:
-            sys.stdout.close()  # close the stream 
-            sys.stdout = backup # restore original stdout
-
-        with open(os.path.join(config['DIRECTORIES']['LOGIC'], config['DIRECTORIES']['LOGS'], 'console.txt'), "a") as file:
-            file.write(out) # write print output to file
-            file.close()
-
-        return result # captured result from function
+            logger.end()
+        return result # captured result from decorated function
     return captured
 
 # Root
 @app.route('/')
-@capture
 def main():
     numAugm = config['DEFAULT']['NUMBER_AUGMENTATIONS_PER_IMAGE']
     batchSize = config['DEFAULT']['train_batch_size']
@@ -105,7 +106,6 @@ def main():
 
 # Predict
 @app.route('/api/smiley', methods=['POST'])
-@capture
 def smiley():
     maybe_update_models()
 
@@ -145,7 +145,6 @@ def smiley():
 
 # Add training example
 @app.route('/api/generate-training-example', methods=['POST'])
-@capture
 def generate_training_example():
     image_size = int(config['DEFAULT']['IMAGE_SIZE'])
     image = np.array(request.json["img"], dtype=np.uint8).reshape(image_size, image_size, 1)
@@ -156,7 +155,6 @@ def generate_training_example():
 
 # Update config parameters
 @app.route('/api/update-config', methods=['POST'])
-@capture
 def update_config():
     config.set("CNN", "LEARNING_RATE", request.json["cnnLearningRate"])
     config.set("REGRESSION", "LEARNING_RATE", request.json["srLearningRate"])
@@ -195,7 +193,6 @@ def train_models():
     return "ok"
 
 # Delete all saved models
-@capture
 @app.route('/api/delete-all-models', methods=['POST'])
 def delete_all_models():
     filelist = [f for f in os.listdir(MODELS_DIRECTORY)]
@@ -205,14 +202,10 @@ def delete_all_models():
     return "ok"
 
 @app.route('/api/get-console-output')
-@capture
 def console_output():
-    console_file = os.path.join(config['DIRECTORIES']['LOGIC'], config['DIRECTORIES']['LOGS'], 'console.txt')
-    if (os.path.isfile(console_file) and os.path.getsize(console_file) > 0):
-        print(os.path.getsize(console_file))
-        return send_file(console_file)
-    else:
-        return 'No entries (yet)'
+    output = logger.buffer
+    logger.__init__()
+    return jsonify(out=output)
 
 # main
 if __name__ == '__main__':
