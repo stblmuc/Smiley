@@ -11,20 +11,26 @@ CATEGORIES_LOCATION = os.path.join(os.path.dirname(__file__), config['DIRECTORIE
                                        config['DEFAULT']['IMAGE_SIZE'] + "/")
 CATEGORIES = None
 
+
 # Class for log handling
 class Logger(object):
     def __init__(self):
         self.buffer = ""
+
     def start(self):
         self.stdout = sys.stdout
         sys.stdout = self
+
     def end(self):
         sys.stdout = self.stdout
+
     def write(self, data):
         self.buffer += data
         self.stdout.write(data)
+
     def flush(self):
         pass
+
     def pop(self):
         out = self.buffer
         self.__init__()
