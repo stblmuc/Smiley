@@ -24,7 +24,7 @@ if not os.path.exists(MODELS_DIRECTORY):
 # updates the models if the number of classes changed
 def maybe_update_models():
     global y1, variables, saver_regression, y2, saver_cnn, x, is_training, sess, num_categories
-    if 'num_categories' not in globals() or num_categories != len(utils.update()):
+    if 'num_categories' not in globals() or num_categories != len(utils.update_categories()):
         # close (old) tensorflow if existent
         if 'sess' in globals():
             sess.close()
@@ -129,7 +129,7 @@ def smiley():
     err = ""  # string with error messages
 
     # if too less images are added, print an error message
-    too_less_img_error = get_too_less_images_error_msg()
+    too_less_img_error = utils.get_too_less_images_error_msg()
     if len(too_less_img_error) > 0:
         err = too_less_img_error
         regression_output = []
@@ -152,7 +152,7 @@ def smiley():
             err = err_retrain
 
     if num_categories == 0:
-        err = get_no_cat_error_msg()
+        err = utils.get_no_cat_error_msg()
 
     return jsonify(classifiers=["Softmax Regression", "CNN"], results=[regression_output, cnn_output],
                    error=err, categories=utils.get_category_names())
@@ -165,7 +165,7 @@ def generate_training_example():
     image = np.array(request.json["img"], dtype=np.uint8).reshape(image_size, image_size, 1)
     category = request.json["cat"]
     utils.add_training_example(image, category)
-    err = get_too_less_images_error_msg()
+    err = utils.get_too_less_images_error_msg()
     if len(err) > 0:
         return jsonify(error=err)
     else:
@@ -197,7 +197,7 @@ def train_models():
 
     # if no categories are added, print error
     if num_categories == 0:
-        err = get_no_cat_error_msg()
+        err = utils.get_no_cat_error_msg()
         return jsonify(error=err)
 
     try:
@@ -228,23 +228,6 @@ def console_output():
     logger.__init__()
     return jsonify(out=output)
 
-# Returns a string error message that a category has to be added
-def get_no_cat_error_msg():
-    req_images_per_cat = utils.get_number_of_images_required()
-    return "Please add at least one category (by adding at least %d images in that category)." % req_images_per_cat
-
-
-# Returns a string error message with the number of images for each category which is below the minimum images required
-def get_too_less_images_error_msg():
-    msg = ""
-    req_images_per_cat = utils.get_number_of_images_required()
-    cat_img = utils.get_number_of_images_per_category()
-    for cat in cat_img.keys():
-        if cat_img[cat] < req_images_per_cat:
-            msg += "category '" + cat + "' has just %d images, " % cat_img[cat]
-    if len(msg) > 0:
-        msg += "but at least %d images are required for each category." % req_images_per_cat
-    return msg
 
 # main
 if __name__ == '__main__':
