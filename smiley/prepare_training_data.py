@@ -7,7 +7,7 @@ import utils
 from scipy import ndimage
 
 # parameters
-NUM_LABELS = len(utils.update())
+NUM_LABELS = len(utils.update_categories())
 
 # load config params
 config = configparser.ConfigParser()
@@ -232,7 +232,7 @@ def cv2_clipped_zoom(img, zoom_factor):
 # prepare training data (generated images)
 def prepare_data(model, use_data_augmentation=True):
     global NUM_LABELS, config
-    NUM_LABELS = len(utils.update())
+    NUM_LABELS = len(utils.update_categories())
     config.read(os.path.join(os.path.dirname(__file__), 'config.ini'))
     train_data = []
     train_labels = []
