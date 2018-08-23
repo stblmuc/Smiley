@@ -38,14 +38,16 @@ def add_training_example(image, category):
     w = png.Writer(image_size, image_size, greyscale=True)
     w.write(open(os.path.join(CATEGORIES_LOCATION, category) + "/" + str(image_name) + ".png", "wb"), image)
 
+
 def get_category_names():
     category_names = ["" for _ in range(len(CATEGORIES))]
     for ind in range(len(category_names)):
         category_names[ind] = [x for x in CATEGORIES.keys() if CATEGORIES[x] == ind][0]
     return category_names
 
+
+# returns dictionary with keys = category names (from folders), values = number of images for the category
 def get_number_of_images_per_category():
-    # dictionary with keys = category names (from folders), values = number of images for the category
     cat_images = {}
     for z in os.walk(CATEGORIES_LOCATION):
         if len(str(z[0].split("/")[-1])) > 0:

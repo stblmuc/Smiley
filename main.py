@@ -13,7 +13,6 @@ import regression_model, cnn_model, category_manager, regression_train, cnn_trai
 
 config = configparser.ConfigParser()
 config.read(os.path.join(os.path.dirname(__file__), 'smiley/config.ini'))
-
 MODELS_DIRECTORY = os.path.join(config['DIRECTORIES']['LOGIC'], config['DIRECTORIES']['MODELS'],
                                 config['DEFAULT']['IMAGE_SIZE'])
 IMAGE_SIZE = int(config['DEFAULT']['IMAGE_SIZE'])
@@ -22,18 +21,20 @@ IMAGE_SIZE = int(config['DEFAULT']['IMAGE_SIZE'])
 if not os.path.exists(MODELS_DIRECTORY):
     os.makedirs(MODELS_DIRECTORY)
 
+
 # updates the models if the number of classes changed
 def maybe_update_models():
     global y1, variables, saver_regression, y2, saver_cnn, x, is_training, sess, num_categories
     if 'num_categories' not in globals() or num_categories != len(category_manager.update()):
+        # close (old) tensorflow if existent
         if 'sess' in globals():
             sess.close()
 
         num_categories = len(category_manager.CATEGORIES)
 
         # Model variables
-        x = tf.placeholder("float", [None, IMAGE_SIZE * IMAGE_SIZE])  # image placeholder
-        is_training = tf.placeholder("bool") # used for activating the dropout
+        x = tf.placeholder("float", [None, IMAGE_SIZE * IMAGE_SIZE])  # image input placeholder
+        is_training = tf.placeholder("bool")  # used for activating the dropout
 
         # Tensorflow session
         sess = tf.InteractiveSession()
@@ -47,21 +48,26 @@ def maybe_update_models():
         y2, variables = cnn_model.convolutional(x, nCategories=num_categories, is_training=is_training)
         saver_cnn = tf.train.Saver(variables)
 
+
 # Initialize the categories mapping, the tensorflow session and the models
 maybe_update_models()
+
 
 # Regression prediction
 def regression_predict(input):
     saver_regression.restore(sess, os.path.join(MODELS_DIRECTORY, config['REGRESSION']['MODEL_FILENAME']))
     return sess.run(y1, feed_dict={x: input}).flatten().tolist()
 
+
 # CNN prediction
 def cnn_predict(input):
     saver_cnn.restore(sess, os.path.join(MODELS_DIRECTORY, config['CNN']['MODEL_FILENAME']))
     return sess.run(y2, feed_dict={x: input, is_training: False}).flatten().tolist()
 
+
 # Webapp definition
 app = Flask(__name__)
+
 
 # Root
 @app.route('/')
@@ -118,7 +124,6 @@ def smiley():
             err = err_retrain
 
     if num_categories == 0:
-        #print(err)
         err = get_no_cat_error_msg()
 
     if len(err) > 0:
@@ -141,6 +146,7 @@ def generate_training_example():
     else:
         return "ok"
 
+
 # Update config parameters
 @app.route('/api/update-config', methods=['POST'])
 def update_config():
@@ -157,13 +163,14 @@ def update_config():
 
     return "ok"
 
+
 # Train model
 @app.route('/api/train-models', methods=['POST'])
 def train_models():
     maybe_update_models()
 
     # if no categories are added, print error
-    if (num_categories == 0):
+    if num_categories == 0:
         err = get_no_cat_error_msg()
         return jsonify(error=err)
 
@@ -179,6 +186,7 @@ def train_models():
 
     return "ok"
 
+
 # Delete all saved models
 @app.route('/api/delete-all-models', methods=['POST'])
 def delete_all_models():
@@ -188,11 +196,13 @@ def delete_all_models():
 
     return "ok"
 
+
 # Returns a string error message with the number of images required for each category
 def get_no_cat_error_msg():
     # calculating number of images required for each category (-0.000001 for precision errors)
     req_images_per_cat = math.ceil((1.0 / (1.0 - float(config['DEFAULT']['train_ratio']))) - 0.000001)
     return "Please add at least one category (by adding at least %d images in that category)." % req_images_per_cat
+
 
 def get_too_less_images_error_msg():
     msg = ""
@@ -209,6 +219,6 @@ def get_too_less_images_error_msg():
 # main
 if __name__ == '__main__':
     # Open webbrowser tab for the app
-    #webbrowser.open_new_tab("http://localhost:5000")
+    webbrowser.open_new_tab("http://localhost:5000")
 
     app.run()
