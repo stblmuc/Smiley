@@ -11,19 +11,26 @@ CATEGORIES_LOCATION = os.path.join(os.path.dirname(__file__), config['DIRECTORIE
                                        config['DEFAULT']['IMAGE_SIZE'] + "/")
 CATEGORIES = None
 
+
+# Class for log handling
 class Logger(object):
     def __init__(self):
         self.buffer = ""
+
     def start(self):
         self.stdout = sys.stdout
         sys.stdout = self
+
     def end(self):
         sys.stdout = self.stdout
+
     def write(self, data):
         self.buffer += data
         self.stdout.write(data)
+
     def flush(self):
         pass
+
     def pop(self):
         length = len(self.buffer)
         out = self.buffer[:length]
@@ -31,8 +38,9 @@ class Logger(object):
         return out
 
 
-# Class for log handling
+# logger object
 LOGGER = Logger()
+
 
 # Decorator to capture standard output
 def capture(f):
@@ -42,7 +50,7 @@ def capture(f):
             result = f(*args, **kwargs)
         finally:
             LOGGER.end()
-        return result # captured result from decorated function
+        return result  # captured result from decorated function
     return captured
 
 
@@ -119,10 +127,8 @@ def get_not_enough_images_error():
     cat_img = get_number_of_images_per_category()
     for cat in cat_img.keys():
         if cat_img[cat] < req_images_per_cat:
-            img = "image"
-            if cat_img[cat] > 1:
-                img = "images"
+            img = "images" if cat_img[cat] > 1 else "image"
             msg += "category '<b>" + cat + "</b>' has just <b>" + str(cat_img[cat]) + "</b> " + img + ", "
     if len(msg) > 0:
-        msg += "but at least <b>%d</b> images are required for each category." % req_images_per_cat
+        msg += "but at least <b>%d</b> images are required for each category. Please add at least the required images." % req_images_per_cat
     return msg
