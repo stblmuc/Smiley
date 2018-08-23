@@ -68,6 +68,7 @@ def cnn_predict(input):
 # Webapp definition
 app = Flask(__name__)
 
+
 # Root
 @app.route('/')
 def main():
@@ -187,8 +188,7 @@ def train_models():
 # Delete all saved models
 @app.route('/api/delete-all-models', methods=['POST'])
 def delete_all_models():
-    filelist = [f for f in os.listdir(MODELS_DIRECTORY)]
-    for f in filelist:
+    for f in os.listdir(MODELS_DIRECTORY):
         os.remove(os.path.join(MODELS_DIRECTORY, f))
 
     return "ok"

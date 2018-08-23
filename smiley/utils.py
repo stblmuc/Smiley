@@ -40,6 +40,7 @@ class Logger(object):
 # logger object
 LOGGER = Logger()
 
+
 # Decorator to capture standard output
 def capture(f):
     def captured(*args, **kwargs):
@@ -48,7 +49,7 @@ def capture(f):
             result = f(*args, **kwargs)
         finally:
             LOGGER.end()
-        return result # captured result from decorated function
+        return result  # captured result from decorated function
     return captured
 
 
@@ -122,5 +123,5 @@ def get_too_less_images_error_msg():
             img = "images" if cat_img[cat] > 1 else "image"
             msg += "category '<b>" + cat + "</b>' has just <b>" + str(cat_img[cat]) + "</b> " + img + ", "
     if len(msg) > 0:
-        msg += "but at least <b>%d</b> images are required for each category." % req_images_per_cat
+        msg += "but at least <b>%d</b> images are required for each category. Please add at least the required images." % req_images_per_cat
     return msg
