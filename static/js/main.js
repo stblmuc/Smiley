@@ -271,6 +271,10 @@ class Main {
                     $("#trainigDataLabel").css("background-color", "#ffffff");
                 }, 500);
                 this.initialize();
+                const error = data.error;
+                if (error) {
+                    $("#error").text(error);
+                }
             }
         })
         .fail(() => {
