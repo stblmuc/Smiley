@@ -138,9 +138,9 @@ def create_validation_set(train_data, train_labels, train_ratio):
         msg = "Error while preparing dat:"
         for idx in range(0, len(number_per_category_in_validation.values())):
             if list(number_per_category_in_validation.values())[idx] == 0:
-                msg += " category '" + utils.get_category_names()[idx] + "' has just %d images," % int(
+                msg += " category '<b>" + utils.get_category_names()[idx] + "</b>' has just <b>%d</b> images," % int(
                     number_per_category[idx])
-        raise Exception(msg + " but at least %d images are required for each category."
+        raise Exception(msg + " but at least <b>%d</b> images are required for each category."
                         % utils.get_number_of_images_required())
     else:
         return numpy.array(train_data_result), numpy.array(train_labels_result), \

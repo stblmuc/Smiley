@@ -173,7 +173,7 @@ class Main {
                 var results = data.results;
 
                 if (error) {
-                    $("#error").text(error);
+                    $("#error").html(error);
                 } else {
                     $("#error").text("");
                 }
@@ -273,7 +273,7 @@ class Main {
                 this.initialize();
                 const error = data.error;
                 if (error) {
-                    $("#error").text(error);
+                    $("#error").html(error);
                 }
             }
         })
@@ -389,7 +389,7 @@ class Main {
 
                 const error = data.error;
                 if (error) {
-                    $("#error").text(error);
+                    $("#error").html(error);
                 } else {
                     $("#error").text("");
                     this.drawInput((inputs) => {
