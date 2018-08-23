@@ -15,7 +15,6 @@ import regression_model, cnn_model, utils, regression_train, cnn_train
 
 config = configparser.ConfigParser()
 config.read(os.path.join(os.path.dirname(__file__), 'smiley/config.ini'))
-
 MODELS_DIRECTORY = os.path.join(config['DIRECTORIES']['LOGIC'], config['DIRECTORIES']['MODELS'],
                                 config['DEFAULT']['IMAGE_SIZE'])
 IMAGE_SIZE = int(config['DEFAULT']['IMAGE_SIZE'])
@@ -29,10 +28,16 @@ def maybe_update_models():
     global y1, variables, saver_regression, y2, saver_cnn, x, is_training, sess, num_categories
     if 'num_categories' not in globals() or num_categories != len(utils.update()):
         num_categories = len(utils.CATEGORIES)
+    if 'num_categories' not in globals() or num_categories != len(utils.update()):
+        # close (old) tensorflow if existent
+        if 'sess' in globals():
+            sess.close()
+
+        num_categories = len(utils.CATEGORIES)
 
         # Model variables
-        x = tf.placeholder("float", [None, IMAGE_SIZE * IMAGE_SIZE])  # image placeholder
-        is_training = tf.placeholder("bool") # used for activating the dropout
+        x = tf.placeholder("float", [None, IMAGE_SIZE * IMAGE_SIZE])  # image input placeholder
+        is_training = tf.placeholder("bool")  # used for activating the dropout
 
         # Tensorflow session
         sess = tf.InteractiveSession()
@@ -46,50 +51,58 @@ def maybe_update_models():
         y2, variables = cnn_model.convolutional(x, nCategories=num_categories, is_training=is_training)
         saver_cnn = tf.train.Saver(variables)
 
+
 # Initialize the categories mapping, the tensorflow session and the models
 maybe_update_models()
+
 
 # Regression prediction
 def regression_predict(input):
     saver_regression.restore(sess, os.path.join(MODELS_DIRECTORY, config['REGRESSION']['MODEL_FILENAME']))
     return sess.run(y1, feed_dict={x: input}).flatten().tolist()
 
+
 # CNN prediction
 def cnn_predict(input):
     saver_cnn.restore(sess, os.path.join(MODELS_DIRECTORY, config['CNN']['MODEL_FILENAME']))
     return sess.run(y2, feed_dict={x: input, is_training: False}).flatten().tolist()
 
+
 # Webapp definition
 app = Flask(__name__)
 
-# Delete last console output
-if os.path.isfile(os.path.join(config['DIRECTORIES']['LOGIC'], config['DIRECTORIES']['LOGS'], 'console.txt')):
-    os.remove(os.path.join(config['DIRECTORIES']['LOGIC'], config['DIRECTORIES']['LOGS'], 'console.txt'))
+
+# Class for log handling
+class Logger(object):
+    def __init__(self):
+        self.buffer = ""
+    def start(self):
+        self.stdout = sys.stdout
+        sys.stdout = self
+    def end(self):
+        sys.stdout = self.stdout
+    def write(self, data):
+        self.buffer += data
+        self.stdout.write(data)
+    def flush(self):
+        pass
+logger = Logger()
+
 
 # Decorator to capture standard output
 def capture(f):
-    @wraps(f)
     def captured(*args, **kwargs):
-        backup = sys.stdout # setup the environment
-
+        logger.start()
         try:
-            sys.stdout = StringIO()     # capture output
             result = f(*args, **kwargs)
-            out = sys.stdout.getvalue() # release output
         finally:
-            sys.stdout.close()  # close the stream 
-            sys.stdout = backup # restore original stdout
-
-        with open(os.path.join(config['DIRECTORIES']['LOGIC'], config['DIRECTORIES']['LOGS'], 'console.txt'), "a") as file:
-            file.write(out) # write print output to file
-            file.close()
-
-        return result # captured result from function
+            logger.end()
+        return result # captured result from decorated function
     return captured
+
 
 # Root
 @app.route('/')
-@capture
 def main():
     numAugm = config['DEFAULT']['NUMBER_AUGMENTATIONS_PER_IMAGE']
     batchSize = config['DEFAULT']['train_batch_size']
@@ -105,7 +118,6 @@ def main():
 
 # Predict
 @app.route('/api/smiley', methods=['POST'])
-@capture
 def smiley():
     maybe_update_models()
 
@@ -119,25 +131,32 @@ def smiley():
     cnn_input = (((255 - data) / 255.0) - 0.5).reshape(1, IMAGE_SIZE * IMAGE_SIZE)
 
     err = ""  # string with error messages
-    err_retrain = "Models not found or incompatible number of categories or incompatible image size. Please (re-)train the classifiers."
-    
-    try:
-        regression_output = regression_predict(regression_input)
-        regression_output = [-1.0 if math.isnan(b) else b for b in regression_output]
-    except (NotFoundError, InvalidArgumentError):
+
+    # if too less images are added, print an error message
+    too_less_img_error = get_too_less_images_error_msg()
+    if len(too_less_img_error) > 0:
+        err = too_less_img_error
         regression_output = []
-        err = err_retrain
-
-    try:
-        cnn_output = cnn_predict(cnn_input)
-        cnn_output = [-1.0 if math.isnan(f) else f for f in cnn_output]
-    except (NotFoundError, InvalidArgumentError):
         cnn_output = []
-        err = err_retrain
+    else:
+        err_retrain = "Models not found or incompatible number of categories or incompatible image size. Please (re-)train the classifiers."
 
-    # if no categories are added, print error
-    if (num_categories == 0):
-        err = "Please add at least one category (by adding N images in that category)."
+        try:
+            regression_output = regression_predict(regression_input)
+            regression_output = [-1.0 if math.isnan(b) else b for b in regression_output]
+        except (NotFoundError, InvalidArgumentError):
+            regression_output = []
+            err = err_retrain
+
+        try:
+            cnn_output = cnn_predict(cnn_input)
+            cnn_output = [-1.0 if math.isnan(f) else f for f in cnn_output]
+        except (NotFoundError, InvalidArgumentError):
+            cnn_output = []
+            err = err_retrain
+
+    if num_categories == 0:
+        err = get_no_cat_error_msg()
 
     return jsonify(classifiers=["Softmax Regression", "CNN"], results=[regression_output, cnn_output],
                    error=err, categories=utils.get_category_names())
@@ -145,18 +164,20 @@ def smiley():
 
 # Add training example
 @app.route('/api/generate-training-example', methods=['POST'])
-@capture
 def generate_training_example():
     image_size = int(config['DEFAULT']['IMAGE_SIZE'])
     image = np.array(request.json["img"], dtype=np.uint8).reshape(image_size, image_size, 1)
     category = request.json["cat"]
     utils.add_training_example(image, category)
+    err = get_too_less_images_error_msg()
+    if len(err) > 0:
+        return jsonify(error=err)
+    else:
+        return "ok"
 
-    return "ok"
 
 # Update config parameters
 @app.route('/api/update-config', methods=['POST'])
-@capture
 def update_config():
     config.set("CNN", "LEARNING_RATE", request.json["cnnLearningRate"])
     config.set("REGRESSION", "LEARNING_RATE", request.json["srLearningRate"])
@@ -171,6 +192,7 @@ def update_config():
 
     return "ok"
 
+
 # Train model
 @app.route('/api/train-models', methods=['POST'])
 @capture
@@ -178,8 +200,8 @@ def train_models():
     maybe_update_models()
 
     # if no categories are added, print error
-    if (num_categories == 0):
-        err = "Please add at least one category (by adding images in that category)."
+    if num_categories == 0:
+        err = get_no_cat_error_msg()
         return jsonify(error=err)
 
     try:
@@ -194,8 +216,8 @@ def train_models():
 
     return "ok"
 
+
 # Delete all saved models
-@capture
 @app.route('/api/delete-all-models', methods=['POST'])
 def delete_all_models():
     filelist = [f for f in os.listdir(MODELS_DIRECTORY)]
@@ -205,14 +227,28 @@ def delete_all_models():
     return "ok"
 
 @app.route('/api/get-console-output')
-@capture
 def console_output():
-    console_file = os.path.join(config['DIRECTORIES']['LOGIC'], config['DIRECTORIES']['LOGS'], 'console.txt')
-    if (os.path.isfile(console_file) and os.path.getsize(console_file) > 0):
-        print(os.path.getsize(console_file))
-        return send_file(console_file)
-    else:
-        return 'No entries (yet)'
+    output = logger.buffer
+    logger.__init__()
+    return jsonify(out=output)
+
+# Returns a string error message that a category has to be added
+def get_no_cat_error_msg():
+    req_images_per_cat = utils.get_number_of_images_required()
+    return "Please add at least one category (by adding at least %d images in that category)." % req_images_per_cat
+
+
+# Returns a string error message with the number of images for each category which is below the minimum images required
+def get_too_less_images_error_msg():
+    msg = ""
+    req_images_per_cat = utils.get_number_of_images_required()
+    cat_img = utils.get_number_of_images_per_category()
+    for cat in cat_img.keys():
+        if cat_img[cat] < req_images_per_cat:
+            msg += "category '" + cat + "' has just %d images, " % cat_img[cat]
+    if len(msg) > 0:
+        msg += "but at least %d images are required for each category." % req_images_per_cat
+    return msg
 
 # main
 if __name__ == '__main__':

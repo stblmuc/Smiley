@@ -15,7 +15,7 @@ We provide an easily understandable and concise backend and frontend capable of 
 - Python >=3.5 (recommended 3.6.6)
   - TensorFlow >=1.9 (recommended 1.9.0)
 
-### Usage ###
+### Installation ###
 Start the anaconda prompt and simply follow these instructions:
 
 ```bash
@@ -38,17 +38,47 @@ Start the anaconda prompt and simply follow these instructions:
 The logs from training can be accessed on the Tensorboard webapp by running the following command and navigating to the indicated site:
 
     > python -m tensorboard.main --logdir smiley/data/logs
-
-### Parameters ###
-Changing important parameters, e.g. learning rates and number of epochs, can be done on the webapp or in the config file `smiley/config.ini`.
+    
 
 ### Implementation details ###
 
-##### Linear regression #####
+##### Softmax Regression #####
 This method uses a single weight matrix which is multiplied with the input. After that, a bias is added and softmax is applied to obtain class probabilities.
 
 ##### Convolutional Neural Network #####
 It consists of two convolutional + max-pool layers followed by two fully connected layers with dropout on the first one. Softmax is also applied in the end to obtain class probabilities.
+
+### Parameters ###
+Changing important parameters, e.g. learning rates and number of epochs, can be done on the webapp. Further parameters can be changed in `smiley/config.ini`.
+Description of all parameters of `smiley/config.ini`:
+
+##### DEFAULT #####
+- **number_augmentations_per_image:** number of artificially created images per one original image (the artificial images are obtained by scaling, translating and rotating the original image)
+- **max_angle_for_augmentation:** images are rotated maximum +/- this angle at augmentation
+- **train_batch_size:** number of samples in a single batch
+- **train_ratio:** the ratio of how much data will be used for training and how much for validation
+- **image_size:** the width and height of the network-input images 
+
+##### CNN #####
++ **learning_rate:** controls how much the weights of our network are adjusted with respect to the loss gradient
++ **epochs:** number of times the entire (train-)dataset is passed forward and backward through the network
++ **model_filename:** the filename of the stored CNN model
+
+##### REGRESSION #####
++ **learning_rate:** controls how much the weights of our network are adjusted with respect to the loss gradient
++ **epochs:** number of times the entire (train-)dataset is passed forward and backward through the network
++ **model_filename:** the filename of the stored softmax regression model
+
+##### LOGS #####
++ **train_accuracy_display_step:** determines how often the accuracy of the current model on the train samples is displayed on the console
++ **validation_step:** determines how often the accuracy of the current model on the validation set is computed and displayed on the console
++ **expand_display_step:** determines how often the progress at the data augmentation is logged on the console
+
+##### DIRECTORIES #####
++ **logic:** contains the important scripts, image data and stored models of the program
++ **categories:** contains the image data
++ **models:** contains the stored models of the program
++ **logs:** contains the tensorflow log files for the Tensorboard
 
 ### License ###
 [MIT License](LICENSE)

@@ -271,6 +271,10 @@ class Main {
                     $("#trainigDataLabel").css("background-color", "#ffffff");
                 }, 500);
                 this.initialize();
+                const error = data.error;
+                if (error) {
+                    $("#error").text(error);
+                }
             }
         })
         .fail(() => {
@@ -381,6 +385,8 @@ class Main {
             url: '/api/train-models',
             method: 'POST',
             success: (data) => {
+                this.getConsoleOutput();
+
                 const error = data.error;
                 if (error) {
                     $("#error").text(error);
@@ -390,6 +396,7 @@ class Main {
                         this.loadOutput(inputs);
                     });
                 }
+
             }
         })
         .always(() => {
@@ -473,6 +480,21 @@ class Main {
         const error = "<b>Please make sure the server is running and check its console for further information.</b>";
         $("#error").html(error);
     }
+
+    getConsoleOutput(firstCall) {
+        var obj = $('#consoleOutput .card-body');
+        console.log('B')
+        $.ajax({
+            url: '/api/get-console-output',
+            success: (data) => {
+                if (!!firstCall && data.out.length == 0) data.out = "done!<br>"
+                obj.append(data.out.replace(/(\r\n|\n|\r)/gm, "<br>"));
+            }
+        })
+        .fail(() => {
+            obj.html("Connection failed.<br>");
+        });
+    }
 }
 
 $(() => {
@@ -511,17 +533,6 @@ $(() => {
         return false;
     });
 
-    setInterval(function() {
-        obj = $('#consoleOutput .card-body');
-        $.ajax({
-            url: '/api/get-console-output',
-            success: (data) => {
-                obj.html(data.replace(/(\r\n|\n|\r)/gm, "<br>"));
-                // obj[0].scrollTop = obj[0].scrollHeight;
-            }
-        })
-        .fail(() => {
-            obj.html('Connection failed.');
-        });
-    },2000);
+    main.getConsoleOutput(true);
+    setInterval(main.getConsoleOutput,5000);
 });
