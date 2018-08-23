@@ -135,11 +135,14 @@ def create_validation_set(train_data, train_labels, train_ratio):
         raise Exception("Please add at least one category.")
     elif min(number_per_category_in_validation.values()) == 0:
         # at least one of the categories has no items in the validation set (not enough training examples)
-        msg = "Error while preparing dat:"
+        msg = "Error while preparing data:"
         for idx in range(0, len(number_per_category_in_validation.values())):
             if list(number_per_category_in_validation.values())[idx] == 0:
-                msg += " category '<b>" + utils.get_category_names()[idx] + "</b>' has just <b>%d</b> images," % int(
-                    number_per_category[idx])
+                img = "image"
+                if number_per_category[idx] > 1:
+                    img = "images"
+                msg += " category '<b>" + utils.get_category_names()[idx] + "</b>' has just <b>" + str(int(
+                    number_per_category[idx])) + "</b> " + img + ","
         raise Exception(msg + " but at least <b>%d</b> images are required for each category."
                         % utils.get_number_of_images_required())
     else:

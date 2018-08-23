@@ -78,7 +78,10 @@ def get_too_less_images_error_msg():
     cat_img = get_number_of_images_per_category()
     for cat in cat_img.keys():
         if cat_img[cat] < req_images_per_cat:
-            msg += "category '<b>" + cat + "</b>' has just <b>%d</b> images, " % cat_img[cat]
+            img = "image"
+            if cat_img[cat] > 1:
+                img = "images"
+            msg += "category '<b>" + cat + "</b>' has just <b>" + str(cat_img[cat]) + "</b> " + img + ", "
     if len(msg) > 0:
         msg += "but at least <b>%d</b> images are required for each category." % req_images_per_cat
     return msg
