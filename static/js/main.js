@@ -388,8 +388,6 @@ class Main {
             url: '/api/train-models',
             method: 'POST',
             success: (data) => {
-                this.getConsoleOutput(false);
-
                 const error = data.error;
                 if (error) {
                     $("#error").html(error);
@@ -403,6 +401,7 @@ class Main {
             }
         })
         .always(() => {
+            this.getConsoleOutput(false);
             clearInterval(blink);
             $(button).prop('disabled', false);
             $("#deleteModels").prop('disabled', false);
