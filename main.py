@@ -26,6 +26,9 @@ if not os.path.exists(MODELS_DIRECTORY):
 def maybe_update_models():
     global y1, variables, saver_regression, y2, saver_cnn, x, is_training, sess, num_categories
     if 'num_categories' not in globals() or num_categories != len(category_manager.update()):
+        if 'sess' in globals():
+            sess.close()
+
         num_categories = len(category_manager.CATEGORIES)
 
         # Model variables
@@ -90,25 +93,33 @@ def smiley():
     cnn_input = (((255 - data) / 255.0) - 0.5).reshape(1, IMAGE_SIZE * IMAGE_SIZE)
 
     err = ""  # string with error messages
-    err_retrain = "Models not found or incompatible number of categories or incompatible image size. Please (re-)train the classifiers."
-    
-    try:
-        regression_output = regression_predict(regression_input)
-        regression_output = [-1.0 if math.isnan(b) else b for b in regression_output]
-    except (NotFoundError, InvalidArgumentError):
+
+    # if too less images are added, print an error message
+    too_less_img_error = get_too_less_images_error_msg()
+    if len(too_less_img_error) > 0:
+        err = too_less_img_error
         regression_output = []
-        err = err_retrain
-
-    try:
-        cnn_output = cnn_predict(cnn_input)
-        cnn_output = [-1.0 if math.isnan(f) else f for f in cnn_output]
-    except (NotFoundError, InvalidArgumentError):
         cnn_output = []
-        err = err_retrain
+    else:
+        err_retrain = "Models not found or incompatible number of categories or incompatible image size. Please (re-)train the classifiers."
 
-    # if no categories are added, print error
-    if (num_categories == 0):
-        err = "Please add at least one category (by adding N images in that category)."
+        try:
+            regression_output = regression_predict(regression_input)
+            regression_output = [-1.0 if math.isnan(b) else b for b in regression_output]
+        except (NotFoundError, InvalidArgumentError):
+            regression_output = []
+            err = err_retrain
+
+        try:
+            cnn_output = cnn_predict(cnn_input)
+            cnn_output = [-1.0 if math.isnan(f) else f for f in cnn_output]
+        except (NotFoundError, InvalidArgumentError):
+            cnn_output = []
+            err = err_retrain
+
+    if num_categories == 0:
+        #print(err)
+        err = get_no_cat_error_msg()
 
     if len(err) > 0:
         print(err)
@@ -124,8 +135,11 @@ def generate_training_example():
     image = np.array(request.json["img"], dtype=np.uint8).reshape(image_size, image_size, 1)
     category = request.json["cat"]
     category_manager.add_training_example(image, category)
-
-    return "ok"
+    err = get_too_less_images_error_msg()
+    if len(err) > 0:
+        return jsonify(error=err)
+    else:
+        return "ok"
 
 # Update config parameters
 @app.route('/api/update-config', methods=['POST'])
@@ -150,7 +164,7 @@ def train_models():
 
     # if no categories are added, print error
     if (num_categories == 0):
-        err = "Please add at least one category (by adding images in that category)."
+        err = get_no_cat_error_msg()
         return jsonify(error=err)
 
     try:
@@ -174,9 +188,27 @@ def delete_all_models():
 
     return "ok"
 
+# Returns a string error message with the number of images required for each category
+def get_no_cat_error_msg():
+    # calculating number of images required for each category (-0.000001 for precision errors)
+    req_images_per_cat = math.ceil((1.0 / (1.0 - float(config['DEFAULT']['train_ratio']))) - 0.000001)
+    return "Please add at least one category (by adding at least %d images in that category)." % req_images_per_cat
+
+def get_too_less_images_error_msg():
+    msg = ""
+    req_images_per_cat = math.ceil((1.0 / (1.0 - float(config['DEFAULT']['train_ratio']))) - 0.000001)
+    cat_img = category_manager.get_number_of_images_per_category()
+    for cat in cat_img.keys():
+        if cat_img[cat] < req_images_per_cat:
+            msg += "category '" + cat + "' has just %d images, " % cat_img[cat]
+    if len(msg) > 0:
+        msg += "but at least %d images are required for each category." % req_images_per_cat
+    return msg
+
+
 # main
 if __name__ == '__main__':
     # Open webbrowser tab for the app
-    webbrowser.open_new_tab("http://localhost:5000")
+    #webbrowser.open_new_tab("http://localhost:5000")
 
     app.run()

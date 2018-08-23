@@ -129,11 +129,16 @@ def create_validation_set(train_data, train_labels, train_ratio):
             validation_data_result.append(x)
             validation_labels_result.append(train_labels[i])
 
-    if not number_per_category_in_validation.values() or min(number_per_category_in_validation.values()) == 0:
+    if not number_per_category_in_validation.values():
+        raise Exception("Please add at least one category.")
+    elif min(number_per_category_in_validation.values()) == 0:
         # at least one of the categories has no items in the validation set (not enough training examples)
-        val, idx = min((val, idx) for (idx, val) in enumerate(list(number_per_category_in_validation.values())))
-        raise Exception("Error while preparing data. Category '" + category_manager.get_category_names()[idx]
-                        + "' has just %d images but needs at least %d images." % (int(number_per_category[idx]), 5))
+        msg = "Error while preparing dat:"
+        for idx in range(0, len(number_per_category_in_validation.values())):
+            if list(number_per_category_in_validation.values())[idx] == 0:
+                msg += " category '" + category_manager.get_category_names()[idx] + "' has just %d images," % int(
+                    number_per_category[idx])
+        raise Exception(msg + " but at least %d images are required for each category." % get_number_images_required())
     else:
         return numpy.array(train_data_result), numpy.array(train_labels_result), \
                numpy.array(validation_data_result), numpy.array(validation_labels_result)
@@ -251,3 +256,8 @@ def prepare_data(model, use_data_augmentation=True):
     train_size = train_total_data.shape[0]  # size of training set
 
     return NUM_LABELS, train_total_data, train_size, validation_data, validation_labels, test_data, test_labels
+
+
+# returns the number of images required for each category (-0.000001 for precision errors)
+def get_number_images_required():
+    return math.ceil((1.0 / (1.0 - float(config['DEFAULT']['train_ratio']))) - 0.000001)
