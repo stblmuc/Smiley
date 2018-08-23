@@ -245,37 +245,40 @@ class Main {
                     cat: label,
                     img: inputs
                 };
-                this.uploadTrainingData(uploadData);
+                $(button).fadeOut(400).fadeIn(400);
+                var blink = setInterval(function(){
+                    $(button).fadeOut(400).fadeIn(400);
+                }, 1000);
+                this.uploadTrainingData(uploadData, blink);
             });
             if (!this.cats.includes(label)) {
                 this.cats.push(label)
-                var catsList = document.getElementById('trainingDataLabelOptions');
+                var catsList = $('#trainingDataLabelOptions')[0];
                 var option = document.createElement('option');
                 option.value = label;
-                catsList.appendChild(option);
+                catsList.append(option);
             }
         } else {
             alert("Please enter a name/label for the data");
         };
     }
 
-    uploadTrainingData(inputs) {
+    uploadTrainingData(inputs, blink) {
         $.ajax({
             url: '/api/generate-training-example',
             method: 'POST',
             contentType: 'application/json',
             data: JSON.stringify(inputs),
             success: (data) => {
-                $("#trainigDataLabel").css("background-color", "#dff0d8");
-                window.setTimeout(() => {
-                    $("#trainigDataLabel").css("background-color", "#ffffff");
-                }, 500);
                 this.initialize();
                 const error = data.error;
                 if (error) {
                     $("#error").html(error);
                 }
             }
+        })
+        .always(() => {
+            clearInterval(blink);
         })
         .fail(() => {
             this.clearOutput();
@@ -385,7 +388,7 @@ class Main {
             url: '/api/train-models',
             method: 'POST',
             success: (data) => {
-                this.getConsoleOutput();
+                this.getConsoleOutput(false);
 
                 const error = data.error;
                 if (error) {
@@ -487,7 +490,7 @@ class Main {
             url: '/api/get-console-output',
             success: (data) => {
                 if (!!firstCall) obj.append("done!<br>");
-                obj.append(data.out.replace(/(\r\n|\n|\r)/gm, "<br>"));
+                if (data.out) obj.append(data.out.replace(/(\r\n|\n|\r)/gm, "<br>"));
             }
         })
         .fail(() => {
@@ -503,8 +506,8 @@ $(() => {
         main.initialize();
     });
 
-    $('#addTrainingData').click(() => {
-        main.addTrainingData();
+    $('#addTrainingData').click((e) => {
+        main.addTrainingData(e.target);
     });
 
     $('#importFile').change((e) => {
@@ -533,5 +536,5 @@ $(() => {
     });
 
     main.getConsoleOutput(true);
-    setInterval(main.getConsoleOutput,5000);
+    //setInterval(main.getConsoleOutput,5000);
 });

@@ -12,7 +12,8 @@ sys.path.append('smiley')
 import regression_model, cnn_model, regression_train, cnn_train, utils
 
 config = configparser.ConfigParser()
-config.read(os.path.join(os.path.dirname(__file__), 'smiley/config.ini'))
+config.file = os.path.join(os.path.dirname(__file__), 'smiley/config.ini')
+config.read(config.file)
 
 MODELS_DIRECTORY = os.path.join(config['DIRECTORIES']['LOGIC'], config['DIRECTORIES']['MODELS'],
                                 config['DEFAULT']['IMAGE_SIZE'])
@@ -99,31 +100,31 @@ def smiley():
 
     err = ""  # string with error messages
 
+    if num_categories == 0:
+        err = utils.get_no_cat_error()
+
     # if too less images are added, print an error message
-    too_less_img_error = utils.get_too_less_images_error_msg()
-    if len(too_less_img_error) > 0:
-        err = too_less_img_error
+    elif utils.not_enough_images():
+        err = utils.get_not_enough_images_error()
         regression_output = []
         cnn_output = []
+
     else:
-        err_retrain = "Models not found or incompatible number of categories or incompatible image size. Please (re-)train the classifiers."
+        retrain_error = "Models not found or incompatible number of categories or incompatible image size. Please (re-)train the classifiers."
 
         try:
             regression_output = regression_predict(regression_input)
             regression_output = [-1.0 if math.isnan(b) else b for b in regression_output]
         except (NotFoundError, InvalidArgumentError):
             regression_output = []
-            err = err_retrain
+            err = retrain_error
 
         try:
             cnn_output = cnn_predict(cnn_input)
             cnn_output = [-1.0 if math.isnan(f) else f for f in cnn_output]
         except (NotFoundError, InvalidArgumentError):
             cnn_output = []
-            err = err_retrain
-
-    if num_categories == 0:
-        err = utils.get_no_cat_error_msg()
+            err = retrain_error
 
     return jsonify(classifiers=["Softmax Regression", "CNN"], results=[regression_output, cnn_output],
                    error=err, categories=utils.get_category_names())
@@ -136,15 +137,16 @@ def generate_training_example():
     image = np.array(request.json["img"], dtype=np.uint8).reshape(image_size, image_size, 1)
     category = request.json["cat"]
     utils.add_training_example(image, category)
-    err = utils.get_too_less_images_error_msg()
-    if len(err) > 0:
+
+    if utils.not_enough_images():
+        err = utils.get_not_enough_images_error()
         return jsonify(error=err)
     else:
         return "ok"
 
 
 # Update config parameters
-@app.route('/api/update_categories-config', methods=['POST'])
+@app.route('/api/update-config', methods=['POST'])
 def update_config():
     config.set("CNN", "LEARNING_RATE", request.json["cnnLearningRate"])
     config.set("REGRESSION", "LEARNING_RATE", request.json["srLearningRate"])
@@ -154,7 +156,7 @@ def update_config():
     config.set("DEFAULT", "train_batch_size", request.json["batchSize"])
 
     # Write config back to file
-    with open(os.path.join(os.path.dirname(__file__), 'smiley/config.ini'), "w") as f:
+    with open(config.file, "w") as f:
         config.write(f)
 
     return "ok"
@@ -168,17 +170,16 @@ def train_models():
 
     # if no categories are added, print error
     if num_categories == 0:
-        err = utils.get_no_cat_error_msg()
+        err = utils.get_no_cat_error()
         return jsonify(error=err)
-
+    elif utils.not_enough_images():
+        err = utils.get_not_enough_images_error()
+        return jsonify(error=err)
     try:
         regression_train.train()
         cnn_train.train()
-    except Exception as inst:
-        if len(inst.args) > 0:
-            err = inst.args[0]
-        else:
-            err = "Unknown error."
+    except:
+        err = "Unknown error."
         return jsonify(error=err)
 
     return "ok"

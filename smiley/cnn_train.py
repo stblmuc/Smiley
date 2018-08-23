@@ -123,8 +123,6 @@ def train():
 
                 # saver.save(sess, LOGS_DIRECTORY + "CNN", epoch)
 
-    print("Optimization Finished!")
-
     # Code with test set
     # restore variables from disk
     # saver.restore(sess, MODEL_PATH)

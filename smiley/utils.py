@@ -25,8 +25,9 @@ class Logger(object):
     def flush(self):
         pass
     def pop(self):
-        out = self.buffer
-        self.__init__()
+        length = len(self.buffer)
+        out = self.buffer[:length]
+        self.buffer = self.buffer[length:]
         return out
 
 
@@ -100,13 +101,19 @@ def get_number_of_images_required():
 
 
 # Returns a string error message that a category has to be added
-def get_no_cat_error_msg():
+def get_no_cat_error():
     req_images_per_cat = get_number_of_images_required()
     return "Please add at least one category (by adding at least <b>%d</b> images in that category)." % req_images_per_cat
 
 
+def not_enough_images():
+    req_images_per_cat = get_number_of_images_required()
+    cat_img = get_number_of_images_per_category()
+    return all(cat_img[cat] < req_images_per_cat for cat in cat_img.keys())
+
+
 # Returns a string error message with the number of images for each category which is below the minimum images required
-def get_too_less_images_error_msg():
+def get_not_enough_images_error():
     msg = ""
     req_images_per_cat = get_number_of_images_required()
     cat_img = get_number_of_images_per_category()
