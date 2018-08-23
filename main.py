@@ -13,6 +13,7 @@ import regression_model, cnn_model, regression_train, cnn_train, utils
 
 config = configparser.ConfigParser()
 config.read(os.path.join(os.path.dirname(__file__), 'smiley/config.ini'))
+
 MODELS_DIRECTORY = os.path.join(config['DIRECTORIES']['LOGIC'], config['DIRECTORIES']['MODELS'],
                                 config['DEFAULT']['IMAGE_SIZE'])
 IMAGE_SIZE = int(config['DEFAULT']['IMAGE_SIZE'])
@@ -24,7 +25,7 @@ if not os.path.exists(MODELS_DIRECTORY):
 # updates the models if the number of classes changed
 def maybe_update_models():
     global y1, variables, saver_regression, y2, saver_cnn, x, is_training, sess, num_categories
-    if 'num_categories' not in globals() or num_categories != len(utils.update()):
+    if 'num_categories' not in globals() or num_categories != len(utils.update_categories()):
         # close (old) tensorflow if existent
         if 'sess' in globals():
             sess.close()
@@ -66,36 +67,6 @@ def cnn_predict(input):
 
 # Webapp definition
 app = Flask(__name__)
-
-
-# Class for log handling
-class Logger(object):
-    def __init__(self):
-        self.buffer = ""
-    def start(self):
-        self.stdout = sys.stdout
-        sys.stdout = self
-    def end(self):
-        sys.stdout = self.stdout
-    def write(self, data):
-        self.buffer += data
-        self.stdout.write(data)
-    def flush(self):
-        pass
-logger = Logger()
-
-
-# Decorator to capture standard output
-def capture(f):
-    def captured(*args, **kwargs):
-        logger.start()
-        try:
-            result = f(*args, **kwargs)
-        finally:
-            logger.end()
-        return result # captured result from decorated function
-    return captured
-
 
 # Root
 @app.route('/')
@@ -191,7 +162,7 @@ def update_config():
 
 # Train model
 @app.route('/api/train-models', methods=['POST'])
-@capture
+@utils.capture
 def train_models():
     maybe_update_models()
 
@@ -224,8 +195,7 @@ def delete_all_models():
 
 @app.route('/api/get-console-output')
 def console_output():
-    output = logger.buffer
-    logger.__init__()
+    output = utils.LOGGER.pop()
     return jsonify(out=output)
 
 # Returns a string error message that a category has to be added

@@ -24,14 +24,13 @@
             <canvas id="main" style="border:1px solid"></canvas>
             <p>
                 <button id="clear" class="btn btn-outline-secondary">Clear</button>
-                <label for="trainingDataLabel">&nbsp;&nbsp;Add Training Data To:
+                <label for="trainingDataLabel" style="margin-bottom: 0;">&nbsp;&nbsp;Add Training Data To:
                     <input list="trainingDataLabelOptions" id="trainingDataLabel" placeholder="e.g. smile">
                     <datalist id="trainingDataLabelOptions"></datalist>
                     <button id="addTrainingData" class="btn btn-outline-secondary">Add</button>
                 </label>
             </p>
-            <hr>
-            <div style="margin-top: 1rem">
+            <div style="margin-bottom: 1rem">
                 <div class="btn-group">
                     <button class="btn" style="pointer-events: none;">Import from:</button>
                     <label id="importFile" class="btn btn-outline-secondary" style="margin-bottom: 0px;">File<input type="file" hidden></label>
@@ -44,7 +43,7 @@
                     <button id="deleteModels" class="btn btn-outline-danger">Delete</button>
                 </div>
             </div>
-            <div style="margin: 1rem 0 1rem 0">
+            <div style="margin-bottom: 1rem">
                 <div class="card">
                     <div class="card-header" data-toggle="collapse" href="#trainParameters">
                         <span>Train Parameters Panel</span>
@@ -94,8 +93,7 @@
             <p>network output:</p>
             <p class="error" id="error"></p>
             <table id="output" class="table"></table>
-            <hr>
-            <div class="card">
+            <div class="card" style="margin-bottom: 1rem">
                 <div class="card-header" data-toggle="collapse" href="#consoleOutput">
                     <span>Console Output</span>
                     <span class="float-right text-muted" id="console-toggle-text">Click to toggle</span>

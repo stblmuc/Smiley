@@ -483,11 +483,10 @@ class Main {
 
     getConsoleOutput(firstCall) {
         var obj = $('#consoleOutput .card-body');
-        console.log('B')
         $.ajax({
             url: '/api/get-console-output',
             success: (data) => {
-                if (!!firstCall && data.out.length == 0) data.out = "done!<br>"
+                if (!!firstCall) obj.append("done!<br>");
                 obj.append(data.out.replace(/(\r\n|\n|\r)/gm, "<br>"));
             }
         })
