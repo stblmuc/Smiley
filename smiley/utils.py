@@ -7,11 +7,11 @@ config = configparser.ConfigParser()
 config.read(os.path.join(os.path.dirname(__file__), 'config.ini'))
 
 CATEGORIES_LOCATION = os.path.join(os.path.dirname(__file__), config['DIRECTORIES']['CATEGORIES'],
-                                   config['DEFAULT']['IMAGE_SIZE'] + "/")
+                                       config['DEFAULT']['IMAGE_SIZE'] + "/")
 CATEGORIES = None
 
 
-def update():
+def update_categories():
     global CATEGORIES
 
     # create folder for categories if it doesn't exist:

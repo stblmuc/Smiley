@@ -5,13 +5,11 @@ import sys
 import webbrowser
 import numpy as np
 import tensorflow as tf
-from flask import Flask, jsonify, render_template, request, send_file
+from flask import Flask, jsonify, render_template, request
 from tensorflow.python.framework.errors_impl import InvalidArgumentError, NotFoundError
-from io import StringIO
-from functools import wraps
 
 sys.path.append('smiley')
-import regression_model, cnn_model, utils, regression_train, cnn_train
+import regression_model, cnn_model, regression_train, cnn_train, utils
 
 config = configparser.ConfigParser()
 config.read(os.path.join(os.path.dirname(__file__), 'smiley/config.ini'))
@@ -175,7 +173,7 @@ def generate_training_example():
 
 
 # Update config parameters
-@app.route('/api/update-config', methods=['POST'])
+@app.route('/api/update_categories-config', methods=['POST'])
 def update_config():
     config.set("CNN", "LEARNING_RATE", request.json["cnnLearningRate"])
     config.set("REGRESSION", "LEARNING_RATE", request.json["srLearningRate"])

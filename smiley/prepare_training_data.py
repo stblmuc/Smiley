@@ -1,9 +1,9 @@
 import configparser
 import os
 import math
-import utils
 import numpy
 import cv2
+import utils
 from scipy import ndimage
 
 # parameters
