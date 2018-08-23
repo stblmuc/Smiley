@@ -73,6 +73,8 @@ def add_data(model, train_images, train_labels, test_images, test_labels, train_
         #    test_labels.append(labels[i])
 
     train_images = numpy.array(train_images)
+
+    # Code with test set
     #test_images = numpy.array(test_images)
 
     # transform labels into one-hot vectors
@@ -260,4 +262,5 @@ def prepare_data(model, use_data_augmentation=True):
 
 # returns the number of images required for each category (-0.000001 for precision errors)
 def get_number_images_required():
+    # for with test set add 1
     return math.ceil((1.0 / (1.0 - float(config['DEFAULT']['train_ratio']))) - 0.000001)
