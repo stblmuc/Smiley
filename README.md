@@ -52,29 +52,29 @@ It consists of two convolutional + max-pool layers followed by two fully connect
 Changing important parameters, e.g. learning rates and number of epochs, can be done on the webapp. Further parameters can be changed in `smiley/config.ini`.
 Description of all parameters of `smiley/config.ini`:
 
-DEFAULT
+##### DEFAULT #####
 - **number_augmentations_per_image:** number of artificially created images per one original image (the artificial images are obtained by scaling, translating and rotating the original image)
 - **max_angle_for_augmentation:** images are rotated maximum +/- this angle at augmentation
 - **train_batch_size:** number of samples in a single batch
 - **train_ratio:** the ratio of how much data will be used for training and how much for validation
 - **image_size:** the width and height of the network-input images 
 
-CNN
+##### CNN #####
 + **learning_rate:** controls how much the weights of our network are adjusted with respect to the loss gradient
 + **epochs:** number of times the entire (train-)dataset is passed forward and backward through the network
 + **model_filename:** the filename of the stored CNN model
 
-REGRESSION
+##### REGRESSION #####
 + **learning_rate:** controls how much the weights of our network are adjusted with respect to the loss gradient
 + **epochs:** number of times the entire (train-)dataset is passed forward and backward through the network
 + **model_filename:** the filename of the stored softmax regression model
 
-LOGS
+##### LOGS #####
 + **train_accuracy_display_step:** determines how often the accuracy of the current model on the train samples is displayed on the console
 + **validation_step:** determines how often the accuracy of the current model on the validation set is computed and displayed on the console
 + **expand_display_step:** determines how often the progress at the data augmentation is logged on the console
 
-DIRECTORIES
+##### DIRECTORIES #####
 + **logic:** contains the important scripts, image data and stored models of the program
 + **categories:** contains the image data
 + **models:** contains the stored models of the program
