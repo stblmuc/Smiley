@@ -140,7 +140,8 @@ def create_validation_set(train_data, train_labels, train_ratio):
             if list(number_per_category_in_validation.values())[idx] == 0:
                 msg += " category '" + category_manager.get_category_names()[idx] + "' has just %d images," % int(
                     number_per_category[idx])
-        raise Exception(msg + " but at least %d images are required for each category." % get_number_images_required())
+        raise Exception(msg + " but at least %d images are required for each category."
+                        % category_manager.get_number_of_images_required())
     else:
         return numpy.array(train_data_result), numpy.array(train_labels_result), \
                numpy.array(validation_data_result), numpy.array(validation_labels_result)

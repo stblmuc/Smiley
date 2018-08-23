@@ -1,6 +1,7 @@
 import configparser
 import os
 import png
+import math
 
 config = configparser.ConfigParser()
 config.read(os.path.join(os.path.dirname(__file__), 'config.ini'))
@@ -51,6 +52,14 @@ def get_number_of_images_per_category():
     cat_images = {}
     for z in os.walk(CATEGORIES_LOCATION):
         if len(str(z[0].split("/")[-1])) > 0:
-            for x in os.walk(CATEGORIES_LOCATION + str(z[0].split("/")[-1])):
+            for x in os.walk(os.path.join(CATEGORIES_LOCATION, str(z[0].split("/")[-1]))):
+                # the number of files in the category folder is used for the number of images for that category
                 cat_images[str(x[0].split("/")[-1])] = len(x[-1])
     return cat_images
+
+
+# returns the number of images required for each category
+def get_number_of_images_required():
+    # calculating number of images required for each category (-0.000001 for float precision errors)
+    # (for with test set add 1)
+    return math.ceil((1.0 / (1.0 - float(config['DEFAULT']['train_ratio']))) - 0.000001)

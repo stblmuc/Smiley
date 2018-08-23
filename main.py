@@ -197,19 +197,16 @@ def delete_all_models():
     return "ok"
 
 
-# Returns a string error message with the number of images required for each category
+# Returns a string error message that a category has to be added
 def get_no_cat_error_msg():
-    # calculating number of images required for each category (-0.000001 for precision errors)
-    # (for with test set add 1)
-    req_images_per_cat = math.ceil((1.0 / (1.0 - float(config['DEFAULT']['train_ratio']))) - 0.000001)
+    req_images_per_cat = category_manager.get_number_of_images_required()
     return "Please add at least one category (by adding at least %d images in that category)." % req_images_per_cat
 
 
+# Returns a string error message with the number of images for each category which is below the minimum images required
 def get_too_less_images_error_msg():
     msg = ""
-    # calculating number of images required for each category (-0.000001 for precision errors)
-    # (for with test set add 1)
-    req_images_per_cat = math.ceil((1.0 / (1.0 - float(config['DEFAULT']['train_ratio']))) - 0.000001)
+    req_images_per_cat = category_manager.get_number_of_images_required()
     cat_img = category_manager.get_number_of_images_per_category()
     for cat in cat_img.keys():
         if cat_img[cat] < req_images_per_cat:

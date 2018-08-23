@@ -15,7 +15,7 @@ We provide an easily understandable and concise backend and frontend capable of 
 - Python >=3.5 (recommended 3.6.6)
   - TensorFlow >=1.9 (recommended 1.9.0)
 
-### Usage ###
+### Installation ###
 Start the anaconda prompt and simply follow these instructions:
 
 ```bash
@@ -42,7 +42,7 @@ The logs from training can be accessed on the Tensorboard webapp by running the 
 
 ### Implementation details ###
 
-##### Softmax regression #####
+##### Softmax Regression #####
 This method uses a single weight matrix which is multiplied with the input. After that, a bias is added and softmax is applied to obtain class probabilities.
 
 ##### Convolutional Neural Network #####
