@@ -27,8 +27,6 @@ if not os.path.exists(MODELS_DIRECTORY):
 def maybe_update_models():
     global y1, variables, saver_regression, y2, saver_cnn, x, is_training, sess, num_categories
     if 'num_categories' not in globals() or num_categories != len(utils.update()):
-        num_categories = len(utils.CATEGORIES)
-    if 'num_categories' not in globals() or num_categories != len(utils.update()):
         # close (old) tensorflow if existent
         if 'sess' in globals():
             sess.close()
