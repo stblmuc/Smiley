@@ -338,15 +338,12 @@ class Main {
         }
     }
 
+    /* sets video_device_id to the last webcam found */
     gotDevices(deviceInfos) {
         for (var i = 0; i !== deviceInfos.length; ++i) {
             var deviceInfo = deviceInfos[i];
             if (deviceInfo.kind === 'videoinput') {
-                console.log(deviceInfo.label);
-                console.log(deviceInfo);
                 this.video_device_id = deviceInfo.deviceId;
-            } else {
-                console.log('Found one other kind of source/device: ', deviceInfo);
             }
         }
     }
