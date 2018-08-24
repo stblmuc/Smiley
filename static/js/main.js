@@ -32,6 +32,10 @@ class Main {
         this.canvas.addEventListener('mouseup', this.onMouseUp.bind(this));
         this.canvas.addEventListener('mousemove', this.onMouseMove.bind(this));
 
+        navigator.mediaDevices.enumerateDevices().then((deviceInfos) => {
+            this.gotDevices(deviceInfos);
+        });
+
         this.initializeConfigValues();
         this.initialize();
     }
@@ -334,6 +338,19 @@ class Main {
         }
     }
 
+    gotDevices(deviceInfos) {
+        for (var i = 0; i !== deviceInfos.length; ++i) {
+            var deviceInfo = deviceInfos[i];
+            if (deviceInfo.kind === 'videoinput') {
+                console.log(deviceInfo.label);
+                console.log(deviceInfo);
+                this.video_device_id = deviceInfo.deviceId;
+            } else {
+                console.log('Found one other kind of source/device: ', deviceInfo);
+            }
+        }
+    }
+
     takePicture(button) {
         if (!!(navigator.mediaDevices && navigator.mediaDevices.getUserMedia)) {
             if (!!this.video && !this.video.paused) {
@@ -347,14 +364,14 @@ class Main {
                 $(button).text("Save");
                 this.video.play();
             } else {
-                var constraints = {video: {width: this.rect_size, height: this.rect_size, facingMode: "user", frameRate: 10}};
+                var constraints = {video: {width: this.rect_size, height: this.rect_size, facingMode: "user", frameRate: 10, deviceId: {exact: this.video_device_id}}};
 
                 navigator.mediaDevices.getUserMedia(constraints)
                 .then((mediaStream) => {
                     $(button).text("Save");
 
-                    const ctx = this.ctx
-                    const rect_size = this.rect_size
+                    const ctx = this.ctx;
+                    const rect_size = this.rect_size;
 
                     this.video = document.createElement('video');
                     this.video.srcObject = mediaStream;
