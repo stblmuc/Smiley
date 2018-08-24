@@ -32,9 +32,7 @@ class Main {
         this.canvas.addEventListener('mouseup', this.onMouseUp.bind(this));
         this.canvas.addEventListener('mousemove', this.onMouseMove.bind(this));
 
-        navigator.mediaDevices.enumerateDevices().then((deviceInfos) => {
-            this.gotDevices(deviceInfos);
-        });
+        navigator.mediaDevices.enumerateDevices().then((deviceInfos)=>{this.gotDevices(deviceInfos);});
 
         this.initializeConfigValues();
         this.initialize();
@@ -345,6 +343,9 @@ class Main {
             if (deviceInfo.kind === 'videoinput') {
                 this.video_device_id = deviceInfo.deviceId;
             }
+        }
+        if (this.video_device_id === null) {
+            alert('No webcam found.');
         }
     }
 

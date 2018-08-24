@@ -86,7 +86,7 @@ def save_augmented_example(model, image):
         c = 0.5
     scaled_img = numpy.clip(255 - (image + c) * 255, 0, 255).astype(int)
 
-    # create folder for category if it doesn't exist:
+    # create folder for the augmented images if it doesn't exist:
     path = os.path.join(os.path.dirname(__file__), config['DIRECTORIES']['augm_images'])
     if not os.path.exists(path):
         os.makedirs(path)

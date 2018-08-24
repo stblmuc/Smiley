@@ -269,9 +269,3 @@ def prepare_data(model, use_data_augmentation=True):
     train_size = train_total_data.shape[0]  # size of training set
 
     return NUM_LABELS, train_total_data, train_size, validation_data, validation_labels, test_data, test_labels
-
-
-# returns the number of images required for each category (-0.000001 for precision errors)
-def get_number_images_required():
-    # for with test set add 1
-    return math.ceil((1.0 / (1.0 - float(config['DEFAULT']['train_ratio']))) - 0.000001)
