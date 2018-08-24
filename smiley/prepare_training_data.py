@@ -151,7 +151,7 @@ def create_validation_set(train_data, train_labels, train_ratio):
 
 
 # augment training data
-def expand_training_data(images, labels):
+def expand_training_data(model, images, labels):
     expanded_images = []
     expanded_labels = []
     image_size = int(config['DEFAULT']['IMAGE_SIZE'])
@@ -172,23 +172,27 @@ def expand_training_data(images, labels):
 
         num_augm_per_img = int(config['DEFAULT']['NUMBER_AUGMENTATIONS_PER_IMAGE'])
         max_angle = int(config['DEFAULT']['MAX_ANGLE_FOR_AUGMENTATION'])
+        save_augm_step = int(config['LOGS']['save_augm_step'])
         for i in range(num_augm_per_img):
             # rotate the image with random degree
             angle = numpy.random.randint(-max_angle, max_angle, 1)
             new_img = ndimage.rotate(image, angle, reshape=False, cval=bg_value)
 
             # shift the image with random distance
-            max_shift = int(math.floor(image_size * 0.2))
+            max_shift = int(math.floor(image_size * 0.15))
             shift = numpy.random.randint(-max_shift, max_shift, 2)
             new_img_ = ndimage.shift(new_img, shift, cval=bg_value)
 
             # zoom image while keeping its dimensions
-            zoom = numpy.random.uniform(0.5, 2)
-            new_img__ = cv2_clipped_zoom(new_img_, zoom)
+            zoom = numpy.random.uniform(0.5, 1.5)
+            new_img__ = cv2_clipped_zoom(model, new_img_, zoom)
 
             # register new training data
             expanded_images.append(numpy.reshape(new_img__, image_size * image_size))
             expanded_labels.append(y)
+
+            if save_augm_step != 0 and (i + 1) % save_augm_step == 0:
+                utils.save_augmented_example(model, new_img__)
 
     # images and labels are concatenated for random-shuffle at each epoch
     # notice that pair of image and label should not be broken
@@ -199,7 +203,7 @@ def expand_training_data(images, labels):
 
 
 # Source: https://stackoverflow.com/questions/37119071/scipy-rotate-and-zoom-an-image-without-changing-its-dimensions
-def cv2_clipped_zoom(img, zoom_factor):
+def cv2_clipped_zoom(model, img, zoom_factor):
     """
     Center zoom in/out of the given image and returning an enlarged/shrinked view of
     the image without changing dimensions
@@ -225,9 +229,13 @@ def cv2_clipped_zoom(img, zoom_factor):
     pad_height1, pad_width1 = (height - resize_height) // 2, (width - resize_width) // 2
     pad_height2, pad_width2 = (height - resize_height) - pad_height1, (width - resize_width) - pad_width1
     pad_spec = [(pad_height1, pad_height2), (pad_width1, pad_width2)] + [(0, 0)] * (img.ndim - 2)
+    if model == "regression":
+        const_fill_value = 0
+    elif model == "CNN":
+        const_fill_value = -0.5
 
     result = cv2.resize(cropped_img, (resize_width, resize_height))
-    result = numpy.pad(result, pad_spec, mode='constant')
+    result = numpy.pad(result, pad_spec, mode='constant', constant_values=const_fill_value)
     assert result.shape[0] == height and result.shape[1] == width
     return result
 
@@ -254,7 +262,7 @@ def prepare_data(model, use_data_augmentation=True):
     # concatenate train_data and train_labels for random shuffle
     if use_data_augmentation:
         # augment training data by random rotations etc.
-        train_total_data = expand_training_data(train_data, train_labels)
+        train_total_data = expand_training_data(model, train_data, train_labels)
     else:
         train_total_data = numpy.concatenate((train_data, train_labels), axis=1)
         numpy.random.shuffle(train_total_data)

@@ -73,12 +73,14 @@ Description of all parameters of `smiley/config.ini`:
 + **train_accuracy_display_step:** determines how often the accuracy of the current model on the train samples is displayed on the console
 + **validation_step:** determines how often the accuracy of the current model on the validation set is computed and displayed on the console
 + **expand_display_step:** determines how often the progress at the data augmentation is logged on the console
++ **save_augm_step:** determines how often the augmented images are saved, 0 if no augmented images should be stored
 
 ##### DIRECTORIES #####
 + **logic:** contains the important scripts, image data and stored models of the program
 + **categories:** contains the image data
 + **models:** contains the stored models of the program
 + **logs:** contains the tensorflow log files for the Tensorboard
++ **augm_images:** contains the stored augmented images
 
 ### License ###
 [MIT License](LICENSE)

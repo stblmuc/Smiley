@@ -3,6 +3,7 @@ import os
 import sys
 import png
 import math
+import numpy
 
 config = configparser.ConfigParser()
 config.read(os.path.join(os.path.dirname(__file__), 'config.ini'))
@@ -71,16 +72,36 @@ def update_categories():
 
 def add_training_example(image, category):
     # create folder for category if it doesn't exist:
-    if not os.path.exists(os.path.join(CATEGORIES_LOCATION, category)):
-        os.makedirs(os.path.join(CATEGORIES_LOCATION, category))
+    path = os.path.join(CATEGORIES_LOCATION, category)
+    if not os.path.exists(path):
+        os.makedirs(path)
 
+    save_image(image, path)
+
+
+def save_augmented_example(model, image):
+    # scale back image
+    c = 0
+    if model == "CNN":
+        c = 0.5
+    scaled_img = numpy.clip(255 - (image + c) * 255, 0, 255).astype(int)
+
+    # create folder for category if it doesn't exist:
+    path = os.path.join(os.path.dirname(__file__), config['DIRECTORIES']['augm_images'])
+    if not os.path.exists(path):
+        os.makedirs(path)
+
+    save_image(scaled_img, path)
+
+
+def save_image(image, path):
     # name for new training example image
-    image_name = max([0] + [int(x.split(".")[0]) for x in os.listdir(os.path.join(CATEGORIES_LOCATION, category))]) + 1
+    image_name = max([0] + [int(x.split(".")[0]) for x in os.listdir(path)]) + 1
 
     # store new training example image
     image_size = int(config['DEFAULT']['IMAGE_SIZE'])
     w = png.Writer(image_size, image_size, greyscale=True)
-    w.write(open(os.path.join(CATEGORIES_LOCATION, category) + "/" + str(image_name) + ".png", "wb"), image)
+    w.write(open(path + "/" + str(image_name) + ".png", "wb"), image)
 
 
 def get_category_names():
