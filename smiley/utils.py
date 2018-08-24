@@ -105,10 +105,7 @@ def save_image(image, path):
 
 
 def get_category_names():
-    category_names = ["" for _ in range(len(CATEGORIES))]
-    for ind in range(len(category_names)):
-        category_names[ind] = [x for x in CATEGORIES.keys() if CATEGORIES[x] == ind][0]
-    return category_names
+    return CATEGORIES.keys()
 
 
 # returns dictionary with keys = category names (from folders), values = number of images for the category
