@@ -35,6 +35,7 @@ class Main {
         navigator.mediaDevices.enumerateDevices().then((deviceInfos)=>{this.gotDevices(deviceInfos);});
 
         this.initializeConfigValues();
+        this.createUserCategoryButtons();
         this.initialize();
     }
 
@@ -72,6 +73,16 @@ class Main {
         document.getElementById('sr-epochs').value = this.srEpochs;
         document.getElementById('cnn-rate').value = this.cnnRate;
         document.getElementById('cnn-epochs').value = this.cnnEpochs;
+    }
+
+    createUserCategoryButtons() {
+        param.user_categories.forEach(function(item){
+            var catsButtons = $('#emoji-buttons')[0];
+            var newButton = document.createElement('button');
+            newButton.innerHTML = item;
+            newButton.className += " btn btn-outline-secondary button-cross cross-img";
+            catsButtons.appendChild(newButton);
+        });
     }
 
     onMouseDown(e) {
@@ -268,6 +279,12 @@ class Main {
                 var option = document.createElement('option');
                 option.value = label;
                 catsList.append(option);
+
+                var catsButtons = $('#emoji-buttons')[0];
+                var newButton = document.createElement('button');
+                newButton.innerHTML = label;
+                newButton.className += " btn btn-outline-secondary button-cross cross-img";
+                catsButtons.appendChild(newButton);
             }
         } else {
             alert("Please enter a name/label for the data");

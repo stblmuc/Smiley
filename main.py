@@ -81,7 +81,8 @@ def main():
     cnnEpochs = config['CNN']['EPOCHS']
     data = {'image_size': IMAGE_SIZE, 'numAugm': numAugm, 'batchSize': batchSize, 'srRate': srRate,
             'srEpochs': srEpochs, 'cnnRate': cnnRate, 'cnnEpochs': cnnEpochs,
-            'categories': list(utils.CATEGORIES.keys())}
+            'categories': list(set().union(utils.get_category_names(), ["sad", "smiley", "neutral", "upside-down", "angry", "scream"])),
+            'user_categories': list(set(utils.get_category_names()) - {"sad", "smiley", "neutral", "upside-down", "angry", "scream"})}
     return render_template('index.html', data=data)
 
 
