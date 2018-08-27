@@ -3,10 +3,6 @@
     margin-bottom: 1rem;
 }
 
-hr {
-    margin-left: 0;
-}
-
 .button-own-image:before {
     content: "";
     width: 20px;
