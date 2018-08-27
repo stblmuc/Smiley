@@ -376,7 +376,17 @@ class Main {
         }
     }
 
-    takePicture(button) {
+    useModeDraw(button) {
+        console.log('he')
+        if (!!this.video) {
+            this.video.pause();
+            this.video = null;
+        }
+
+        this.initialize();
+    }
+
+    useModeCamera(button) {
         if (!!(navigator.mediaDevices && navigator.mediaDevices.getUserMedia)) {
             if (!this.video) {
                 var constraints = {video: {width: this.rect_size, height: this.rect_size, facingMode: "user", frameRate: 10}};
@@ -512,6 +522,14 @@ class Main {
 $(() => {
     var main = new Main();
 
+    $('#modeDraw').click((e) => {
+        main.useModeDraw(e.target);
+    });
+
+    $('#modeCamera').click((e) => {
+        main.useModeCamera(e.target);
+    });
+
     $('#clear').click(() => {
         main.initialize();
     });
@@ -535,10 +553,6 @@ $(() => {
     $('#importFolder').change((e) => {
         main.loadAndUploadImages(e.target);
     });*/
-
-    $('#modeCamera').click((e) => {
-        main.takePicture(e.target);
-    });
 
     $('#trainModels').click((e) => {
         main.trainModels(e.target);
