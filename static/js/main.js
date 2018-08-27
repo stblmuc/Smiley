@@ -239,8 +239,34 @@ class Main {
         });
     }
 
-    addTrainingData(button) {
+    /*addTrainingData(button) {
         const label = $("#trainingDataLabel").val();
+        if (label) {
+            this.drawInput((inputs) => {
+                const uploadData = {
+                    cat: label,
+                    img: inputs
+                };
+                $(button).fadeOut(400).fadeIn(400);
+                var blink = setInterval(function(){
+                    $(button).fadeOut(400).fadeIn(400);
+                }, 1000);
+                this.uploadTrainingData(uploadData, blink);
+            });
+            if (!this.cats.includes(label)) {
+                this.cats.push(label)
+                var catsList = $('#trainingDataLabelOptions')[0];
+                var option = document.createElement('option');
+                option.value = label;
+                catsList.append(option);
+            }
+        } else {
+            alert("Please enter a name/label for the data");
+        };
+    }*/
+
+    addTrainingData(button) {
+        const label = $(button).text();
         if (label) {
             this.drawInput((inputs) => {
                 const uploadData = {
@@ -521,6 +547,10 @@ $(() => {
     });
 
     $('#addTrainingData').click((e) => {
+        //main.addTrainingData(e.target);
+    });
+
+    $('#addSmileyData').click((e) => {
         main.addTrainingData(e.target);
     });
 

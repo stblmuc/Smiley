@@ -109,7 +109,7 @@ def get_category_names():
     return list(CATEGORIES.keys())
 
 
-# returns dictionary with keys = category names (from folders), values = number of images for the category
+# Returns dictionary with keys = category names (from folders), values = number of images for the category
 def get_number_of_images_per_category():
     cat_images = {}
     for z in os.walk(CATEGORIES_LOCATION):
@@ -120,7 +120,7 @@ def get_number_of_images_per_category():
     return cat_images
 
 
-# returns the number of images required for each category
+# Returns the number of images required for each category
 def get_number_of_images_required():
     # calculating number of images required for each category (-0.000001 for float precision errors)
     # (for with test set add 1)
@@ -133,6 +133,7 @@ def get_no_cat_error():
     return "Please add at least one category (by adding at least <b>%d</b> images in that category)." % req_images_per_cat
 
 
+# Checks if at least one category has not the least required number of images
 def not_enough_images():
     req_images_per_cat = get_number_of_images_required()
     cat_img = get_number_of_images_per_category()
