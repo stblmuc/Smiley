@@ -550,7 +550,7 @@ $(() => {
         //main.addTrainingData(e.target);
     });*/
 
-    $('#addSmileyData').click((e) => {
+    $('.add-emoji-data').click((e) => {
         main.addTrainingData(e.target);
     });
 

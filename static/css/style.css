@@ -11,5 +11,25 @@
 }
 
 .smiley-img:before{
-     background-color : red;
+     background-image : url("../img/smiley.png");
+}
+
+.neutral-img:before{
+     background-image : url("../img/neutral.png");
+}
+
+.sad-img:before{
+     background-image : url("../img/sad.png");
+}
+
+.scream-img:before{
+     background-image : url("../img/scream.png");
+}
+
+.angry-img:before{
+     background-image : url("../img/angry.png");
+}
+
+.upside-down-img:before{
+     background-image : url("../img/upside-down.png");
 }
