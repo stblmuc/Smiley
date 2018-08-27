@@ -79,10 +79,11 @@ def main():
     srEpochs = config['REGRESSION']['EPOCHS']
     cnnRate = config['CNN']['LEARNING_RATE']
     cnnEpochs = config['CNN']['EPOCHS']
+    predefined_categories = ["sad", "smile", "neutral", "upside-down", "angry", "scream"]
     data = {'image_size': IMAGE_SIZE, 'numAugm': numAugm, 'batchSize': batchSize, 'srRate': srRate,
             'srEpochs': srEpochs, 'cnnRate': cnnRate, 'cnnEpochs': cnnEpochs,
-            'categories': list(set().union(utils.get_category_names(), ["sad", "smiley", "neutral", "upside-down", "angry", "scream"])),
-            'user_categories': list(set(utils.get_category_names()) - {"sad", "smiley", "neutral", "upside-down", "angry", "scream"})}
+            'categories': list(set().union(utils.get_category_names(), predefined_categories)),
+            'user_categories': list(set(utils.get_category_names()) - set(predefined_categories))}
     return render_template('index.html', data=data)
 
 
