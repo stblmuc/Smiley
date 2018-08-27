@@ -150,5 +150,5 @@ def get_not_enough_images_error():
             img = "images" if cat_img[cat] > 1 else "image"
             msg += "category '<b>" + cat + "</b>' has just <b>" + str(cat_img[cat]) + "</b> " + img + ", "
     if len(msg) > 0:
-        msg += "but at least <b>%d</b> images are required for each category. Please add at least the required images." % req_images_per_cat
+        msg += "but at least <b>%d</b> images are required for each category. Please add the missing images and (re-)train the classifiers." % req_images_per_cat
     return msg
