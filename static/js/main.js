@@ -239,34 +239,17 @@ class Main {
         });
     }
 
-    /*addTrainingData(button) {
-        const label = $("#trainingDataLabel").val();
-        if (label) {
-            this.drawInput((inputs) => {
-                const uploadData = {
-                    cat: label,
-                    img: inputs
-                };
-                $(button).fadeOut(400).fadeIn(400);
-                var blink = setInterval(function(){
-                    $(button).fadeOut(400).fadeIn(400);
-                }, 1000);
-                this.uploadTrainingData(uploadData, blink);
-            });
-            if (!this.cats.includes(label)) {
-                this.cats.push(label)
-                var catsList = $('#trainingDataLabelOptions')[0];
-                var option = document.createElement('option');
-                option.value = label;
-                catsList.append(option);
-            }
-        } else {
-            alert("Please enter a name/label for the data");
-        };
-    }*/
-
     addTrainingData(button) {
+        const label = $("#trainingDataLabel").val();
+        this.addTrainingDataWithLabel(button, label);
+    }
+
+    addEmojiTrainingData(button) {
         const label = $(button).text();
+        this.addTrainingDataWithLabel(button, label);
+    }
+
+    addTrainingDataWithLabel(button, label) {
         if (label) {
             this.drawInput((inputs) => {
                 const uploadData = {
@@ -288,7 +271,7 @@ class Main {
             }
         } else {
             alert("Please enter a name/label for the data");
-        };
+        }
     }
 
     uploadTrainingData(inputs, blink) {
@@ -546,12 +529,12 @@ $(() => {
         main.initialize();
     });
 
-    /*$('#addTrainingData').click((e) => {
-        //main.addTrainingData(e.target);
-    });*/
+    $('#addTrainingData').click((e) => {
+        main.addTrainingData(e.target);
+    });
 
     $('.add-emoji-data').click((e) => {
-        main.addTrainingData(e.target);
+        main.addEmojiTrainingData(e.target);
     });
 
     /*$('#importFile').change((e) => {

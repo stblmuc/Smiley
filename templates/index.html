@@ -30,15 +30,17 @@
             </p>
             <div class="card" style="margin-bottom: 1rem">
                 <div class="card-header">
-                    <span>Add to training</span>
+                    <span>Add to training dataset</span>
                 </div>
                 <div class="card-body">
-                    <button class="btn btn-outline-secondary button-own-image add-emoji-data smiley-img" value="smiley">smiley</button>
-                    <button class="btn btn-outline-secondary button-own-image add-emoji-data neutral-img" value="neutral">neutral</button>
-                    <button class="btn btn-outline-secondary button-own-image add-emoji-data sad-img" value="sad">sad</button>
-                    <button class="btn btn-outline-secondary button-own-image add-emoji-data angry-img" value="angry">angry</button>
-                    <button class="btn btn-outline-secondary button-own-image add-emoji-data scream-img" value="scream">scream</button>
-                    <button class="btn btn-outline-secondary button-own-image add-emoji-data upside-down-img" value="upside-down">upside-down</button>
+                    <div id="emoji-buttons">
+                        <button class="btn btn-outline-secondary button-own-image add-emoji-data smiley-img">smiley</button>
+                        <button class="btn btn-outline-secondary button-own-image add-emoji-data neutral-img">neutral</button>
+                        <button class="btn btn-outline-secondary button-own-image add-emoji-data sad-img">sad</button>
+                        <button class="btn btn-outline-secondary button-own-image add-emoji-data angry-img">angry</button>
+                        <button class="btn btn-outline-secondary button-own-image add-emoji-data scream-img">scream</button>
+                        <button class="btn btn-outline-secondary button-own-image add-emoji-data upside-down-img">upside-down</button>
+                    </div>
                     <br>
                     <label for="trainingDataLabel" style="margin-bottom: 0;">&nbsp;&nbsp;Or add your own category:
                         <input list="trainingDataLabelOptions" id="trainingDataLabel" placeholder="e.g. elephant">
