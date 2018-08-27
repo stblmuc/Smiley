@@ -51,6 +51,15 @@
      background-image : url("../img/upside-down.png");
 }
 
-.cross-img:after{
+.cross-img{
+     content: "";
      background-image : url("../img/cross.png");
+     width: 20px;
+     height: 20px;
+     display: inline-block;
+     margin-left: 5px;
+     vertical-align: text-top;
+     background-color: transparent;
+     background-position : center center;
+     background-repeat: no-repeat;
 }

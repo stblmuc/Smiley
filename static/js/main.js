@@ -76,13 +76,21 @@ class Main {
     }
 
     createUserCategoryButtons() {
-        param.user_categories.forEach(function(item){
-            var catsButtons = $('#ownCategories')[0];
-            var newButton = document.createElement('button');
-            newButton.innerHTML = item;
-            newButton.className += " btn btn-outline-secondary button-cross cross-img";
-            catsButtons.appendChild(newButton);
+        param.user_categories.forEach((item) => {
+            this.addUserCategoryButton(item);
         });
+    }
+
+    addUserCategoryButton(label) {
+        var catsButtons = $('#ownCategories')[0];
+        var outerDiv = document.createElement('div');
+        outerDiv.className += " btn btn-outline-secondary emoji-buttons";
+        outerDiv.innerHTML = label;
+        outerDiv.value = label;
+        var newButton = document.createElement('button');
+        newButton.className += " cross-img";
+        outerDiv.appendChild(newButton);
+        catsButtons.appendChild(outerDiv);
     }
 
     onMouseDown(e) {
@@ -290,7 +298,7 @@ class Main {
                 if (error) {
                     $("#error").html(error);
                 }
-                
+
                 var label = inputs.cat;
                 if (!this.cats.includes(label)) {
                     this.cats.push(label)
@@ -299,11 +307,7 @@ class Main {
                     option.value = label;
                     catsList.append(option);
 
-                    var catsButtons = $('#ownCategories')[0];
-                    var newButton = document.createElement('button');
-                    newButton.innerHTML = label;
-                    newButton.className += " btn btn-outline-secondary button-cross cross-img";
-                    catsButtons.appendChild(newButton);
+                    this.addUserCategoryButton(label);
                 }
             }
         })
@@ -552,8 +556,14 @@ $(() => {
         main.addTrainingData(e.target);
     });
 
-    $('.add-emoji-data').click((e) => {
+    $('.cross-img').click((e) => {
+        alert("Inner");
+        e.stopPropagation();
+    });
+
+    $('.emoji-buttons').click((e) => {
         main.addEmojiTrainingData(e.target);
+        e.stopPropagation();
     });
 
     /*$('#importFile').change((e) => {
