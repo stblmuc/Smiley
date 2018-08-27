@@ -77,7 +77,7 @@ class Main {
 
     createUserCategoryButtons() {
         param.user_categories.forEach(function(item){
-            var catsButtons = $('#emoji-buttons')[0];
+            var catsButtons = $('#ownCategories')[0];
             var newButton = document.createElement('button');
             newButton.innerHTML = item;
             newButton.className += " btn btn-outline-secondary button-cross cross-img";
@@ -273,19 +273,6 @@ class Main {
                 }, 1000);
                 this.uploadTrainingData(uploadData, blink);
             });
-            if (!this.cats.includes(label)) {
-                this.cats.push(label)
-                var catsList = $('#trainingDataLabelOptions')[0];
-                var option = document.createElement('option');
-                option.value = label;
-                catsList.append(option);
-
-                var catsButtons = $('#emoji-buttons')[0];
-                var newButton = document.createElement('button');
-                newButton.innerHTML = label;
-                newButton.className += " btn btn-outline-secondary button-cross cross-img";
-                catsButtons.appendChild(newButton);
-            }
         } else {
             alert("Please enter a name/label for the data");
         }
@@ -302,6 +289,21 @@ class Main {
                 const error = data.error;
                 if (error) {
                     $("#error").html(error);
+                }
+                
+                var label = inputs.cat;
+                if (!this.cats.includes(label)) {
+                    this.cats.push(label)
+                    var catsList = $('#trainingDataLabelOptions')[0];
+                    var option = document.createElement('option');
+                    option.value = label;
+                    catsList.append(option);
+
+                    var catsButtons = $('#ownCategories')[0];
+                    var newButton = document.createElement('button');
+                    newButton.innerHTML = label;
+                    newButton.className += " btn btn-outline-secondary button-cross cross-img";
+                    catsButtons.appendChild(newButton);
                 }
             }
         })
