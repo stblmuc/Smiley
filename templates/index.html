@@ -4,29 +4,13 @@
     <title>Smiley Demo</title>
     <link rel="shortcut icon" href="{{ url_for('static', filename='favicon.ico') }}">
     <link rel="stylesheet" href="{{ url_for('static', filename='css/bootstrap.min.css') }}">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
     <script type="text/javascript" src="{{ url_for('static', filename='js/jquery.min.js') }}"></script>
     <script rel="text/javascript" src="{{ url_for('static', filename='js/bootstrap.min.js') }}"></script>
     <script type="text/javascript" src="{{ url_for('static', filename='js/main.js') }}"></script>
     <script type="text/javascript">
         var param = {{data|tojson}}; // Retrieve data from main.py (i.e. image size, config parameters)
     </script>
-    <style>
-.button-own-image:before {
-    content: "";
-    width: 20px;
-    height: 20px;
-    display: inline-block;
-    margin-right: 5px;
-    vertical-align: text-top;
-    background-color: transparent;
-    background-position : center center;
-    background-repeat: no-repeat;
-}
-
-.smiley-img:before{
-     background-image : url(../static/img/smiley.png);
-}
-</style>
 </head>
 <body>
 <div class="container">
