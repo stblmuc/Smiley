@@ -1,0 +1,15 @@
+.button-own-image:before {
+    content: "";
+    width: 20px;
+    height: 20px;
+    display: inline-block;
+    margin-right: 5px;
+    vertical-align: text-top;
+    background-color: transparent;
+    background-position : center center;
+    background-repeat: no-repeat;
+}
+
+.smiley-img:before{
+     background-color : red;
+}
