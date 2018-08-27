@@ -77,6 +77,7 @@ def add_training_example(image, category):
         os.makedirs(path)
 
     save_image(image, path)
+    update_categories()
 
 
 def save_augmented_example(model, image):
@@ -135,7 +136,7 @@ def get_no_cat_error():
 def not_enough_images():
     req_images_per_cat = get_number_of_images_required()
     cat_img = get_number_of_images_per_category()
-    return all(cat_img[cat] < req_images_per_cat for cat in cat_img.keys())
+    return any(cat_img[cat] < req_images_per_cat for cat in cat_img.keys())
 
 
 # Returns a string error message with the number of images for each category which is below the minimum images required
