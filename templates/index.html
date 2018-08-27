@@ -17,23 +17,23 @@
     <h1>Smiley Recognition</h1>
     <div class="row">
         <div class="col-lg-6">
-            <div style="margin-bottom: 1rem">
-                <div class="btn-group">
-                    <button id="ModeDraw" class="btn btn-outline-secondary">Draw</button>
-                    <button id="ModeCamera" class="btn btn-outline-secondary">Camera</button>
+            <div class="btn-group d-flex">
+                <button id="ModeDraw" class="btn btn-outline-secondary w-50">Draw</button>
+                <button id="ModeCamera" class="btn btn-outline-secondary w-50">Camera</button>
+            </div>
+            <div>
+                <canvas id="main" style="border:1px solid"></canvas>
+                <div class="row no-gutters justify-content-between">
+                    <button id="clear" class="btn btn-outline-secondary">Clear</button>
+                    <button id="recognise" class="btn btn-outline-secondary">Recognise</button>
                 </div>
             </div>
-            <canvas id="main" style="border:1px solid"></canvas>
-            <p>
-                <button id="clear" class="btn btn-outline-secondary">Clear</button>
-                <button id="recognise" class="btn btn-outline-secondary">Recognise</button>
-            </p>
-            <div class="card" style="margin-bottom: 1rem">
+            <div class="card">
                 <div class="card-header">
                     <span>Add to training dataset</span>
                 </div>
                 <div class="card-body">
-                    <div id="emoji-buttons">
+                    <div id="emoji-buttons row no-gutters justify-content-around">
                         <button class="btn btn-outline-secondary button-own-image add-emoji-data smiley-img">smiley</button>
                         <button class="btn btn-outline-secondary button-own-image add-emoji-data neutral-img">neutral</button>
                         <button class="btn btn-outline-secondary button-own-image add-emoji-data sad-img">sad</button>
@@ -41,67 +41,71 @@
                         <button class="btn btn-outline-secondary button-own-image add-emoji-data scream-img">scream</button>
                         <button class="btn btn-outline-secondary button-own-image add-emoji-data upside-down-img">upside-down</button>
                     </div>
+                    <div id="ownCategories" class="row no-gutters justify-content-around"></div>
                     <br>
-                    <label for="trainingDataLabel" style="margin-bottom: 0;">&nbsp;&nbsp;Or add your own category:
+                    <p>Or to your own category:</p>
+                    <label for="trainingDataLabel" style="margin-bottom: 0;">
                         <input list="trainingDataLabelOptions" id="trainingDataLabel" placeholder="e.g. elephant">
                         <datalist id="trainingDataLabelOptions"></datalist>
                         <button id="addTrainingData" class="btn btn-outline-secondary">Add</button>
                     </label>
                 </div>
             </div>
-            <div style="margin-bottom: 1rem">
-                    <button id="trainModels" class="btn btn-outline-primary">Train</button>
+            <div>
+                <button id="trainModels" class="btn btn-primary btn-block">Start Training</button>
             </div>
-            <div style="margin-bottom: 1rem">
-                <div class="card">
-                    <div class="card-header" data-toggle="collapse" href="#trainParameters">
-                        <span>Train Parameters Panel</span>
-                        <span class="float-right text-muted" id="train-toggle-text">Click to toggle</span>
-                    </div>
-                    <div id="trainParameters" class="collapse">
-                        <form id="config-form">
-                            <div class="card-body" style="padding: 0; border: 0;">
-                                <div class="input-group">
-                                    <div class="input-group-prepend"><label class="input-group-text" for="num-augm" style="border-radius: 0">Augmentations per image:</label></div>
-                                    <input type="number" id="num-augm" class="form-control" value="10" style="border-radius: 0">
-                                </div>
-                                <div class="input-group">
-                                    <div class="input-group-prepend"><label class="input-group-text" for="batch-size" style="border-radius: 0">Batch size:</label></div>
-                                    <input type="number" id="batch-size" class="form-control" value="10" style="border-radius: 0">
-                                </div>
-                                <div class="input-group">
-                                    <div class="input-group-prepend"><label class="input-group-text" for="sr-rate" style="border-radius: 0">Softmax regression learning rate:</label></div>
-                                    <input type="number" id="sr-rate" class="form-control" value="0.01" step="0.0001" style="border-radius: 0">
-                                </div>
-                                <div class="input-group">
-                                    <div class="input-group-prepend"><label class="input-group-text" for="sr-epochs" style="border-radius: 0">Softmax regression epochs:</label></div>
-                                    <input type="number" id="sr-epochs" class="form-control" value="3" style="border-radius: 0">
-                                </div>
-                                <div class="input-group">
-                                    <div class="input-group-prepend"><label class="input-group-text" for="cnn-rate" style="border-radius: 0">CNN learning rate:</label></div>
-                                    <input type="number" id="cnn-rate" class="form-control" value="0.0001" step="0.0001" style="border-radius: 0">
-                                </div>
-                                <div class="input-group">
-                                    <div class="input-group-prepend"><label class="input-group-text" for="cnn-epochs" style="border-radius: 0">CNN epochs:</label></div>
-                                    <input type="number" id="cnn-epochs" class="form-control" value="3" style="border-radius: 0">
-                                </div>
+            <div class="card">
+                <div class="card-header" data-toggle="collapse" href="#trainParameters">
+                    <span>Train Parameters Panel</span>
+                    <span class="float-right text-muted" id="train-toggle-text">Click to toggle</span>
+                </div>
+                <div id="trainParameters" class="collapse">
+                    <form id="config-form">
+                        <div class="card-body" style="padding: 0; border: 0;">
+                            <div class="input-group">
+                                <div class="input-group-prepend"><label class="input-group-text" for="num-augm" style="border-radius: 0">Augmentations per image:</label></div>
+                                <input type="number" id="num-augm" class="form-control" value="10" style="border-radius: 0">
                             </div>
-                            <div class="card-footer">
-                                <button class="btn btn-outline-primary" type="submit">Save parameters</button>
+                            <div class="input-group">
+                                <div class="input-group-prepend"><label class="input-group-text" for="batch-size" style="border-radius: 0">Batch size:</label></div>
+                                <input type="number" id="batch-size" class="form-control" value="10" style="border-radius: 0">
                             </div>
-                        </form>
-                    </div>
+                            <div class="input-group">
+                                <div class="input-group-prepend"><label class="input-group-text" for="sr-rate" style="border-radius: 0">Softmax regression learning rate:</label></div>
+                                <input type="number" id="sr-rate" class="form-control" value="0.01" step="0.0001" style="border-radius: 0">
+                            </div>
+                            <div class="input-group">
+                                <div class="input-group-prepend"><label class="input-group-text" for="sr-epochs" style="border-radius: 0">Softmax regression epochs:</label></div>
+                                <input type="number" id="sr-epochs" class="form-control" value="3" style="border-radius: 0">
+                            </div>
+                            <div class="input-group">
+                                <div class="input-group-prepend"><label class="input-group-text" for="cnn-rate" style="border-radius: 0">CNN learning rate:</label></div>
+                                <input type="number" id="cnn-rate" class="form-control" value="0.0001" step="0.0001" style="border-radius: 0">
+                            </div>
+                            <div class="input-group">
+                                <div class="input-group-prepend"><label class="input-group-text" for="cnn-epochs" style="border-radius: 0">CNN epochs:</label></div>
+                                <input type="number" id="cnn-epochs" class="form-control" value="3" style="border-radius: 0">
+                            </div>
+                        </div>
+                        <div class="card-footer">
+                            <button class="btn btn-outline-primary" type="submit">Save parameters</button>
+                        </div>
+                    </form>
                 </div>
             </div>
         </div>
         <br>
         <div class="col-lg-6">
-            <p>network input:</p>
-            <canvas id="input" style="border:1px solid" width="140" height="140"></canvas>
-            <hr>
-            <p>network output:</p>
-            <p class="error" id="error"></p>
-            <table id="output" class="table"></table>
+            <div>
+                <p>network input:</p>
+                <canvas id="input" style="border:1px solid" width="140" height="140"></canvas>
+                <hr>
+            </div>
+            <div>
+                <p>network output:</p>
+                <p class="error" id="error"></p>
+                <table id="output" class="table"></table>
+            </div>
             <!--<div class="card" style="margin-bottom: 1rem">
                 <div class="card-header" data-toggle="collapse" href="#consoleOutput">
                     <span>Console Output</span>
