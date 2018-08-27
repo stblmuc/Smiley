@@ -101,14 +101,15 @@ def smiley():
 
     err = ""  # string with error messages
 
+    regression_output = []
+    cnn_output = []
+
     if num_categories == 0:
         err = utils.get_no_cat_error()
 
     # if too less images are added, print an error message
     elif utils.not_enough_images():
         err = utils.get_not_enough_images_error()
-        regression_output = []
-        cnn_output = []
 
     else:
         retrain_error = "Models not found or incompatible number of categories or incompatible image size. Please (re-)train the classifiers."
@@ -117,14 +118,12 @@ def smiley():
             regression_output = regression_predict(regression_input)
             regression_output = [-1.0 if math.isnan(b) else b for b in regression_output]
         except (NotFoundError, InvalidArgumentError):
-            regression_output = []
             err = retrain_error
 
         try:
             cnn_output = cnn_predict(cnn_input)
             cnn_output = [-1.0 if math.isnan(f) else f for f in cnn_output]
         except (NotFoundError, InvalidArgumentError):
-            cnn_output = []
             err = retrain_error
 
     return jsonify(classifiers=["Softmax Regression", "CNN"], results=[regression_output, cnn_output],
