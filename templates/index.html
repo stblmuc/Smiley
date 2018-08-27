@@ -33,29 +33,37 @@
     <h1>Smiley Recognition</h1>
     <div class="row">
         <div class="col-lg-6">
-            <p>Draw a smiley, import an image or take a photo with your webcam:</p>
+            <div style="margin-bottom: 1rem">
+                <div class="btn-group">
+                    <button id="ModeDraw" class="btn btn-outline-secondary">Draw</button>
+                    <button id="ModeCamera" class="btn btn-outline-secondary">Camera</button>
+                </div>
+            </div>
             <canvas id="main" style="border:1px solid"></canvas>
             <p>
                 <button id="clear" class="btn btn-outline-secondary">Clear</button>
-                <label for="trainingDataLabel" style="margin-bottom: 0;">&nbsp;&nbsp;Add Training Data To:
-                    <input list="trainingDataLabelOptions" id="trainingDataLabel" placeholder="e.g. smile">
-                    <datalist id="trainingDataLabelOptions"></datalist>
-                    <button id="addTrainingData" class="btn btn-outline-secondary">Add</button>
-                    <button id="addSmileyData" class="btn btn-outline-secondary button-own-image smiley-img" value="smiley">smiley</button>
-                </label>
+                <button id="recognise" class="btn btn-outline-secondary">Recognise</button>
             </p>
-            <div style="margin-bottom: 1rem">
-                <div class="btn-group">
-                    <button class="btn" style="pointer-events: none;">Import from:</button>
-                    <!--<label id="importFile" class="btn btn-outline-secondary" style="margin-bottom: 0px;">File<input type="file" hidden></label>
-                    <label id="importFolder" class="btn btn-outline-secondary" style="margin-bottom: 0px;">Folder<input type="file" multiple webkitdirectory hidden></label>-->
-                    <button id="takePicture" class="btn btn-outline-secondary">Camera</button>
-                </div>&nbsp;
-                <div class="btn-group">
-                    <button class="btn" style="pointer-events: none;">Models:</button>
-                    <button id="trainModels" class="btn btn-outline-primary">Train</button>
-                    <!--<button id="deleteModels" class="btn btn-outline-danger">Delete</button>-->
+            <div class="card" style="margin-bottom: 1rem">
+                <div class="card-header">
+                    <span>Add to training</span>
                 </div>
+                <div class="card-body">
+                    <button id="addSmileyData" class="btn btn-outline-secondary button-own-image smiley-img" value="smiley">smiley</button>
+                    <button id="addSmileyData2" class="btn btn-outline-secondary button-own-image smiley-img" value="smiley">smiley2</button>
+                    <button id="addSmileyData3" class="btn btn-outline-secondary button-own-image smiley-img" value="smiley">smiley3</button>
+                    <button id="addSmileyData4" class="btn btn-outline-secondary button-own-image smiley-img" value="smiley">smiley4</button>
+                    <button id="addSmileyData5" class="btn btn-outline-secondary button-own-image smiley-img" value="smiley">smiley5</button>
+                    <br>
+                    <label for="trainingDataLabel" style="margin-bottom: 0;">&nbsp;&nbsp;Or add your own category:
+                        <input list="trainingDataLabelOptions" id="trainingDataLabel" placeholder="e.g. elephant">
+                        <datalist id="trainingDataLabelOptions"></datalist>
+                        <button id="addTrainingData" class="btn btn-outline-secondary">Add</button>
+                    </label>
+                </div>
+            </div>
+            <div style="margin-bottom: 1rem">
+                    <button id="trainModels" class="btn btn-outline-primary">Train</button>
             </div>
             <div style="margin-bottom: 1rem">
                 <div class="card">

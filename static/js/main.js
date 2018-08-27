@@ -546,39 +546,36 @@ $(() => {
         main.initialize();
     });
 
-    $('#addTrainingData').click((e) => {
+    /*$('#addTrainingData').click((e) => {
         //main.addTrainingData(e.target);
-    });
+    });*/
 
     $('#addSmileyData').click((e) => {
         main.addTrainingData(e.target);
     });
 
-    $('#importFile').change((e) => {
+    /*$('#importFile').change((e) => {
         main.loadImage(e.target.files[0]);
     });
 
     $('#importFolder').change((e) => {
         main.loadAndUploadImages(e.target);
-    });
+    });*/
 
-    $('#takePicture').click((e) => {
+    /*$('#takePicture').click((e) => {
         main.takePicture(e.target);
-    });
+    });*/
 
     $('#trainModels').click((e) => {
         main.trainModels(e.target);
     });
 
-    $('#deleteModels').click((e) => {
+    /*$('#deleteModels').click((e) => {
         main.deleteAllModels(e.target);
     });
-
-    $('#config-form').submit((e) => {
+*/
+    /*$('#config-form').submit((e) => {
         main.updateConfig(e.target);
         return false;
-    });
-
-    main.getConsoleOutput(true);
-    //setInterval(main.getConsoleOutput,5000);
+    });*/
 });
