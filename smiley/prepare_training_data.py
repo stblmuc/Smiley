@@ -172,7 +172,6 @@ def expand_training_data(model, images, labels):
 
         num_augm_per_img = int(config['DEFAULT']['NUMBER_AUGMENTATIONS_PER_IMAGE'])
         max_angle = int(config['DEFAULT']['MAX_ANGLE_FOR_AUGMENTATION'])
-        save_augm_step = int(config['LOGS']['save_augm_step'])
         for i in range(num_augm_per_img):
             # rotate the image with random degree
             angle = numpy.random.randint(-max_angle, max_angle, 1)
@@ -190,9 +189,6 @@ def expand_training_data(model, images, labels):
             # register new training data
             expanded_images.append(numpy.reshape(new_img__, image_size * image_size))
             expanded_labels.append(y)
-
-            if save_augm_step != 0 and (i + 1) % save_augm_step == 0:
-                utils.save_augmented_example(model, new_img__)
 
     # images and labels are concatenated for random-shuffle at each epoch
     # notice that pair of image and label should not be broken
