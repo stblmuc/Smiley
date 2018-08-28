@@ -347,56 +347,55 @@ class Main {
         });
     }
 
-    loadImage(data, cb) {
-        var img = new Image();
-        img.onload = () => {
-            this.initialize();
-            var imgSize = Math.min(img.width, img.height);
-    	    var left = (img.width - imgSize) / 2;
-    	    var top = (img.height - imgSize) / 2;
+    // loadImage(data, cb) {
+    //     var img = new Image();
+    //     img.onload = () => {
+    //         this.initialize();
+    //         var imgSize = Math.min(img.width, img.height);
+    // 	    var left = (img.width - imgSize) / 2;
+    // 	    var top = (img.height - imgSize) / 2;
 
-            // draw squared-up image in canvas
-            this.ctx.drawImage(img, left, top, imgSize, imgSize, 0, 0, this.ctx.canvas.width, this.ctx.canvas.height);
+    //         // draw squared-up image in canvas
+    //         this.ctx.drawImage(img, left, top, imgSize, imgSize, 0, 0, this.ctx.canvas.width, this.ctx.canvas.height);
 
-            this.drawInput((inputs) => {
-                if (typeof cb == 'function')
-                    cb(data, inputs);
-                else
-                    this.loadOutput(inputs);
-            });
-        }
-        img.src = window.URL.createObjectURL(data)
-    }
+    //         this.drawInput((inputs) => {
+    //             if (typeof cb == 'function')
+    //                 cb(data, inputs);
+    //             else
+    //                 this.loadOutput(inputs);
+    //         });
+    //     }
+    //     img.src = window.URL.createObjectURL(data)
+    // }
 
-    loadAndUploadImages(target) {
-        function cb(data, inputs) {
-            var path = data.webkitRelativePath.split("/");
-            var label = path[path.length - 2];
-            if (label) {
-                const uploadData = {
-                    cat: label,
-                    img: inputs
-                };
-                $.ajax({
-                    url: '/api/generate-training-example',
-                    method: 'POST',
-                    contentType: 'application/json',
-                    data: JSON.stringify(uploadData),
-                    success: (data) => {
-                    }
-                })
-            } else {
-                alert("Please select a folder of one category or of one image size");
-            };
-        }
+    // loadAndUploadImages(target) {
+    //     function cb(data, inputs) {
+    //         var path = data.webkitRelativePath.split("/");
+    //         var label = path[path.length - 2];
+    //         if (label) {
+    //             const uploadData = {
+    //                 cat: label,
+    //                 img: inputs
+    //             };
+    //             $.ajax({
+    //                 url: '/api/generate-training-example',
+    //                 method: 'POST',
+    //                 contentType: 'application/json',
+    //                 data: JSON.stringify(uploadData),
+    //                 success: (data) => {
+    //                 }
+    //             })
+    //         } else {
+    //             alert("Please select a folder of one category or of one image size");
+    //         };
+    //     }
 
-        for (var i = 0; i < target.files.length; i++) {
-            this.loadImage(target.files[i], cb);
-        }
-    }
+    //     for (var i = 0; i < target.files.length; i++) {
+    //         this.loadImage(target.files[i], cb);
+    //     }
+    // }
 
     useModeDraw(button) {
-        console.log('he')
         if (!!this.video) {
             this.video.pause();
             this.video = null;
@@ -460,15 +459,13 @@ class Main {
                     $("#error").html(error);
                 } else {
                     $("#error").text("");
-                    this.drawInput((inputs) => {
-                        this.loadOutput(inputs);
-                    });
+
+                    this.recogniseInput();
                 }
 
             }
         })
         .always(() => {
-            this.getConsoleOutput(false);
             clearInterval(blink);
             $(button).prop('disabled', false);
         })
@@ -562,7 +559,7 @@ $(() => {
     });
 
     $('.add-emoji-data').click((e) => {
-        main.addTrainingData(e.target, e.target.val());
+        main.addTrainingData(e.target, $(e.target).val());
     });
 
     /*$('#importFile').change((e) => {
