@@ -439,6 +439,8 @@ class Main {
                     this.video.play();
                 })
                 .catch(function(err) { console.log(err.name + ": " + err.message); }); // always check for errors at the end.
+            } else {
+                this.initialize();
             }
         } else {
             alert('getUserMedia() is not supported by your browser');
