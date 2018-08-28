@@ -3,7 +3,6 @@ import os
 import sys
 import png
 import math
-import numpy
 import shutil
 
 config = configparser.ConfigParser()
