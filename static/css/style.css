@@ -64,3 +64,7 @@
      background-position : center center;
      background-repeat: no-repeat;
 }
+
+.cross-img:hover{
+    background-color: white;
+}
