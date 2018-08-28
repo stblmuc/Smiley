@@ -147,6 +147,15 @@ def generate_training_example():
         return "ok"
 
 
+# Delete a category
+@app.route('/api/delete-category', methods=['POST'])
+def delete_category():
+    category = request.json["cat"]
+    utils.delete_category(category)
+
+    return "ok"
+
+
 # Update config parameters
 @app.route('/api/update-config', methods=['POST'])
 def update_config():

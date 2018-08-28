@@ -96,7 +96,27 @@ class Main {
     }
 
     deleteCategory(label) {
-        alert("TODO: Delete category")
+        $("#trainingDataLabelOptions option[value='"+label+"']").remove(); // delete cat from datalist options
+
+        const catData = {
+            cat: label
+        };
+        $.ajax({
+            url: '/api/delete-category',
+            method: 'POST',
+            contentType: 'application/json',
+            data: JSON.stringify(catData),
+            success: (data) => {
+                this.initialize();
+            }
+        })
+        .always(() => {
+            clearInterval(blink);
+        })
+        .fail(() => {
+            this.clearOutput();
+            this.checkConnection();
+        });
     }
 
     onMouseDown(e) {

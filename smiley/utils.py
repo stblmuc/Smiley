@@ -4,6 +4,7 @@ import sys
 import png
 import math
 import numpy
+import shutil
 
 config = configparser.ConfigParser()
 config.read(os.path.join(os.path.dirname(__file__), 'config.ini'))
@@ -103,6 +104,13 @@ def save_image(image, path):
     image_size = int(config['DEFAULT']['IMAGE_SIZE'])
     w = png.Writer(image_size, image_size, greyscale=True)
     w.write(open(path + "/" + str(image_name) + ".png", "wb"), image)
+
+
+# Deletes the folder of the category
+def delete_category(category):
+    path = os.path.join(CATEGORIES_LOCATION, category)
+    shutil.rmtree(path)
+    update_categories()
 
 
 def get_category_names():
