@@ -97,6 +97,10 @@ class Main {
 
     deleteCategory(label) {
         $("#trainingDataLabelOptions option[value='"+label+"']").remove(); // delete cat from datalist options
+        var index = this.cats.indexOf(label);
+        if (index !== -1) {
+            this.cats.splice(index, 1);
+        }
 
         const catData = {
             cat: label
