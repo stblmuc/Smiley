@@ -190,11 +190,9 @@ def train_models():
     try:
         regression_train.train()
         cnn_train.train()
-    except Exception as inst:
-        raise Exception(inst.args[0])
-    #except:
-    #    err = "Unknown error."
-    #    return jsonify(error=err)
+    except:
+       err = "Unknown error."
+       return jsonify(error=err)
 
     return "ok"
 

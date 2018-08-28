@@ -11,7 +11,7 @@ def convolutional(x, nCategories, is_training=True):
     config.read(os.path.join(os.path.dirname(__file__), 'config.ini'))
     image_size = int(config['DEFAULT']['IMAGE_SIZE'])
 
-    with tf.variable_scope('cnn'):
+    with tf.variable_scope('cnn', reuse=tf.AUTO_REUSE):
         x_image = tf.reshape(x, [-1, image_size, image_size, 1])
 
         # Convolutional layer + max pool layer
