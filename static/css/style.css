@@ -5,8 +5,8 @@
 
 .button-own-image:before {
     content: "";
-    width: 20px;
-    height: 20px;
+    width: 21px;
+    height: 21px;
     display: inline-block;
     margin-right: 5px;
     vertical-align: text-top;
@@ -17,8 +17,8 @@
 
 .button-cross:after {
     content: "";
-    width: 20px;
-    height: 20px;
+    width: 21px;
+    height: 21px;
     display: inline-block;
     margin-left: 5px;
     vertical-align: text-top;
@@ -54,11 +54,12 @@
 .cross-img{
      content: "";
      background-image : url("../img/cross.png");
-     width: 20px;
-     height: 20px;
+     width: 21px;
+     height: 21px;
      display: inline-block;
-     margin-left: 5px;
+     margin-left: 10px;
      vertical-align: text-top;
+     border: solid #000000 1px;
      background-color: transparent;
      background-position : center center;
      background-repeat: no-repeat;

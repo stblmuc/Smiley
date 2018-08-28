@@ -86,7 +86,7 @@ class Main {
         .html(label).val(label).click((e) => {
             this.addTrainingData(e.target);
         });
-        var newButton = document.createElement('button');
+        var newButton = document.createElement('div');
         $(newButton).addClass("cross-img").click((e) => {
             outerDiv.remove();
             this.deleteCategory(label);
