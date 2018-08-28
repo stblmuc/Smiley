@@ -3,6 +3,14 @@
     margin-bottom: 1rem;
 }
 
+canvas {
+    border:1px solid
+}
+
+label {
+    margin-bottom: 0;
+}
+
 .button-own-image:before {
     content: "";
     width: 21px;
@@ -60,7 +68,7 @@
 }
 
 #trainModels {
-    transition: width .5s ease;
+    transition: width .4s ease;
 }
 
 .toggle-arrow {
@@ -68,10 +76,10 @@
     width: 10px;
     margin-top: 7px;
     display: inline-flex !important;
-    -moz-transition: -moz-transform .3s;
-    -webkit-transition: -webkit-transform .3s;
-    -o-transition: -o-transform .3s;
-    transition: transform .3s;
+    -moz-transition: -moz-transform .4s;
+    -webkit-transition: -webkit-transform .4s;
+    -o-transition: -o-transform .4s;
+    transition: transform .4s;
 }
 
 .toggle-arrow::after {
@@ -98,7 +106,23 @@
     transform: rotate(-180deg);
 }
 
-.inline-class{
-    display: inline-block;
-    margin-left: 3px;
+#config-form .card-body {
+    padding: 0;
+    border: 0;
+}
+
+#config-form .input-group-text {
+    border-radius: 0;
+}
+
+#config-form .form-control {
+    border-radius: 0;
+}
+
+.updating {
+    border: solid yellow 3px;
+}
+
+.inline {
+    display: inline;
 }

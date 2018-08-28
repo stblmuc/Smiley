@@ -22,7 +22,7 @@
                 <button id="modeCamera" class="btn btn-outline-secondary w-50">Camera</button>
             </div>
             <div>
-                <canvas id="main" style="border:1px solid"></canvas>
+                <canvas id="main"></canvas>
                 <div class="row no-gutters justify-content-between">
                     <button id="clear" class="btn btn-outline-secondary">Clear</button>
                     <button id="recognise" class="btn btn-outline-secondary">Recognise</button>
@@ -43,8 +43,8 @@
                     </div>
                     <div id="ownCategories" class="row no-gutters justify-content-around"></div>
                     <br>
-                    <p>Or to your own category:</p>
-                    <label for="trainingDataLabel" style="margin-bottom: 0;">
+                    <span>Or to your own category:</span>
+                    <label for="trainingDataLabel">
                         <input list="trainingDataLabelOptions" id="trainingDataLabel" placeholder="e.g. elephant">
                         <datalist id="trainingDataLabelOptions"></datalist>
                         <button id="addTrainingData" class="btn btn-outline-secondary">Add</button>
@@ -61,34 +61,31 @@
                 </div>
                 <div id="trainParameters" class="collapse">
                     <form id="config-form">
-                        <div class="card-body" style="padding: 0; border: 0;">
+                        <div class="card-body">
                             <div class="input-group">
-                                <div class="input-group-prepend"><label class="input-group-text" for="num-augm" style="border-radius: 0">Augmentations per image:</label></div>
-                                <input type="number" id="num-augm" class="form-control" value="10" style="border-radius: 0">
+                                <div class="input-group-prepend"><label class="input-group-text" for="num-augm">Augmentations per image:</label></div>
+                                <input type="number" id="num-augm" class="form-control" value="10">
                             </div>
                             <div class="input-group">
-                                <div class="input-group-prepend"><label class="input-group-text" for="batch-size" style="border-radius: 0">Batch size:</label></div>
-                                <input type="number" id="batch-size" class="form-control" value="10" style="border-radius: 0">
+                                <div class="input-group-prepend"><label class="input-group-text" for="batch-size">Batch size:</label></div>
+                                <input type="number" id="batch-size" class="form-control" value="10">
                             </div>
                             <div class="input-group">
-                                <div class="input-group-prepend"><label class="input-group-text" for="sr-rate" style="border-radius: 0">Softmax regression learning rate:</label></div>
-                                <input type="number" id="sr-rate" class="form-control" value="0.01" step="0.0001" style="border-radius: 0">
+                                <div class="input-group-prepend"><label class="input-group-text" for="sr-rate">Softmax regression learning rate:</label></div>
+                                <input type="number" id="sr-rate" class="form-control" value="0.01" step="0.0001">
                             </div>
                             <div class="input-group">
-                                <div class="input-group-prepend"><label class="input-group-text" for="sr-epochs" style="border-radius: 0">Softmax regression epochs:</label></div>
-                                <input type="number" id="sr-epochs" class="form-control" value="3" style="border-radius: 0">
+                                <div class="input-group-prepend"><label class="input-group-text" for="sr-epochs">Softmax regression epochs:</label></div>
+                                <input type="number" id="sr-epochs" class="form-control" value="3">
                             </div>
                             <div class="input-group">
-                                <div class="input-group-prepend"><label class="input-group-text" for="cnn-rate" style="border-radius: 0">CNN learning rate:</label></div>
-                                <input type="number" id="cnn-rate" class="form-control" value="0.0001" step="0.0001" style="border-radius: 0">
+                                <div class="input-group-prepend"><label class="input-group-text" for="cnn-rate">CNN learning rate:</label></div>
+                                <input type="number" id="cnn-rate" class="form-control" value="0.0001" step="0.0001">
                             </div>
                             <div class="input-group">
-                                <div class="input-group-prepend"><label class="input-group-text" for="cnn-epochs" style="border-radius: 0">CNN epochs:</label></div>
-                                <input type="number" id="cnn-epochs" class="form-control" value="3" style="border-radius: 0">
+                                <div class="input-group-prepend"><label class="input-group-text" for="cnn-epochs">CNN epochs:</label></div>
+                                <input type="number" id="cnn-epochs" class="form-control" value="3">
                             </div>
-                        </div>
-                        <div class="card-footer">
-                            <button class="btn btn-outline-primary" type="submit">Save parameters</button>
                         </div>
                     </form>
                 </div>
@@ -98,7 +95,7 @@
         <div class="col-lg-6">
             <div>
                 <p>network input:</p>
-                <canvas id="input" style="border:1px solid" width="140" height="140"></canvas>
+                <canvas id="input" width="140" height="140"></canvas>
                 <hr>
             </div>
             <div>

@@ -85,9 +85,9 @@ class Main {
 
     addNewNumberToCategory(category, number) {
         var numberDiv = document.createElement('div');
-        numberDiv.innerHTML = " (" + number + ")";
-        numberDiv.className += " inline-class";
+        $(numberDiv).html(" (" + number + ")").addClass("inline");
         numberDiv.id = category + "-number";
+
         var x = $('.add-emoji-data').filter(function(){return this.value==category})[0];
         x.insertBefore(numberDiv, x.childNodes[1]);
     }
@@ -377,54 +377,6 @@ class Main {
         });
     }
 
-    // loadImage(data, cb) {
-    //     var img = new Image();
-    //     img.onload = () => {
-    //         this.initialize();
-    //         var imgSize = Math.min(img.width, img.height);
-    // 	    var left = (img.width - imgSize) / 2;
-    // 	    var top = (img.height - imgSize) / 2;
-
-    //         // draw squared-up image in canvas
-    //         this.ctx.drawImage(img, left, top, imgSize, imgSize, 0, 0, this.ctx.canvas.width, this.ctx.canvas.height);
-
-    //         this.drawInput((input) => {
-    //             if (typeof cb == 'function')
-    //                 cb(data, input);
-    //             else
-    //                 this.loadOutput(input);
-    //         });
-    //     }
-    //     img.src = window.URL.createObjectURL(data)
-    // }
-
-    // loadAndUploadImages(target) {
-    //     function cb(data, input) {
-    //         var path = data.webkitRelativePath.split("/");
-    //         var label = path[path.length - 2];
-    //         if (label) {
-    //             const uploadData = {
-    //                 cat: label,
-    //                 img: input
-    //             };
-    //             $.ajax({
-    //                 url: '/api/generate-training-example',
-    //                 method: 'POST',
-    //                 contentType: 'application/json',
-    //                 data: JSON.stringify(uploadData),
-    //                 success: (data) => {
-    //                 }
-    //             })
-    //         } else {
-    //             alert("Please select a folder of one category or of one image size");
-    //         };
-    //     }
-
-    //     for (var i = 0; i < target.files.length; i++) {
-    //         this.loadImage(target.files[i], cb);
-    //     }
-    // }
-
     useModeDraw(button) {
         if (!!this.video) {
             this.video.pause();
@@ -486,7 +438,7 @@ class Main {
                     $(button).css('width', data.progress + '%')
                 }
             })
-        }, 500);
+        }, 800);
 
         $.ajax({
             url: '/api/train-models',
@@ -515,7 +467,7 @@ class Main {
         });
     }
 
-    updateConfig(button) {
+    updateConfig() {
         this.numAugm = $('#num-augm').val();
         this.batchSize = $('#batch-size').val();
         this.srRate = $('#sr-rate').val();
@@ -538,7 +490,8 @@ class Main {
             contentType: 'application/json',
             data: JSON.stringify(conf),
             success: (data) => {
-                $(button).parent('#trainParameters').collapse('hide');
+                // $('#trainParameters').collapse('hide');
+                $('#trainParameters input').removeClass('updating');
             }
         })
         .fail(() => {
@@ -552,30 +505,79 @@ class Main {
         $("#error").html(error);
     }
 
-    getConsoleOutput(firstCall) {
-        var obj = $('#consoleOutput .card-body');
-        $.ajax({
-            url: '/api/get-console-output',
-            success: (data) => {
-                if (!!firstCall) obj.append("done!<br>");
-                if (data.out) obj.append(data.out.replace(/(\r\n|\n|\r)/gm, "<br>"));
-            }
-        })
-        .fail(() => {
-            obj.html("Connection failed.<br>");
-        });
-    }
+
+    // loadImage(data, cb) {
+    //     var img = new Image();
+    //     img.onload = () => {
+    //         this.initialize();
+    //         var imgSize = Math.min(img.width, img.height);
+    //      var left = (img.width - imgSize) / 2;
+    //      var top = (img.height - imgSize) / 2;
+
+    //         // draw squared-up image in canvas
+    //         this.ctx.drawImage(img, left, top, imgSize, imgSize, 0, 0, this.ctx.canvas.width, this.ctx.canvas.height);
+
+    //         this.drawInput((input) => {
+    //             if (typeof cb == 'function')
+    //                 cb(data, input);
+    //             else
+    //                 this.loadOutput(input);
+    //         });
+    //     }
+    //     img.src = window.URL.createObjectURL(data)
+    // }
+
+    // loadAndUploadImages(target) {
+    //     function cb(data, input) {
+    //         var path = data.webkitRelativePath.split("/");
+    //         var label = path[path.length - 2];
+    //         if (label) {
+    //             const uploadData = {
+    //                 cat: label,
+    //                 img: input
+    //             };
+    //             $.ajax({
+    //                 url: '/api/generate-training-example',
+    //                 method: 'POST',
+    //                 contentType: 'application/json',
+    //                 data: JSON.stringify(uploadData),
+    //                 success: (data) => {
+    //                 }
+    //             })
+    //         } else {
+    //             alert("Please select a folder of one category or of one image size");
+    //         };
+    //     }
+
+    //     for (var i = 0; i < target.files.length; i++) {
+    //         this.loadImage(target.files[i], cb);
+    //     }
+    // }
+
+    // getConsoleOutput(firstCall) {
+    //     var obj = $('#consoleOutput .card-body');
+    //     $.ajax({
+    //         url: '/api/get-console-output',
+    //         success: (data) => {
+    //             if (!!firstCall) obj.append("done!<br>");
+    //             if (data.out) obj.append(data.out.replace(/(\r\n|\n|\r)/gm, "<br>"));
+    //         }
+    //     })
+    //     .fail(() => {
+    //         obj.html("Connection failed.<br>");
+    //     });
+    // }
 }
 
 $(() => {
     var main = new Main();
 
     $('#modeDraw').click((e) => {
-        main.useModeDraw(e.target);
+        main.useModeDraw(e.currentTarget);
     });
 
     $('#modeCamera').click((e) => {
-        main.useModeCamera(e.target);
+        main.useModeCamera(e.currentTarget);
     });
 
     $('#clear').click(() => {
@@ -587,31 +589,40 @@ $(() => {
     });
 
     $('#addTrainingData').click((e) => {
-        main.addTrainingData(e.target, $('#trainingDataLabel').val());
+        main.addTrainingData(e.currentTarget, $('#trainingDataLabel').val());
     });
 
     $('.button-own-image').click((e) => {
         main.addTrainingData(e.currentTarget, $(e.currentTarget).val());
     });
 
+    $('#trainModels').click((e) => {
+        main.trainModels(e.currentTarget);
+    });
+
+    $('#config-form').submit((e) => {
+        main.updateConfig();
+        return false;
+    });
+
+    $('#config-form input').each(function() {
+        $(this).change((e) => {
+            $(this).addClass('updating');
+            this.timeout = setTimeout(() => {
+                $('#config-form').submit();
+            }, 2000);
+        })
+    })
+
     /*$('#importFile').change((e) => {
-        main.loadImage(e.target.files[0]);
+        main.loadImage(e.currentTarget.files[0]);
     });
 
     $('#importFolder').change((e) => {
-        main.loadAndUploadImages(e.target);
+        main.loadAndUploadImages(e.currentTarget);
+    });
+
+    $('#deleteModels').click((e) => {
+        main.deleteAllModels(e.currentTarget);
     });*/
-
-    $('#trainModels').click((e) => {
-        main.trainModels(e.target);
-    });
-
-    /*$('#deleteModels').click((e) => {
-        main.deleteAllModels(e.target);
-    });
-*/
-    $('#config-form').submit((e) => {
-        main.updateConfig(e.target);
-        return false;
-    });
 });
