@@ -68,3 +68,8 @@
 .cross-img:hover{
     background-color: white;
 }
+
+.inline-class{
+    display: inline-block;
+    margin-left: 3px;
+}
