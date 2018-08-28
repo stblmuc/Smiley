@@ -32,7 +32,7 @@ class Main {
         this.canvas.addEventListener('mouseup', this.onMouseUp.bind(this));
         this.canvas.addEventListener('mousemove', this.onMouseMove.bind(this));
 
-        this.createCategoryButtons();
+        this.createUserCategoryButtons();
         this.initializeConfigValues();
         this.initialize();
     }
@@ -73,18 +73,18 @@ class Main {
         $('#cnn-epochs').val(this.cnnEpochs);
     }
 
-    createCategoryButtons() {
+    createUserCategoryButtons() {
         param.user_categories.forEach((item) => {
-            this.addCategoryButton(item);
+            this.addUserCategoryButton(item);
         });
     }
 
-    addCategoryButton(label) {
+    addUserCategoryButton(label) {
         var catsButtons = $('#ownCategories')[0];
         var outerDiv = document.createElement('div');
         $(outerDiv).addClass("btn btn-outline-secondary add-emoji-data")
         .html(label).val(label).click((e) => {
-            this.addTrainingData(e.target);
+            this.addTrainingData(e.target, e.target.val());
         });
         var newButton = document.createElement('div');
         $(newButton).addClass("cross-img").click((e) => {
@@ -114,9 +114,6 @@ class Main {
                 this.initialize();
             }
         })
-        .always(() => {
-            clearInterval(blink);
-        })
         .fail(() => {
             this.clearOutput();
             this.checkConnection();
@@ -124,7 +121,7 @@ class Main {
     }
 
     onMouseDown(e) {
-        if (!!this.video) return; // don't draw while using the camera
+        if (!!this.video) return; // don't draw in camera mode
 
         this.canvas.style.cursor = 'default';
         this.drawing = true;
@@ -132,7 +129,8 @@ class Main {
     }
 
     onMouseUp() {
-        if (!!this.video) this.video[this.video.paused ? 'play' : 'pause']();
+        if (!!this.video)
+            this.video[this.video.paused ? 'play' : 'pause']();
 
         this.drawing = false;
     }
@@ -295,26 +293,23 @@ class Main {
         });
     }
 
-    addTrainingData(button) {
-        const label = $(button).val();
-        this.addTrainingDataWithLabel(button, label);
-    }
-
-    addTrainingDataWithLabel(button, label) {
+    addTrainingData(button, label) {
         if (label) {
             this.drawInput((inputs) => {
                 const uploadData = {
                     cat: label,
                     img: inputs
                 };
+
                 $(button).fadeOut(400).fadeIn(400);
                 var blink = setInterval(function(){
                     $(button).fadeOut(400).fadeIn(400);
                 }, 1000);
+
                 this.uploadTrainingData(uploadData, blink);
             });
         } else {
-            alert("Please enter a name/label for the data");
+            alert("Please assign a category for the data");
         }
     }
 
@@ -339,7 +334,7 @@ class Main {
                     $(option).val(label);
                     catsList.append(option);
 
-                    this.addCategoryButton(label);
+                    this.addUserCategoryButton(label);
                 }
             }
         })
@@ -563,11 +558,11 @@ $(() => {
     });
 
     $('#addTrainingData').click((e) => {
-        main.addTrainingData($('#trainingDataLabel')[0]);
+        main.addTrainingData(e.target, $('#trainingDataLabel').val());
     });
 
     $('.add-emoji-data').click((e) => {
-        main.addTrainingData(e.target);
+        main.addTrainingData(e.target, e.target.val());
     });
 
     /*$('#importFile').change((e) => {
