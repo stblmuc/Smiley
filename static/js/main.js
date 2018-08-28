@@ -103,7 +103,7 @@ class Main {
         var outerDiv = document.createElement('div');
         $(outerDiv).addClass("btn btn-outline-secondary add-emoji-data")
         .html(label).val(label).click((e) => {
-            this.addTrainingData(e.target, $(e.target).val());
+            this.addTrainingData(e.currentTarget, $(e.currentTarget).val());
         });
         var newButton = document.createElement('div');
         $(newButton).addClass("cross-img").click((e) => {
@@ -591,7 +591,7 @@ $(() => {
     });
 
     $('.button-own-image').click((e) => {
-        main.addTrainingData(e.target, $(e.target).val());
+        main.addTrainingData(e.currentTarget, $(e.currentTarget).val());
     });
 
     /*$('#importFile').change((e) => {
