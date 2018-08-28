@@ -177,6 +177,7 @@ def update_config():
 @app.route('/api/train-models', methods=['POST'])
 @utils.capture
 def train_models():
+    delete_all_models()
     maybe_update_models()
 
     # if no categories are added, print error
@@ -189,9 +190,11 @@ def train_models():
     try:
         regression_train.train()
         cnn_train.train()
-    except:
-        err = "Unknown error."
-        return jsonify(error=err)
+    except Exception as inst:
+        raise Exception(inst.args[0])
+    #except:
+    #    err = "Unknown error."
+    #    return jsonify(error=err)
 
     return "ok"
 
