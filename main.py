@@ -180,7 +180,6 @@ def update_config():
 @app.route('/api/train-models', methods=['POST'])
 @utils.capture
 def train_models():
-    # if no categories are added, print error
     if num_categories == 0:
         err = utils.get_no_cat_error()
         return jsonify(error=err)
@@ -190,6 +189,7 @@ def train_models():
 
     maybe_update_models()
     delete_all_models()
+    
     try:
         regression_train.train()
         cnn_train.train()
