@@ -148,8 +148,10 @@ class Main {
     }
 
     onMouseUp() {
-        if (!!this.video)
-            this.video[this.video.paused ? 'play' : 'pause']();
+        if (!!this.video) {
+            this.video.pause();
+            this.recogniseInput((input) => {})
+        }
 
         this.drawing = false;
     }
@@ -180,7 +182,7 @@ class Main {
         var ctx = this.input.getContext('2d');
         var img = new Image();
         img.onload = () => {
-            var inputs = [];
+            var input = [];
             var small = document.createElement('canvas').getContext('2d');
             small.drawImage(img, 0, 0, img.width, img.height, 0, 0, this.image_size, this.image_size);
             var data = small.getImageData(0, 0, this.image_size, this.image_size).data;
@@ -209,15 +211,15 @@ class Main {
                     var scaled_gray = Math.min(255,((grayscale - threshold)*scale) + threshold)
                     grayscale = grayscale > threshold ? scaled_gray : grayscale
 
-                    inputs[i * this.image_size + j] = grayscale;
+                    input[i * this.image_size + j] = grayscale;
                     ctx.fillStyle = 'rgb(' + Array(3).fill(grayscale) + ')';
                     ctx.fillRect(j * 5, i * 5, 5, 5);
                 }
             }
-            if (Math.min(...inputs) === 255) {
-                return false;
+            if (Math.min(...input) === 255) {
+                return;
             }
-            cb(inputs);
+            cb(input);
         };
         img.src = this.canvas.toDataURL();
     }
@@ -227,20 +229,20 @@ class Main {
         $('#output td, #output tr').remove();
     }
 
-    recogniseInput() {
+    recogniseInput(cb) {
         if (!!this.video) this.video.pause();
 
-        this.drawInput((inputs) => {
-            this.loadOutput(inputs);
+        this.drawInput((input) => {
+            (typeof cb == 'function') ? cb(input) : this.loadOutput(input);
         });
     }
 
-    loadOutput(inputs) {
+    loadOutput(input) {
         $.ajax({
             url: '/api/smiley',
             method: 'POST',
             contentType: 'application/json',
-            data: JSON.stringify(inputs),
+            data: JSON.stringify(input),
             success: (data) => {
                 const categories = data.categories;
                 const error = data.error;
@@ -314,10 +316,10 @@ class Main {
 
     addTrainingData(button, label) {
         if (label) {
-            this.drawInput((inputs) => {
+            this.recogniseInput((input) => {
                 const uploadData = {
                     cat: label,
-                    img: inputs
+                    img: input
                 };
 
                 $(button).fadeOut(400).fadeIn(400);
@@ -332,12 +334,12 @@ class Main {
         }
     }
 
-    uploadTrainingData(inputs, blink) {
+    uploadTrainingData(input, blink) {
         $.ajax({
             url: '/api/generate-training-example',
             method: 'POST',
             contentType: 'application/json',
-            data: JSON.stringify(inputs),
+            data: JSON.stringify(input),
             success: (data) => {
                 this.initialize();
                 const error = data.error;
@@ -345,7 +347,7 @@ class Main {
                     $("#error").html(error);
                 }
 
-                var label = inputs.cat;
+                var label = input.cat;
                 if (!this.cats.includes(label)) {
                     this.cats.push(label)
                     var catsList = $('#trainingDataLabelOptions')[0];
@@ -386,24 +388,24 @@ class Main {
     //         // draw squared-up image in canvas
     //         this.ctx.drawImage(img, left, top, imgSize, imgSize, 0, 0, this.ctx.canvas.width, this.ctx.canvas.height);
 
-    //         this.drawInput((inputs) => {
+    //         this.drawInput((input) => {
     //             if (typeof cb == 'function')
-    //                 cb(data, inputs);
+    //                 cb(data, input);
     //             else
-    //                 this.loadOutput(inputs);
+    //                 this.loadOutput(input);
     //         });
     //     }
     //     img.src = window.URL.createObjectURL(data)
     // }
 
     // loadAndUploadImages(target) {
-    //     function cb(data, inputs) {
+    //     function cb(data, input) {
     //         var path = data.webkitRelativePath.split("/");
     //         var label = path[path.length - 2];
     //         if (label) {
     //             const uploadData = {
     //                 cat: label,
-    //                 img: inputs
+    //                 img: input
     //             };
     //             $.ajax({
     //                 url: '/api/generate-training-example',
@@ -465,6 +467,8 @@ class Main {
                     this.video.play();
                 })
                 .catch(function(err) { console.log(err.name + ": " + err.message); }); // always check for errors at the end.
+            } else {
+                this.initialize();
             }
         } else {
             alert('getUserMedia() is not supported by your browser');

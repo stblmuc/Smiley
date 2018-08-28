@@ -35,18 +35,18 @@ def maybe_update_models():
 
         # Model variables
         x = tf.placeholder("float", [None, IMAGE_SIZE * IMAGE_SIZE])  # image input placeholder
-        is_training = tf.placeholder("bool")  # used for activating the dropout
+        is_training = tf.placeholder("bool")  # used for activating the dropout in training phase
 
         # Tensorflow session
         sess = tf.InteractiveSession()
         sess.run(tf.global_variables_initializer())
 
         # Regression model
-        y1, variables = regression_model.regression(x, nCategories=num_categories)
+        y1, variables = regression_model.regression(x, nCategories=num_categories) # prediction results and variables
         saver_regression = tf.train.Saver(variables)
 
         # CNN model
-        y2, variables = cnn_model.convolutional(x, nCategories=num_categories, is_training=is_training)
+        y2, variables = cnn_model.convolutional(x, nCategories=num_categories, is_training=is_training) # prediction results and variables
         saver_cnn = tf.train.Saver(variables)
 
 
@@ -109,10 +109,11 @@ def smiley():
     regression_output = []
     cnn_output = []
 
+    # if no categories available, print error message
     if num_categories == 0:
         err = utils.get_no_cat_error()
 
-    # if too less images are added, print an error message
+    # if too less images are added, print error message
     elif utils.not_enough_images():
         err = utils.get_not_enough_images_error()
 
@@ -180,7 +181,6 @@ def update_config():
 @app.route('/api/train-models', methods=['POST'])
 @utils.capture
 def train_models():
-    # if no categories are added, print error
     if num_categories == 0:
         err = utils.get_no_cat_error()
         return jsonify(error=err)
@@ -190,6 +190,7 @@ def train_models():
 
     maybe_update_models()
     delete_all_models()
+
     try:
         regression_train.train()
         cnn_train.train()

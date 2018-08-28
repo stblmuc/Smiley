@@ -28,8 +28,8 @@ def train():
 
     # CNN model
     x = tf.placeholder(tf.float32, [None, IMAGE_SIZE * IMAGE_SIZE], name="image")  # CNN input placeholder
-    y_ = tf.placeholder(tf.float32, [None, curr_number_of_categories], name="labels")  # CNN output placeholder
-    y, variables = cnn_model.convolutional(x, nCategories=curr_number_of_categories)
+    y_ = tf.placeholder(tf.float32, [None, curr_number_of_categories], name="labels")  # CNN ground truth labels
+    y, variables = cnn_model.convolutional(x, nCategories=curr_number_of_categories) # CNN output and variables
 
     is_training = tf.placeholder(tf.bool)  # used to apply dropout just in training phase
 
@@ -43,14 +43,14 @@ def train():
     # define optimizer
     with tf.name_scope("ADAM"):
         # optimizer: set up a variable that's incremented once per batch and
-        # controls the learning rate decay.
+        # controls the learning rate decay
         batch = tf.Variable(0)
 
         learning_rate = tf.train.exponential_decay(
-            float(config['CNN']['LEARNING_RATE']),  # base learning rate.
-            tf.cast(batch, dtype=tf.int16) * BATCH_SIZE,  # current index in the dataset.
-            train_size,  # decay step.
-            0.95,  # decay rate.
+            float(config['CNN']['LEARNING_RATE']),  # base learning rate
+            tf.cast(batch, dtype=tf.int16) * BATCH_SIZE,  # current index in the dataset
+            train_size,  # decay step
+            0.95,  # decay rate
             staircase=True)
 
         # use simple momentum for the optimization
