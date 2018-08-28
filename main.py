@@ -180,9 +180,6 @@ def update_config():
 @app.route('/api/train-models', methods=['POST'])
 @utils.capture
 def train_models():
-    delete_all_models()
-    maybe_update_models()
-
     # if no categories are added, print error
     if num_categories == 0:
         err = utils.get_no_cat_error()
@@ -190,6 +187,9 @@ def train_models():
     elif utils.not_enough_images():
         err = utils.get_not_enough_images_error()
         return jsonify(error=err)
+
+    maybe_update_models()
+    delete_all_models()
     try:
         regression_train.train()
         cnn_train.train()
