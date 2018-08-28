@@ -3,6 +3,7 @@ import os
 import cnn_model
 import numpy
 import prepare_training_data
+import utils
 import tensorflow as tf
 from tensorflow.python.framework.errors_impl import InvalidArgumentError, NotFoundError
 
@@ -31,7 +32,7 @@ def train():
     y_ = tf.placeholder(tf.float32, [None, curr_number_of_categories], name="labels")  # CNN ground truth labels
     y, variables = cnn_model.convolutional(x, nCategories=curr_number_of_categories) # CNN output and variables
 
-    is_training = tf.placeholder(tf.bool)  # used to apply dropout just in training phase
+    is_training = tf.placeholder(tf.bool)  # used for activating the dropout in training phase
 
     # loss function
     with tf.name_scope("Loss"):
@@ -75,8 +76,9 @@ def train():
     sess.run(tf.global_variables_initializer(), feed_dict={is_training: True})
     saver = tf.train.Saver(variables)
 
-    # training cycle
+    # training cycle (number of batches and epochs)
     total_batch = int(train_size / BATCH_SIZE)
+    epochs = int(config['CNN']['EPOCHS'])
 
     # op to write logs to Tensorboard
     if not os.path.exists(LOGS_DIRECTORY):
@@ -88,7 +90,7 @@ def train():
                                   is_training)
 
     # loop for epoch
-    for epoch in range(int(config['CNN']['EPOCHS'])):
+    for epoch in range(epochs):
 
         # random shuffling
         numpy.random.shuffle(train_total_data)
@@ -105,6 +107,10 @@ def train():
             # run optimization op (backprop), loss op (to get loss value) and summary nodes
             _, train_accuracy, summary = sess.run([train_step, accuracy, merged_summary_op],
                                                   feed_dict={x: batch_xs, y_: batch_ys, is_training: True})
+
+            # update progress
+            progress = float((epoch * total_batch + i + 1) / (epochs * total_batch))
+            utils.update_progress(progress)
 
             # Write logs at every iteration
             summary_writer.add_summary(summary, epoch * total_batch + i)

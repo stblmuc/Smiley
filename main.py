@@ -176,7 +176,6 @@ def update_config():
 
     return "ok"
 
-
 # Train model
 @app.route('/api/train-models', methods=['POST'])
 @utils.capture
@@ -194,12 +193,17 @@ def train_models():
     try:
         regression_train.train()
         cnn_train.train()
+        utils.reset_progress()
     except:
        err = "Unknown error."
        return jsonify(error=err)
 
     return "ok"
 
+# Retrieve training progress
+@app.route('/api/train-progress')
+def train_progress():
+    return jsonify(progress=utils.get_progress())
 
 # Delete all saved models
 @app.route('/api/delete-all-models', methods=['POST'])
@@ -208,6 +212,7 @@ def delete_all_models():
         os.remove(os.path.join(MODELS_DIRECTORY, f))
 
     return "ok"
+
 
 @app.route('/api/get-console-output')
 def console_output():

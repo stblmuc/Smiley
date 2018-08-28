@@ -87,7 +87,7 @@ class Main {
             this.addTrainingData(e.target, $(e.target).val());
         });
         var newButton = document.createElement('div');
-        $(newButton).addClass("cross-img").click((e) => {
+        $(newButton).addClass("cross-img").html("&#10060;").click((e) => {
             outerDiv.remove();
             this.deleteCategory(label);
             e.stopPropagation();
@@ -448,11 +448,17 @@ class Main {
     }
 
     trainModels(button) {
-        $(button).prop('disabled', true);
-        $(button).fadeOut(400).fadeIn(400);
-        var blink = setInterval(function(){
-            $(button).fadeOut(400).fadeIn(400);
-        }, 1000);
+        $(button).prop('disabled', true)
+        .addClass('progress-bar-striped progress-bar-animated');
+
+        var update_progress = setInterval(function() {
+            $.ajax({
+                url: '/api/train-progress',
+                success: (data) => {
+                    $(button).css('width', data.progress + '%')
+                }
+            })
+        }, 500);
 
         $.ajax({
             url: '/api/train-models',
@@ -470,8 +476,10 @@ class Main {
             }
         })
         .always(() => {
-            clearInterval(blink);
-            $(button).prop('disabled', false);
+            clearInterval(update_progress);
+            $(button).css('width', '100%')
+            .removeClass('progress-bar-striped progress-bar-animated')
+            .prop('disabled', false);
         })
         .fail(() => {
             this.clearOutput();
@@ -503,14 +511,6 @@ class Main {
             data: JSON.stringify(conf),
             success: (data) => {
                 $(button).parent('#trainParameters').collapse('hide');
-                $('#train-toggle-text').fadeOut(400, function() {
-                    $(this).text('Saved').fadeIn(400);
-                })
-                setTimeout(function(){
-                    $('#train-toggle-text').fadeOut(400, function() {
-                        $(this).text('Click to toggle').fadeIn(400);
-                    });
-                },2000);
             }
         })
         .fail(() => {

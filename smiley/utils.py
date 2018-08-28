@@ -12,7 +12,33 @@ config.read(os.path.join(os.path.dirname(__file__), 'config.ini'))
 CATEGORIES_LOCATION = os.path.join(os.path.dirname(__file__), config['DIRECTORIES']['CATEGORIES'],
                                        config['DEFAULT']['IMAGE_SIZE'] + "/")
 CATEGORIES = None
+PROGRESS = {
+    'value': 100,
+    'num_processes': 2,
+    'previous_value': 0
+}
 
+def get_progress():
+    global PROGRESS
+
+    return PROGRESS['value']
+
+def update_progress(value):
+    global PROGRESS
+
+    PROGRESS['value'] = PROGRESS['previous_value'] + (100*value/PROGRESS['num_processes'])
+    
+    # if proccess is completed, add its contribution to previous_value
+    if (value == 1):
+        PROGRESS['previous_value'] += 100/PROGRESS['num_processes']
+
+    return PROGRESS['value']
+
+def reset_progress():
+    global PROGRESS
+
+    PROGRESS['value'] = 100
+    PROGRESS['previous_value'] = 0
 
 # Class for log handling
 class Logger(object):

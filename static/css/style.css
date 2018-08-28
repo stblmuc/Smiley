@@ -39,23 +39,28 @@
      background-image : url("../img/upside-down.png");
 }
 
-.cross-img{
-     background-image : url("../img/cross.png");
-     width: 21px;
-     height: 21px;
-     display: inline-block;
-     margin-left: 10px;
-     vertical-align: text-top;
-     background-color: inherit;
-     background-position: center;
-     background-repeat: no-repeat;
-     border: solid #222 2px;
-     border-radius: 6px;
-     padding: 2px;
+.cross-img {
+    display: inline;
+    width: 20px;
+    height: 20px;
+    font-size: 10px;
+    margin-left: 10px;
+    background-color: transparent;
+    border: solid #333 2px;
+    border-radius: 6px;
+    padding: 1px;
 }
 
 .cross-img:hover{
-     background-color: white;
+     background-color: #ddd;
+}
+
+.train {
+    background-color: #e9ecef;
+}
+
+#trainModels {
+    transition: width .5s ease;
 }
 
 .toggle-arrow {
@@ -74,8 +79,8 @@
     width: 10px;
     height: 10px;
     background-color: transparent;
-    border-right: 3px solid black;
-    border-bottom: 3px solid black;
+    border-right: 3px solid #6c757d;
+    border-bottom: 3px solid #6c757d;
     transform: rotate(45deg);
     -webkit-transform: scale(1) rotate(45deg) translate(0px, 0px);
     -moz-transform: rotate(45deg) scale(1.0);

@@ -2,6 +2,7 @@ import configparser
 import os
 import numpy
 import prepare_training_data
+import utils
 import regression_model
 import tensorflow as tf
 from tensorflow.python.framework.errors_impl import InvalidArgumentError, NotFoundError
@@ -49,14 +50,15 @@ def train():
     sess.run(tf.global_variables_initializer())
     saver = tf.train.Saver(variables)
 
-    # training cycle
+    # training cycle (number of batches and epochs)
     total_batch = int(train_size / BATCH_SIZE)
+    epochs = int(config['REGRESSION']['EPOCHS'])
 
     # restore stored regression model if it exists and has the correct number of categories
     max_acc = maybe_restore_model(MODEL_PATH, saver, sess, accuracy, validation_data, x, validation_labels, y_)
 
     # loop for epoch
-    for epoch in range(int(config['REGRESSION']['EPOCHS'])):
+    for epoch in range(epochs):
 
         # random shuffling
         numpy.random.shuffle(train_total_data)
@@ -71,6 +73,10 @@ def train():
             batch_ys = train_labels_[offset:(offset + BATCH_SIZE), :]
 
             _, train_accuracy = sess.run([train_step, accuracy], feed_dict={x: batch_xs, y_: batch_ys})
+
+            # update progress
+            progress = float((epoch * total_batch + i + 1) / (epochs * total_batch))
+            utils.update_progress(progress)
 
             validation_accuracy = compute_accuracy(sess, accuracy, train_accuracy, i, total_batch, epoch,
                                                    validation_data, x,
