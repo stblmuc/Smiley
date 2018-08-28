@@ -21,7 +21,7 @@ class Main {
         this.input.height = 5 * this.image_size;
 
         var catsList = $('#trainingDataLabelOptions')[0];
-        this.cats = param.categories;
+        this.cats = Object.keys(param.cat_number);
         this.cats.forEach(function(item){
             var option = document.createElement('option');
             $(option).val(item);
@@ -33,6 +33,7 @@ class Main {
         this.canvas.addEventListener('mousemove', this.onMouseMove.bind(this));
 
         this.createUserCategoryButtons();
+        this.addNumberToCategories();
         this.initializeConfigValues();
         this.initialize();
     }
@@ -73,6 +74,24 @@ class Main {
         $('#cnn-epochs').val(this.cnnEpochs);
     }
 
+    addNumberToCategories() {
+        for (var key in param.cat_number) {
+            // check if the property/key is defined in the object itself, not in parent
+            if (param.cat_number.hasOwnProperty(key)) {
+                this.addNewNumberToCategory(key, param.cat_number[key]);
+            }
+        }
+    }
+
+    addNewNumberToCategory(category, number) {
+        var numberDiv = document.createElement('div');
+        numberDiv.innerHTML = " (" + number + ")";
+        numberDiv.className += " inline-class";
+        numberDiv.id = category + "-number";
+        var x = $('.add-emoji-data').filter(function(){return this.value==category})[0];
+        x.insertBefore(numberDiv, x.childNodes[1]);
+    }
+
     createUserCategoryButtons() {
         param.user_categories.forEach((item) => {
             this.addUserCategoryButton(item);
@@ -84,7 +103,7 @@ class Main {
         var outerDiv = document.createElement('div');
         $(outerDiv).addClass("btn btn-outline-secondary add-emoji-data")
         .html(label).val(label).click((e) => {
-            this.addTrainingData(e.target, $(e.target).val());
+            this.addTrainingData(e.currentTarget, $(e.currentTarget).val());
         });
         var newButton = document.createElement('div');
         $(newButton).addClass("cross-img").html("&#10060;").click((e) => {
@@ -338,6 +357,15 @@ class Main {
 
                     this.addUserCategoryButton(label);
                 }
+
+                var catNumber = $('#'+label+'-number');
+                if(catNumber.length > 0) {
+                    var temp = catNumber.html();
+                    var n = parseInt(temp.substring(2, temp.length-1));
+                    catNumber.html(" (" + (n + 1) + ")");
+                } else {
+                    this.addNewNumberToCategory(label, 1 );
+                }
             }
         })
         .always(() => {
@@ -562,8 +590,8 @@ $(() => {
         main.addTrainingData(e.target, $('#trainingDataLabel').val());
     });
 
-    $('.add-emoji-data').click((e) => {
-        main.addTrainingData(e.target, $(e.target).val());
+    $('.button-own-image').click((e) => {
+        main.addTrainingData(e.currentTarget, $(e.currentTarget).val());
     });
 
     /*$('#importFile').change((e) => {

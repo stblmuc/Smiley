@@ -97,3 +97,8 @@
     -webkit-transform: rotate(-180deg);
     transform: rotate(-180deg);
 }
+
+.inline-class{
+    display: inline-block;
+    margin-left: 3px;
+}
