@@ -382,6 +382,9 @@ class Main {
     useModeDraw(button) {
         if (!!this.video) {
             this.video.pause();
+            this.video.srcObject.getVideoTracks().forEach(function(track) {
+                track.stop();
+            });
             this.video = null;
         }
 
@@ -395,10 +398,15 @@ class Main {
                 
                 navigator.mediaDevices.enumerateDevices()
                 .then((deviceInfos) => {
-                    /* sets video_device_id to the last webcam found */
-                    for (var i = 0; i < deviceInfos.length; ++i) 
+                    /* sets video_device_id to the last webcam found (edge-compatible)
+                       or to the logitech one (chrome-compatible)*/
+                    for (var i in deviceInfos) {
                         if (deviceInfos[i].kind === 'videoinput')
                             this.video_device_id = deviceInfos[i].deviceId;
+
+                        if (deviceInfos[i].label.startsWith("Logitech") && deviceInfos[i].kind === 'videoinput')
+                            break;
+                    }
 
                     constraints['video']['deviceId'] = {exact: this.video_device_id};
                     return navigator.mediaDevices.getUserMedia(constraints);
