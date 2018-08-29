@@ -481,15 +481,10 @@ class Main {
                 url: '/api/train-models',
                 method: 'POST',
                 success: (data) => {
+                    this.clearOutput();
+
                     const error = data.error;
-                    if (error) {
-                        $("#error").html(error);
-                    } else {
-                        $("#error").text("");
-
-                        this.recogniseInput();
-                    }
-
+                    $("#error").html(error ? error : "");
                 }
             })
             .always(() => {

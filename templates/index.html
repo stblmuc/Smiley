@@ -35,17 +35,19 @@
                     <span>Add to training dataset</span>
                 </div>
                 <div class="card-body">
-                    <div id="row no-gutters justify-content-around">
-                        <button class="btn btn-outline-secondary button-own-image add-emoji-data smile-img" value="smile">smile</button>
-                        <button class="btn btn-outline-secondary button-own-image add-emoji-data neutral-img" value="neutral">neutral</button>
-                        <button class="btn btn-outline-secondary button-own-image add-emoji-data sad-img" value="sad">sad</button>
-                        <button class="btn btn-outline-secondary button-own-image add-emoji-data angry-img" value="angry">angry</button>
-                        <button class="btn btn-outline-secondary button-own-image add-emoji-data scream-img" value="scream">scream</button>
-                        <button class="btn btn-outline-secondary button-own-image add-emoji-data upside-down-img" value="upside-down">upside-down</button>
+                    <div class="categories">
+                        <div id="row no-gutters justify-content-around">
+                            <button class="btn btn-outline-secondary button-own-image add-emoji-data smile-img" value="smile">smile</button>
+                            <button class="btn btn-outline-secondary button-own-image add-emoji-data neutral-img" value="neutral">neutral</button>
+                            <button class="btn btn-outline-secondary button-own-image add-emoji-data sad-img" value="sad">sad</button>
+                            <button class="btn btn-outline-secondary button-own-image add-emoji-data angry-img" value="angry">angry</button>
+                            <button class="btn btn-outline-secondary button-own-image add-emoji-data scream-img" value="scream">scream</button>
+                            <button class="btn btn-outline-secondary button-own-image add-emoji-data upside-down-img" value="upside-down">upside-down</button>
+                        </div>
+                        <div id="ownCategories" class="row no-gutters justify-content-around"></div>
                     </div>
-                    <div id="ownCategories" class="row no-gutters justify-content-around"></div>
                     <br>
-                    <div id="add-form" class="input-group">
+                    <div class="input-group">
                         <div class="input-group-prepend">
                             <label for="trainingDataLabel" class="input-group-text">Other category:</label>
                         </div>
@@ -71,44 +73,44 @@
                         <div class="card-body">
                             <div class="input-group">
                                 <div class="input-group-prepend"><label class="input-group-text" for="num-augm">Augmentations per image:</label></div>
-                                <input type="number" id="num-augm" class="form-control no-right-border" value="10">
+                                <input type="number" id="num-augm" class="form-control" value="10">
                                 <div class="input-group-append">
-                                    <label class="input-group-text pen" for="num-augm"><i class="fa fa-pen"></i></label>
+                                    <label class="input-group-text" for="num-augm"><i class="fa fa-pen"></i></label>
                                 </div>
                             </div>
                             <div class="input-group">
                                 <div class="input-group-prepend"><label class="input-group-text" for="batch-size">Batch size:</label></div>
-                                <input type="number" id="batch-size" class="form-control no-right-border" value="10">
+                                <input type="number" id="batch-size" class="form-control" value="10">
                                 <div class="input-group-append">
-                                    <label class="input-group-text pen" for="batch-size"><i class="fa fa-pen"></i></label>
+                                    <label class="input-group-text" for="batch-size"><i class="fa fa-pen"></i></label>
                                 </div>
                             </div>
                             <div class="input-group">
                                 <div class="input-group-prepend"><label class="input-group-text" for="sr-rate">Softmax regression learning rate:</label></div>
-                                <input type="number" id="sr-rate" class="form-control no-right-border" value="0.01" step="0.0001">
+                                <input type="number" id="sr-rate" class="form-control" value="0.01" step="0.0001">
                                 <div class="input-group-append">
-                                    <label class="input-group-text pen" for="sr-rate"><i class="fa fa-pen"></i></label>
+                                    <label class="input-group-text" for="sr-rate"><i class="fa fa-pen"></i></label>
                                 </div>
                             </div>
                             <div class="input-group">
                                 <div class="input-group-prepend"><label class="input-group-text" for="sr-epochs">Softmax regression epochs:</label></div>
-                                <input type="number" id="sr-epochs" class="form-control no-right-border" value="3">
+                                <input type="number" id="sr-epochs" class="form-control" value="3">
                                 <div class="input-group-append">
-                                    <label class="input-group-text pen" for="sr-epochs"><i class="fa fa-pen"></i></label>
+                                    <label class="input-group-text" for="sr-epochs"><i class="fa fa-pen"></i></label>
                                 </div>
                             </div>
                             <div class="input-group">
                                 <div class="input-group-prepend"><label class="input-group-text" for="cnn-rate">CNN learning rate:</label></div>
-                                <input type="number" id="cnn-rate" class="form-control no-right-border" value="0.0001" step="0.0001">
+                                <input type="number" id="cnn-rate" class="form-control" value="0.0001" step="0.0001">
                                 <div class="input-group-append">
-                                    <label class="input-group-text pen" for="cnn-rate"><i class="fa fa-pen"></i></label>
+                                    <label class="input-group-text" for="cnn-rate"><i class="fa fa-pen"></i></label>
                                 </div>
                             </div>
                             <div class="input-group">
                                 <div class="input-group-prepend"><label class="input-group-text" for="cnn-epochs">CNN epochs:</label></div>
-                                <input type="number" id="cnn-epochs" class="form-control no-right-border" value="3">
+                                <input type="number" id="cnn-epochs" class="form-control" value="3">
                                 <div class="input-group-append">
-                                    <label class="input-group-text pen" for="cnn-epochs"><i class="fa fa-pen"></i></label>
+                                    <label class="input-group-text" for="cnn-epochs"><i class="fa fa-pen"></i></label>
                                 </div>
                             </div>
                         </div>
