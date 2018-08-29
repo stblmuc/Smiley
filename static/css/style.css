@@ -127,10 +127,6 @@ label {
 #config-form .card-body {
     padding: 0;
     border: 0;
-    -moz-transition: -moz-transform .4s;
-    -webkit-transition: -webkit-transform .4s;
-    -o-transition: -o-transform .4s;
-    transition: transform .4s;
 }
 
 #config-form .input-group-text {

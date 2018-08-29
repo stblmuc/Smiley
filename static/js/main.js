@@ -531,10 +531,11 @@ class Main {
             contentType: 'application/json',
             data: JSON.stringify(conf),
             success: (data) => {
-                var field = $(button).find('.border-warning');
-                field.removeClass('border-warning').addClass('border-success');
+                var icon = $(button).find('i.fa-spinner.fa-spin');
+                icon.removeClass("fa-spinner fa-spin").addClass("fa-check");
+
                 setTimeout(function() {
-                    field.removeClass('border-success');
+                    icon.removeClass("fa-check").addClass("fa-pen");
                 }, 1000);
             }
         })
@@ -655,7 +656,9 @@ $(() => {
 
     $('#config-form input').each(function() {
         $(this).change((e) => {
-            $(this).addClass('border-warning');
+            $(this).siblings('.input-group-append').find('i')
+            .removeClass('fa-pen').addClass('fa-spinner fa-spin');
+
             this.timeout = setTimeout(() => {
                 $('#config-form').submit();
             }, 1000);
