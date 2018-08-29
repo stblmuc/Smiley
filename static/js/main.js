@@ -21,7 +21,7 @@ class Main {
         this.input.height = 5 * this.image_size;
 
         var catsList = $('#trainingDataLabelOptions')[0];
-        this.cats = Object.keys(param.cat_number);
+        this.cats = param.categories;
         this.cats.forEach(function(item){
             var option = document.createElement('option');
             $(option).val(item);
