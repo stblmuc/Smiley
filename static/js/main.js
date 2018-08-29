@@ -43,6 +43,7 @@ class Main {
 
         if (!!this.video) {
             this.video.play();
+
             this.makeMenuActive($('#modeCamera'));
             $('#takePhoto').show();
         } else {
@@ -64,6 +65,7 @@ class Main {
                 this.ctx.closePath();
                 this.ctx.stroke();
             }
+
             this.makeMenuActive($('#modeDraw'));
             $('#takePhoto').hide();
         }
@@ -451,46 +453,62 @@ class Main {
     }
 
     trainModels(button) {
-        $(button).prop('disabled', true)
-        .addClass('progress-bar-striped progress-bar-animated');
-
-        var update_progress = setInterval(function() {
+        if (this.is_training) {
+            $(button).prop('disabled', true);
             $.ajax({
-                url: '/api/train-progress',
+                url: '/api/stop-training',
+                method: 'POST'
+            })
+            .fail(() => {
+                this.clearOutput();
+                this.checkConnection();
+            });
+        } else {
+            this.is_training = true;
+
+            $(button).children('.label-progress-bar').text("Stop Training").css('color', 'black');
+
+            var update_progress = setInterval(function() {
+                $.ajax({
+                    url: '/api/train-progress',
+                    success: (data) => {
+                        $(button).children('.progress-bar').css('width', data.progress + '%');
+                    }
+                });
+            }, 800);
+
+            $.ajax({
+                url: '/api/train-models',
+                method: 'POST',
                 success: (data) => {
-                    $(button).css('width', data.progress + '%')
+                    const error = data.error;
+                    if (error) {
+                        $("#error").html(error);
+                    } else {
+                        $("#error").text("");
+
+                        this.recogniseInput();
+                    }
+
                 }
             })
-        }, 800);
+            .always(() => {
+                clearInterval(update_progress);
 
-        $.ajax({
-            url: '/api/train-models',
-            method: 'POST',
-            success: (data) => {
-                const error = data.error;
-                if (error) {
-                    $("#error").html(error);
-                } else {
-                    $("#error").text("");
+                this.is_training = false;
 
-                    this.recogniseInput();
-                }
-
-            }
-        })
-        .always(() => {
-            clearInterval(update_progress);
-            $(button).css('width', '100%')
-            .removeClass('progress-bar-striped progress-bar-animated')
-            .prop('disabled', false);
-        })
-        .fail(() => {
-            this.clearOutput();
-            this.checkConnection();
-        });
+                $(button).prop('disabled', false);
+                $(button).children('.progress-bar').css('width', '100%');
+                $(button).children('.label-progress-bar').text("Start Training").css('color', 'white');
+            })
+            .fail(() => {
+                this.clearOutput();
+                this.checkConnection();
+            });
+        }
     }
 
-    updateConfig() {
+    updateConfig(button) {
         this.numAugm = $('#num-augm').val();
         this.batchSize = $('#batch-size').val();
         this.srRate = $('#sr-rate').val();
@@ -513,8 +531,11 @@ class Main {
             contentType: 'application/json',
             data: JSON.stringify(conf),
             success: (data) => {
-                // $('#trainParameters').collapse('hide');
-                $('#trainParameters input').removeClass('updating');
+                var field = $(button).find('.border-warning');
+                field.removeClass('border-warning').addClass('border-success');
+                setTimeout(function() {
+                    field.removeClass('border-success');
+                }, 1000);
             }
         })
         .fail(() => {
@@ -601,8 +622,6 @@ $(() => {
 
     $('#modeCamera').click((e) => {
         main.useModeCamera(e.currentTarget);
-        $(e.currentTarget).addClass("menu-active");
-        $('#modeDraw').removeClass("menu-active");
     });
 
     $('#takePhoto').click((e) => {
@@ -630,16 +649,16 @@ $(() => {
     });
 
     $('#config-form').submit((e) => {
-        main.updateConfig();
+        main.updateConfig(e.currentTarget);
         return false;
     });
 
     $('#config-form input').each(function() {
         $(this).change((e) => {
-            $(this).addClass('updating');
+            $(this).addClass('border-warning');
             this.timeout = setTimeout(() => {
                 $('#config-form').submit();
-            }, 2000);
+            }, 1000);
         })
     })
 

@@ -129,6 +129,14 @@ def train():
 
                 # saver.save(sess, LOGS_DIRECTORY + "CNN", epoch)
 
+            # break inner loop if stop training is required
+            if utils.train_should_stop():
+                break;
+
+        # break outer loop if stop training is required
+        if utils.train_should_stop():
+            break;
+
     # Code with test set
     # restore variables from disk
     # saver.restore(sess, MODEL_PATH)

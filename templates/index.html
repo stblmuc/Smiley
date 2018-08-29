@@ -23,7 +23,7 @@
             </div>
             <div class="relative">
                 <canvas id="main"></canvas>
-                <div id="takePhoto" class="circle"></div>
+                <div id="takePhoto" class="circle" style="display: none;"></div>
                 <div class="row no-gutters justify-content-between">
                     <button id="clear" class="btn btn-outline-secondary">Clear</button>
                     <button id="recognise" class="btn btn-outline-secondary">Recognise</button>
@@ -52,8 +52,9 @@
                     </label>
                 </div>
             </div>
-            <div class="train">
-                <button id="trainModels" class="btn btn-primary btn-block">Start Training</button>
+            <div id="trainModels" class="relative">
+                <div class="label-progress-bar">Start Training</div>
+                <div class="progress-bar"></div>
             </div>
             <div class="card">
                 <div class="card-header" data-toggle="collapse" href="#trainParameters, #trainToggleArrow">

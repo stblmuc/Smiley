@@ -119,7 +119,7 @@ def smiley():
         err = utils.get_not_enough_images_error()
 
     else:
-        retrain_error = "Models not found or incompatible number of categories or incompatible image size. Please (re-)train the classifiers."
+        retrain_error = "Models not found or incompatible number of categories or image size. Please (re-)train the classifiers."
 
         try:
             regression_output = regression_predict(regression_input)
@@ -188,16 +188,21 @@ def train_models():
         err = utils.get_not_enough_images_error()
         return jsonify(error=err)
 
+    utils.delete_all_models()
     maybe_update_models()
-    delete_all_models()
 
     try:
         regression_train.train()
         cnn_train.train()
-        utils.reset_progress()
     except:
-       err = "Unknown error."
-       return jsonify(error=err)
+        err = "Unknown error."
+        return jsonify(error=err)
+
+    if utils.train_should_stop():
+        utils.delete_all_models()
+        utils.train_should_stop(False)
+
+    utils.reset_progress()
 
     return "ok"
 
@@ -206,11 +211,10 @@ def train_models():
 def train_progress():
     return jsonify(progress=utils.get_progress())
 
-# Delete all saved models
-@app.route('/api/delete-all-models', methods=['POST'])
-def delete_all_models():
-    for f in os.listdir(MODELS_DIRECTORY):
-        os.remove(os.path.join(MODELS_DIRECTORY, f))
+# Stop the training and delete all saved models
+@app.route('/api/stop-training', methods=['POST'])
+def stop_training():
+    utils.train_should_stop(True)
 
     return "ok"
 

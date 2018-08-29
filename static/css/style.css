@@ -12,6 +12,11 @@ label {
     margin-bottom: 0;
 }
 
+.menu-active{
+    background-color: #6c757d !important;
+    color: #FFFFFF !important;
+}
+
 .button-own-image:before {
     content: "";
     width: 21px;
@@ -64,11 +69,23 @@ label {
      background-color: #ddd;
 }
 
-.train {
+#trainModels {
+    height: 2rem;
     background-color: #e9ecef;
+    text-align: center;
+    vertical-align: middle;
 }
 
-#trainModels {
+.label-progress-bar {
+    position: absolute;
+    margin: auto;
+    height: 100%;
+    width: 100%;
+    color: white;
+}
+
+.progress-bar {
+    height: 100%;
     transition: width .4s ease;
 }
 
@@ -110,6 +127,10 @@ label {
 #config-form .card-body {
     padding: 0;
     border: 0;
+    -moz-transition: -moz-transform .4s;
+    -webkit-transition: -webkit-transform .4s;
+    -o-transition: -o-transform .4s;
+    transition: transform .4s;
 }
 
 #config-form .input-group-text {
@@ -120,31 +141,27 @@ label {
     border-radius: 0;
 }
 
-.updating {
-    border: solid #28a745 3px;
+#config-form .form-control:focus {
+    border-color: #ced4da;
+    outline: none;
+    box-shadow: none;
 }
 
 .inline {
     display: inline;
 }
 
-.menu-active{
-    background-color: #6c757d !important;
-    color: #FFFFFF !important;
-}
-
 .circle {
 	border: 4px solid #000000;
 	border-radius: 50%;
-
 	-webkit-box-shadow: 0 0 2px 0px rgb( 255, 255, 255);
 	box-shadow: 0 0 2px 0px rgb( 255, 255, 255);
 	width: 40px;
 	height: 40px;
-	z-index: 86;
-    display: inline-block;
+	z-index: 2;
+    display: block;
     position: absolute;
-    left: 204px; /*(448 / 2) - 20 */
+    left: 205px; /*(450 / 2) - 20 */
     bottom: 65px;
     cursor: pointer;
 }

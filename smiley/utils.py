@@ -8,19 +8,24 @@ import shutil
 config = configparser.ConfigParser()
 config.read(os.path.join(os.path.dirname(__file__), 'config.ini'))
 
+MODELS_DIRECTORY = os.path.join(config['DIRECTORIES']['LOGIC'], config['DIRECTORIES']['MODELS'],
+                                config['DEFAULT']['IMAGE_SIZE'])
 CATEGORIES_LOCATION = os.path.join(os.path.dirname(__file__), config['DIRECTORIES']['CATEGORIES'],
                                        config['DEFAULT']['IMAGE_SIZE'] + "/")
 CATEGORIES = None
 PROGRESS = {
     'value': 100,
     'num_processes': 2,
-    'previous_value': 0
+    'previous_value': 0,
+    'stop': False
 }
+
 
 def get_progress():
     global PROGRESS
 
     return PROGRESS['value']
+
 
 def update_progress(value):
     global PROGRESS
@@ -33,11 +38,22 @@ def update_progress(value):
 
     return PROGRESS['value']
 
+
+def train_should_stop(stop='MISSING'):
+    global PROGRESS
+
+    if stop is not 'MISSING':
+        PROGRESS['stop'] = stop
+
+    return PROGRESS['stop']
+
+
 def reset_progress():
     global PROGRESS
 
     PROGRESS['value'] = 100
     PROGRESS['previous_value'] = 0
+
 
 # Class for log handling
 class Logger(object):
@@ -79,6 +95,11 @@ def capture(f):
             LOGGER.end()
         return result  # captured result from decorated function
     return captured
+
+
+def delete_all_models():
+    for f in os.listdir(MODELS_DIRECTORY):
+        os.remove(os.path.join(MODELS_DIRECTORY, f))
 
 
 def update_categories():

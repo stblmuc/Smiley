@@ -90,7 +90,13 @@ def train():
                 save_path = saver.save(sess, MODEL_PATH, write_meta_graph=False, write_state=False)
                 print("Model updated and saved in file: %s" % save_path)
 
-    print("Optimization Finished!")
+            # break inner loop if stop training is required
+            if utils.train_should_stop():
+                break;
+
+        # break outer loop if stop training is required
+        if utils.train_should_stop():
+            break;
 
     # Code with test set
     # restore variables from disk
