@@ -28,8 +28,6 @@ class Main {
             catsList.append(option);
         });
 
-        this.makeDrawActive();
-
         this.canvas.addEventListener('mousedown', this.onMouseDown.bind(this));
         this.canvas.addEventListener('mouseup', this.onMouseUp.bind(this));
         this.canvas.addEventListener('mousemove', this.onMouseMove.bind(this));
@@ -45,6 +43,7 @@ class Main {
 
         if (!!this.video) {
             this.video.play();
+            this.makeMenuActive($('#modeCamera'));
         } else {
             this.ctx.fillStyle = '#FFFFFF';
             this.ctx.fillRect(0, 0, this.canvas.width, this.canvas.height);
@@ -64,6 +63,7 @@ class Main {
                 this.ctx.closePath();
                 this.ctx.stroke();
             }
+            this.makeMenuActive($('#modeDraw'));
         }
     }
 
@@ -404,6 +404,8 @@ class Main {
                     return navigator.mediaDevices.getUserMedia(constraints);
                 })
                 .then((mediaStream) => {
+                    this.drawing = false;
+
                     const ctx = this.ctx;
                     const rect_size = this.rect_size;
 
@@ -418,25 +420,22 @@ class Main {
                             }
                         })();
                     }, 0);
-                    this.video.play();
+                    this.initialize();
                 })
                 .catch(function(err) {
                     console.log(err.name + ": " + err.message);
-                    this.makeDrawActive();
                 }); // always check for errors at the end.
             } else {
                 this.initialize();
-                this.makeDrawActive();
             }
         } else {
             alert('getUserMedia() is not supported by your browser');
-            this.makeDrawActive();
         }
     }
 
-    makeDrawActive() {
-        $('#modeDraw').addClass("menu-active");
-        $('#modeCamera').removeClass("menu-active");
+    makeMenuActive(button) {
+        $(button).addClass("menu-active");
+        $(button).siblings().removeClass("menu-active");
     }
 
     trainModels(button) {
@@ -586,13 +585,10 @@ $(() => {
 
     $('#modeDraw').click((e) => {
         main.useModeDraw(e.currentTarget);
-        main.makeDrawActive();
     });
 
     $('#modeCamera').click((e) => {
         main.useModeCamera(e.currentTarget);
-        $(e.currentTarget).addClass("menu-active");
-        $('#modeDraw').removeClass("menu-active");
     });
 
     $('#clear').click(() => {
