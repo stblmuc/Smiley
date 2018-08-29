@@ -92,8 +92,8 @@ def main():
 
 
 # Predict
-@app.route('/api/smiley', methods=['POST'])
-def smiley():
+@app.route('/api/recognise', methods=['POST'])
+def recognise():
     maybe_update_models()
 
     # input with pixel values between 0 (black) and 255 (white)
@@ -138,8 +138,8 @@ def smiley():
 
 
 # Add training example
-@app.route('/api/generate-training-example', methods=['POST'])
-def generate_training_example():
+@app.route('/api/add-training-example', methods=['POST'])
+def add_training_example():
     image_size = int(config['DEFAULT']['IMAGE_SIZE'])
     image = np.array(request.json["img"], dtype=np.uint8).reshape(image_size, image_size, 1)
     category = request.json["cat"]

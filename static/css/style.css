@@ -25,7 +25,7 @@ label {
     margin-right: 5px;
     vertical-align: text-top;
     background-color: transparent;
-    background-position : center center;
+    background-position: center;
     background-repeat: no-repeat;
 }
 
@@ -67,6 +67,10 @@ label {
 
 .cross-img:hover{
      background-color: #ddd;
+}
+
+#categories > div {
+    width: inherit;
 }
 
 #trainModels {

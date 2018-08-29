@@ -27,13 +27,13 @@ class Main {
             $(option).val(item);
             catsList.append(option);
         });
+        this.fixed_cats = param.categories.filter(x => !param.user_categories.includes(x));
 
         this.canvas.addEventListener('mousedown', this.onMouseDown.bind(this));
         this.canvas.addEventListener('mouseup', this.onMouseUp.bind(this));
         this.canvas.addEventListener('mousemove', this.onMouseMove.bind(this));
 
-        this.createUserCategoryButtons();
-        this.addNumberToCategories();
+        this.createCategoryButtons();
         this.initializeConfigValues();
         this.initialize();
     }
@@ -84,58 +84,77 @@ class Main {
         for (var key in param.cat_number) {
             // check if the property/key is defined in the object itself, not in parent
             if (param.cat_number.hasOwnProperty(key)) {
-                this.addNewNumberToCategory(key, param.cat_number[key]);
+                this.updateCategoryNumber(key, param.cat_number[key]);
             }
         }
     }
 
-    addNewNumberToCategory(category, number) {
+    updateCategoryNumber(category, number) {
+        var button = $('#categories .btn')
+        .filter(function(){return this.value==category})[0];
+
+        var value = $(button).children().text().replace(/\D/g, '');
+        $(button).children().remove();
+
         var numberDiv = document.createElement('div');
-        $(numberDiv).html(" (" + number + ")").addClass("inline");
         numberDiv.id = category + "-number";
-
-        var x = $('.add-emoji-data').filter(function(){return this.value==category})[0];
-        x.insertBefore(numberDiv, x.childNodes[1]);
+        $(numberDiv).html(" (" + (number ? number : (Number(value)+1)) + ")").addClass("inline").appendTo(button);
     }
 
-    createUserCategoryButtons() {
-        param.user_categories.forEach((item) => {
-            this.addUserCategoryButton(item);
-        });
-    }
-
-    addUserCategoryButton(label) {
-        var catsButtons = $('#ownCategories')[0];
-        var outerDiv = document.createElement('div');
-        $(outerDiv).addClass("btn btn-outline-secondary add-emoji-data")
-        .html(label).val(label).click((e) => {
-            this.addTrainingData(e.currentTarget, $(e.currentTarget).val());
-        });
-        var newButton = document.createElement('div');
-        $(newButton).addClass("cross-img").html("&#10060;").click((e) => {
-            outerDiv.remove();
-            this.deleteCategory(label);
+    addDeleteToCategory(category, location) {
+        var button = document.createElement('div');
+        $(button).addClass("input-group-append btn btn-outline-danger")
+        .html("<span>&#10060;</span>").click((e) => {
+            this.deleteCategory(category, location);
             e.stopPropagation();
-        }).appendTo(outerDiv);
-        catsButtons.append(outerDiv);
+        }).appendTo(location);
     }
 
-    deleteCategory(label) {
-        $("#trainingDataLabelOptions option[value='"+label+"']").remove(); // delete cat from datalist options
-        var index = this.cats.indexOf(label);
-        if (index !== -1) {
-            this.cats.splice(index, 1);
+    createCategoryButtons() {
+        param.categories.forEach((item) => {
+            this.addCategoryButton(item, $('#categories'), this.fixed_cats.includes(item));
+        });
+
+        this.addNumberToCategories();
+    }
+
+    addCategoryButton(category, location, fixed) {
+        var outerDiv = document.createElement('div');
+        $(outerDiv).addClass("input-group")
+
+        var button = document.createElement('div');
+        $(button).addClass("btn btn-outline-secondary")
+        .html(category).val(category).click((e) => {
+            this.addTrainingData(outerDiv, $(e.currentTarget).val());
+        }).appendTo(outerDiv);
+
+        if (fixed) {
+            $(button).addClass("button-own-image " + category + "-img")
         }
 
-        const catData = {
-            cat: label
-        };
+        this.addDeleteToCategory(category, outerDiv);
+        location.append(outerDiv);
+    }
+
+    deleteCategory(category, button) {
         $.ajax({
             url: '/api/delete-category',
             method: 'POST',
             contentType: 'application/json',
-            data: JSON.stringify(catData),
+            data: JSON.stringify({ cat: category }),
             success: (data) => {
+                $("#trainingDataLabelOptions option[value='"+category+"']").remove(); // delete cat from datalist options
+                $(button).find('div[id$="number"]').remove();
+
+                if (!this.fixed_cats.includes(category)) {
+                    $(button).remove();
+
+                    var index = this.cats.indexOf(category);
+                    if (index !== -1) {
+                        this.cats.splice(index, 1);
+                    }
+                }
+
                 this.initialize();
             }
         })
@@ -245,7 +264,7 @@ class Main {
 
     loadOutput(input) {
         $.ajax({
-            url: '/api/smiley',
+            url: '/api/recognise',
             method: 'POST',
             contentType: 'application/json',
             data: JSON.stringify(input),
@@ -344,7 +363,7 @@ class Main {
 
     uploadTrainingData(input, blink) {
         $.ajax({
-            url: '/api/generate-training-example',
+            url: '/api/add-training-example',
             method: 'POST',
             contentType: 'application/json',
             data: JSON.stringify(input),
@@ -363,17 +382,10 @@ class Main {
                     $(option).val(label);
                     catsList.append(option);
 
-                    this.addUserCategoryButton(label);
+                    this.addCategoryButton(label, $('#categories')[0]);
                 }
 
-                var catNumber = $('#'+label+'-number');
-                if(catNumber.length > 0) {
-                    var temp = catNumber.html();
-                    var n = parseInt(temp.substring(2, temp.length-1));
-                    catNumber.html(" (" + (n + 1) + ")");
-                } else {
-                    this.addNewNumberToCategory(label, 1 );
-                }
+                this.updateCategoryNumber(label, 0);
             }
         })
         .always(() => {
@@ -453,7 +465,7 @@ class Main {
     }
 
     trainModels(button) {
-        if (this.is_training) {
+        if (!!this.is_training) {
             $(button).prop('disabled', true);
             $.ajax({
                 url: '/api/stop-training',
@@ -634,10 +646,6 @@ $(() => {
 
     $('#addTrainingData').click((e) => {
         main.addTrainingData(e.currentTarget, $('#trainingDataLabel').val());
-    });
-
-    $('.button-own-image').click((e) => {
-        main.addTrainingData(e.currentTarget, $(e.currentTarget).val());
     });
 
     $('#trainModels').click((e) => {
