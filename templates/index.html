@@ -5,6 +5,7 @@
     <link rel="shortcut icon" href="{{ url_for('static', filename='favicon.ico') }}">
     <link rel="stylesheet" href="{{ url_for('static', filename='css/bootstrap.min.css') }}">
     <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/awesome-all.min.css') }}">
     <script type="text/javascript" src="{{ url_for('static', filename='js/jquery.min.js') }}"></script>
     <script rel="text/javascript" src="{{ url_for('static', filename='js/bootstrap.min.js') }}"></script>
     <script type="text/javascript" src="{{ url_for('static', filename='js/main.js') }}"></script>
@@ -18,8 +19,8 @@
     <div class="row">
         <div class="col-lg-6">
             <div class="btn-group d-flex">
-                <button id="modeDraw" class="btn btn-outline-secondary w-50">Draw</button>
-                <button id="modeCamera" class="btn btn-outline-secondary w-50">Camera</button>
+                <button id="modeDraw" class="btn btn-outline-secondary w-50">Draw <i class="fa fa-paint-brush"></i></button>
+                <button id="modeCamera" class="btn btn-outline-secondary w-50">Camera <i class="fa fa-camera"></i></button>
             </div>
             <div class="relative">
                 <canvas id="main"></canvas>
@@ -35,7 +36,8 @@
                 </div>
                 <div class="card-body">
                     <div id="row no-gutters justify-content-around">
-                        <button class="btn btn-outline-secondary button-own-image add-emoji-data smile-img" value="smile">smile</button>
+                        <button class="btn btn-outline-secondary button-own-image add-emoji-data smile-img" value="smile">
+                    <i class="fa fa-pencil" aria-hidden="true"></i>smile</button>
                         <button class="btn btn-outline-secondary button-own-image add-emoji-data neutral-img" value="neutral">neutral</button>
                         <button class="btn btn-outline-secondary button-own-image add-emoji-data sad-img" value="sad">sad</button>
                         <button class="btn btn-outline-secondary button-own-image add-emoji-data angry-img" value="angry">angry</button>
@@ -65,27 +67,45 @@
                         <div class="card-body">
                             <div class="input-group">
                                 <div class="input-group-prepend"><label class="input-group-text" for="num-augm">Augmentations per image:</label></div>
-                                <input type="number" id="num-augm" class="form-control" value="10">
+                                <input type="number" id="num-augm" class="form-control no-right-border" value="10">
+                                <div class="input-group-append">
+                                    <span class="input-group-text pen"><i class="fa fa-pen"></i></span>
+                                </div>
                             </div>
                             <div class="input-group">
                                 <div class="input-group-prepend"><label class="input-group-text" for="batch-size">Batch size:</label></div>
-                                <input type="number" id="batch-size" class="form-control" value="10">
+                                <input type="number" id="batch-size" class="form-control no-right-border" value="10">
+                                <div class="input-group-append">
+                                    <span class="input-group-text pen"><i class="fa fa-pen"></i></span>
+                                </div>
                             </div>
                             <div class="input-group">
                                 <div class="input-group-prepend"><label class="input-group-text" for="sr-rate">Softmax regression learning rate:</label></div>
-                                <input type="number" id="sr-rate" class="form-control" value="0.01" step="0.0001">
+                                <input type="number" id="sr-rate" class="form-control no-right-border" value="0.01" step="0.0001">
+                                <div class="input-group-append">
+                                    <span class="input-group-text pen"><i class="fa fa-pen"></i></span>
+                                </div>
                             </div>
                             <div class="input-group">
                                 <div class="input-group-prepend"><label class="input-group-text" for="sr-epochs">Softmax regression epochs:</label></div>
-                                <input type="number" id="sr-epochs" class="form-control" value="3">
+                                <input type="number" id="sr-epochs" class="form-control no-right-border" value="3">
+                                <div class="input-group-append">
+                                    <span class="input-group-text pen"><i class="fa fa-pen"></i></span>
+                                </div>
                             </div>
                             <div class="input-group">
                                 <div class="input-group-prepend"><label class="input-group-text" for="cnn-rate">CNN learning rate:</label></div>
-                                <input type="number" id="cnn-rate" class="form-control" value="0.0001" step="0.0001">
+                                <input type="number" id="cnn-rate" class="form-control no-right-border" value="0.0001" step="0.0001">
+                                <div class="input-group-append">
+                                    <span class="input-group-text pen"><i class="fa fa-pen"></i></span>
+                                </div>
                             </div>
                             <div class="input-group">
                                 <div class="input-group-prepend"><label class="input-group-text" for="cnn-epochs">CNN epochs:</label></div>
-                                <input type="number" id="cnn-epochs" class="form-control" value="3">
+                                <input type="number" id="cnn-epochs" class="form-control no-right-border" value="3">
+                                <div class="input-group-append">
+                                    <span class="input-group-text pen"><i class="fa fa-pen"></i></span>
+                                </div>
                             </div>
                         </div>
                     </form>

@@ -120,6 +120,13 @@ label {
     border-radius: 0;
 }
 
+#config-form .form-control:focus {
+    border-radius: 0;
+    outline: none;
+    box-shadow: none;
+    border-color: #ced4da;
+}
+
 .updating {
     border: solid #28a745 3px;
 }
@@ -151,4 +158,13 @@ label {
 
 .relative {
     position: relative !important;
+}
+
+.pen {
+    background-color: #FFFFFF;
+    border-left-width: 0px !important;
+}
+
+.no-right-border {
+    border-right-width: 0px !important;
 }
