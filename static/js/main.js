@@ -44,6 +44,7 @@ class Main {
         if (!!this.video) {
             this.video.play();
             this.makeMenuActive($('#modeCamera'));
+            $('#takePhoto').show();
         } else {
             this.ctx.fillStyle = '#FFFFFF';
             this.ctx.fillRect(0, 0, this.canvas.width, this.canvas.height);
@@ -64,6 +65,7 @@ class Main {
                 this.ctx.stroke();
             }
             this.makeMenuActive($('#modeDraw'));
+            $('#takePhoto').hide();
         }
     }
 
@@ -290,8 +292,10 @@ class Main {
                     const row = $("<tr>");
                     tbody.append(row);
                     const categoryNameCell = $("<th scope='row'>");
+                    const textElement = $("<span class='button-own-image "+categories[categoryIdx]+"-img'>");
+                    textElement.text(categories[categoryIdx]);
+                    categoryNameCell.append(textElement);
                     row.append(categoryNameCell);
-                    categoryNameCell.text(categories[categoryIdx]);
                     for (let classifierIdx = 0; classifierIdx < classifiers.length; classifierIdx++) {
                         const cell = $("<td>");
                         row.append(cell);
@@ -597,6 +601,12 @@ $(() => {
 
     $('#modeCamera').click((e) => {
         main.useModeCamera(e.currentTarget);
+        $(e.currentTarget).addClass("menu-active");
+        $('#modeDraw').removeClass("menu-active");
+    });
+
+    $('#takePhoto').click((e) => {
+        main.onMouseUp();
     });
 
     $('#clear').click(() => {
