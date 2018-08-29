@@ -126,3 +126,8 @@ label {
 .inline {
     display: inline;
 }
+
+.menu-active{
+    background-color: #6c757d !important;
+    color: #FFFFFF !important;
+}
