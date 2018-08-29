@@ -507,6 +507,11 @@ class Main {
             success: (data) => {
                 // $('#trainParameters').collapse('hide');
                 $('#trainParameters input').removeClass('updating');
+                setInterval(function(){
+                    var icon = $('#trainParameters input').next().children().children();
+                    icon.removeClass("fa-check");
+                    icon.addClass("fa-pen");
+                }, 1000);
             }
         })
         .fail(() => {
@@ -629,6 +634,9 @@ $(() => {
     $('#config-form input').each(function() {
         $(this).change((e) => {
             $(this).addClass('updating');
+            var icon = $(this).next().children().children();
+            icon.removeClass("fa-pen");
+            icon.addClass("fa-check");
             this.timeout = setTimeout(() => {
                 $('#config-form').submit();
             }, 2000);
