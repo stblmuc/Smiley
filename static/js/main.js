@@ -436,6 +436,7 @@ class Main {
     makeDrawActive() {
         $('#modeDraw').addClass("menu-active");
         $('#modeCamera').removeClass("menu-active");
+        $('#takePhoto').hide();
     }
 
     trainModels(button) {
@@ -592,6 +593,11 @@ $(() => {
         main.useModeCamera(e.currentTarget);
         $(e.currentTarget).addClass("menu-active");
         $('#modeDraw').removeClass("menu-active");
+        $('#takePhoto').show();
+    });
+
+    $('#takePhoto').click((e) => {
+        main.onMouseUp();
     });
 
     $('#clear').click(() => {
