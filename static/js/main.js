@@ -290,8 +290,10 @@ class Main {
                     const row = $("<tr>");
                     tbody.append(row);
                     const categoryNameCell = $("<th scope='row'>");
+                    const textElement = $("<span class='button-own-image "+categories[categoryIdx]+"-img'>");
+                    textElement.text(categories[categoryIdx]);
+                    categoryNameCell.append(textElement);
                     row.append(categoryNameCell);
-                    categoryNameCell.text(categories[categoryIdx]);
                     for (let classifierIdx = 0; classifierIdx < classifiers.length; classifierIdx++) {
                         const cell = $("<td>");
                         row.append(cell);
@@ -420,10 +422,7 @@ class Main {
                     }, 0);
                     this.video.play();
                 })
-                .catch(function(err) {
-                    console.log(err.name + ": " + err.message);
-                    this.makeDrawActive();
-                }); // always check for errors at the end.
+                .catch(this.makeDrawActive);
             } else {
                 this.initialize();
                 this.makeDrawActive();
