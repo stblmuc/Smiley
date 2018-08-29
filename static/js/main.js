@@ -44,6 +44,7 @@ class Main {
         if (!!this.video) {
             this.video.play();
             this.makeMenuActive($('#modeCamera'));
+            $('#takePhoto').show();
         } else {
             this.ctx.fillStyle = '#FFFFFF';
             this.ctx.fillRect(0, 0, this.canvas.width, this.canvas.height);
@@ -64,6 +65,7 @@ class Main {
                 this.ctx.stroke();
             }
             this.makeMenuActive($('#modeDraw'));
+            $('#takePhoto').hide();
         }
     }
 
@@ -593,7 +595,6 @@ $(() => {
         main.useModeCamera(e.currentTarget);
         $(e.currentTarget).addClass("menu-active");
         $('#modeDraw').removeClass("menu-active");
-        $('#takePhoto').show();
     });
 
     $('#takePhoto').click((e) => {
