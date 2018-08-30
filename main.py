@@ -85,8 +85,7 @@ def main():
     srEpochs = config['REGRESSION']['EPOCHS']
     cnnRate = config['CNN']['LEARNING_RATE']
     cnnEpochs = config['CNN']['EPOCHS']
-    
-    predefined_categories = ["sad", "smile", "neutral", "upside-down", "angry", "scream"]
+    predefined_categories = config['DEFAULT']['PREDEFINED_CATEGORIES'].split(",")
     
     data = {'image_size': IMAGE_SIZE, 'numAugm': numAugm, 'batchSize': batchSize, 'srRate': srRate,
             'srEpochs': srEpochs, 'cnnRate': cnnRate, 'cnnEpochs': cnnEpochs,
