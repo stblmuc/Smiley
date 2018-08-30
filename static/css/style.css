@@ -180,3 +180,8 @@ label {
     border-top-left-radius: 0px;
     border-bottom-left-radius: 0px;
 }
+
+.red-box-shadow{
+    box-shadow: 0 0 2px 1px #dc3545;
+    border-color: #dc3545;
+}
