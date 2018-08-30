@@ -106,12 +106,14 @@ class Main {
     }
 
     addDeleteToCategory(category, location) {
+        $(location).children().removeClass('rounded');
+        
         var button = document.createElement('div');
         $(button).addClass("input-group-append btn btn-outline-danger")
         .html("<span>&#10060;</span>").click((e) => {
             this.deleteCategory(category, location);
             e.stopPropagation();
-        }).appendTo($(location).removeClass('rounded'));
+        }).appendTo(location);
     }
 
     createCategoryButtons() {
