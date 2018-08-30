@@ -34,7 +34,7 @@ def update_progress(value):
     PROGRESS['value'] = PROGRESS['previous_value'] + (100*value/PROGRESS['num_processes'])
     
     # if proccess is completed, add its contribution to previous_value
-    if (value == 1):
+    if value == 1:
         PROGRESS['previous_value'] += 100/PROGRESS['num_processes']
 
     return PROGRESS['value']
@@ -159,10 +159,12 @@ def get_category_names_in_use():
     return list(CATEGORIES_IN_USE.keys())
 
 
+# Initialize categories in use so that it contains all categories which have enough images
 def initialize_categories_in_use():
     global CATEGORIES_IN_USE
 
     CATEGORIES_IN_USE = {c: i for (i, c) in enumerate(c for (c, n) in get_number_of_images_per_category().items() if n >= get_number_of_images_required())}
+
 
 # Returns dictionary with keys = category names (from folders), values = number of images for the category
 def get_number_of_images_per_category():
@@ -205,5 +207,5 @@ def get_not_enough_images_error():
             img = "images" if cat_img[cat] > 1 else "image"
             msg += "category '<b>" + cat + "</b>' has just <b>" + str(cat_img[cat]) + "</b> " + img + ", "
     if len(msg) > 0:
-        msg += "but at least <b>%d</b> images are required for each category. Please add the missing images and (re-)train the classifiers." % req_images_per_cat
+        msg += "but at least <b>%d</b> images are required for each category. Please add the missing images and (re-)train the classifiers for updated results." % req_images_per_cat
     return msg
