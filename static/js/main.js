@@ -33,8 +33,8 @@ class Main {
 
         this.canvas.addEventListener('mousedown', this.onMouseDown.bind(this));
         this.canvas.addEventListener('mouseup', this.onMouseUp.bind(this));
-        this.canvas.addEventListener('mouseout', this.onMouseUp.bind(this));
         this.canvas.addEventListener('mousemove', this.onMouseMove.bind(this));
+        this.canvas.addEventListener('mouseout', this.onMouseOut.bind(this));
 
         this.createCategoryButtons();
         this.initializeConfigValues();
@@ -83,40 +83,6 @@ class Main {
         $('#cnn-epochs').val(this.cnnEpochs);
     }
 
-    addNumberToCategories() {
-        for (var key in this.cats_img_number) {
-            // check if the property/key is defined in the object itself, not in parent
-            if (this.cats_img_number.hasOwnProperty(key)) {
-                this.updateCategoryNumber(key, this.cats_img_number[key]);
-            }
-        }
-    }
-
-    updateCategoryNumber(category, number) {
-        var button = $('#categories .btn')
-        .filter(function(){return this.value==category})[0];
-
-        var value = $(button).children().text().replace(/\D/g, '');
-        $(button).children().remove();
-
-        var numberDiv = document.createElement('div');
-        numberDiv.id = category + "-number";
-        $(numberDiv).html(" (" + (number ? number : (Number(value)+1)) + ")").addClass("inline").appendTo(button);
-    
-        if (!number && !value) this.addDeleteToCategory(category, $(button).parent());
-    }
-
-    addDeleteToCategory(category, location) {
-        $(location).children().removeClass('rounded');
-        
-        var button = document.createElement('div');
-        $(button).addClass("input-group-append btn btn-outline-danger")
-        .html("<span>&#10060;</span>").click((e) => {
-            this.deleteCategory(category, location);
-            e.stopPropagation();
-        }).appendTo(location);
-    }
-
     createCategoryButtons() {
         var root_location = $('#categories');
         var fixed_cat_div = document.createElement('div');
@@ -162,6 +128,40 @@ class Main {
         location.append(outerDiv);
     }
 
+    addNumberToCategories() {
+        for (var key in this.cats_img_number) {
+            // check if the property/key is defined in the object itself, not in parent
+            if (this.cats_img_number.hasOwnProperty(key)) {
+                this.updateCategoryNumber(key, this.cats_img_number[key]);
+            }
+        }
+    }
+
+    updateCategoryNumber(category, number) {
+        var button = $('#categories .btn')
+        .filter(function(){return this.value==category})[0];
+
+        var value = $(button).children().text().replace(/\D/g, '');
+        $(button).children().remove();
+
+        var numberDiv = document.createElement('div');
+        numberDiv.id = category + "-number";
+        $(numberDiv).html(" (" + (number ? number : (Number(value)+1)) + ")").addClass("inline").appendTo(button);
+    
+        if (!number && !value) this.addDeleteToCategory(category, $(button).parent());
+    }
+
+    addDeleteToCategory(category, location) {
+        $(location).children().removeClass('rounded');
+        
+        var button = document.createElement('div');
+        $(button).addClass("input-group-append btn btn-outline-danger")
+        .html("<span>&#10060;</span>").click((e) => {
+            this.deleteCategory(category, location);
+            e.stopPropagation();
+        }).appendTo(location);
+    }
+
     deleteCategory(category, button) {
         $.ajax({
             url: '/api/delete-category',
@@ -201,7 +201,13 @@ class Main {
     onMouseUp() {
         if (this.video) this.video.pause();
 
-        this.recogniseInput((input) => {})
+        this.recogniseInput((input) => {});
+        this.drawing = false;
+    }
+
+    onMouseOut() {
+        if (this.drawing) this.recogniseInput((input) => {});
+
         this.drawing = false;
     }
 
@@ -292,7 +298,7 @@ class Main {
 
     loadOutput(input) {
         $.ajax({
-            url: '/api/recognise',
+            url: '/api/classify',
             method: 'POST',
             contentType: 'application/json',
             data: JSON.stringify(input),
@@ -373,7 +379,7 @@ class Main {
         if (!label) 
             alert("Please assign a category for the data");
         else if (!label.match(/^[a-zA-Z0-9\-]*$/))
-            alert("Please use only latin alphabet (a-z/A-Z), slash(-) and digits(0-9) for the category name");
+            alert("Please use only latin alphabet (a-z/A-Z), hyphen(-) and digits(0-9) for the category name");
         else if (this.cats.filter((e) => !this.fixed_cats.includes(e)).length == this.maxNumUserCat)
             alert("Maximum number of categories reached");
         else{
@@ -672,7 +678,7 @@ $(() => {
         main.initialize();
     });
 
-    $('#recognise').click(() => {
+    $('#classify').click(() => {
         main.recogniseInput();
     });
 
@@ -698,7 +704,7 @@ $(() => {
                 $('#config-form').submit();
             }, 1000);
         })
-    })
+    });
 
     /*$('#importFile').change((e) => {
         main.loadImage(e.currentTarget.files[0]);

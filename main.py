@@ -19,8 +19,6 @@ MODELS_DIRECTORY = os.path.join(config['DIRECTORIES']['LOGIC'], config['DIRECTOR
                                 config['DEFAULT']['IMAGE_SIZE'])
 IMAGE_SIZE = int(config['DEFAULT']['IMAGE_SIZE'])
 
-first = True
-
 # create folder for models if it doesn't exist
 if not os.path.exists(MODELS_DIRECTORY):
     os.makedirs(MODELS_DIRECTORY)
@@ -97,9 +95,9 @@ def main():
     return render_template('index.html', data=data)
 
 
-# Predict
-@app.route('/api/recognise', methods=['POST'])
-def recognise():
+# Predict category probabilities
+@app.route('/api/classify', methods=['POST'])
+def classify():
     # input with pixel values between 0 (black) and 255 (white)
     data = np.array(request.json, dtype=np.uint8)
 
@@ -216,10 +214,12 @@ def train_models():
 
     return "ok"
 
+
 # Retrieve training progress
 @app.route('/api/train-progress')
 def train_progress():
     return jsonify(progress=utils.get_progress())
+
 
 # Stop the training and delete all saved models
 @app.route('/api/stop-training', methods=['POST'])
