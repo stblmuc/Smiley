@@ -122,7 +122,6 @@ def recognise():
     elif utils.not_enough_images():
         err = utils.get_not_enough_images_error()
 
-
     retrain_error = "Models not found or incompatible number of categories or image size. Please (re-)train the classifiers."
 
     try:
