@@ -33,6 +33,7 @@ class Main {
 
         this.canvas.addEventListener('mousedown', this.onMouseDown.bind(this));
         this.canvas.addEventListener('mouseup', this.onMouseUp.bind(this));
+        this.canvas.addEventListener('mouseout', this.onMouseUp.bind(this));
         this.canvas.addEventListener('mousemove', this.onMouseMove.bind(this));
 
         this.createCategoryButtons();
@@ -198,11 +199,9 @@ class Main {
     }
 
     onMouseUp() {
-        if (this.video) {
-            this.video.pause();
-            this.recogniseInput((input) => {})
-        }
+        if (this.video) this.video.pause();
 
+        this.recogniseInput((input) => {})
         this.drawing = false;
     }
 
@@ -373,8 +372,8 @@ class Main {
     addTrainingData(button, label) {
         if (!label) 
             alert("Please assign a category for the data");
-        else if (!label.match(/^[a-zA-Z0-9]*$/))
-            alert("Please use only latin alphabet (a-z/A-Z) and digits(0-9) for the category name");
+        else if (!label.match(/^[a-zA-Z0-9\-]*$/))
+            alert("Please use only latin alphabet (a-z/A-Z), slash(-) and digits(0-9) for the category name");
         else if (this.cats.filter((e) => !this.fixed_cats.includes(e)).length == this.maxNumUserCat)
             alert("Maximum number of categories reached");
         else{

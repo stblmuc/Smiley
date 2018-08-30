@@ -115,26 +115,29 @@ def recognise():
     cnn_output = []
 
     # if no categories available, print error message
-    if num_categories == 0:
+    if len(utils.update_categories()) == 0:
         err = utils.get_no_cat_error()
 
     # if too less images are added, print error message
     elif utils.not_enough_images():
         err = utils.get_not_enough_images_error()
 
-    retrain_error = "Models not found or incompatible number of categories or image size. Please (re-)train the classifiers."
+    first_train_error = "Models not found or incompatible number of categories or image size. Please (re-)train the classifiers."
 
     try:
         regression_output = regression_predict(regression_input)
         regression_output = [-1.0 if math.isnan(b) else b for b in regression_output]
     except (NotFoundError, InvalidArgumentError):
-        err = retrain_error
+        err = first_train_error
 
     try:
         cnn_output = cnn_predict(cnn_input)
         cnn_output = [-1.0 if math.isnan(f) else f for f in cnn_output]
     except (NotFoundError, InvalidArgumentError):
-        err = retrain_error
+        err = first_train_error
+
+    if utils.is_maybe_old() and len(err) == 0:
+        err = "The network maybe be outdated. Please retrain the classifier for updated results."
 
     return jsonify(classifiers=["Softmax Regression", "CNN"], results=[regression_output, cnn_output],
                    error=err, categories=utils.get_category_names_in_use())

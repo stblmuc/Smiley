@@ -1,6 +1,7 @@
 .col-lg-6 > * {
     max-width: 450px;
     margin-bottom: 1rem;
+    user-select: none;
 }
 
 canvas {
