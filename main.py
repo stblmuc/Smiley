@@ -19,6 +19,8 @@ MODELS_DIRECTORY = os.path.join(config['DIRECTORIES']['LOGIC'], config['DIRECTOR
                                 config['DEFAULT']['IMAGE_SIZE'])
 IMAGE_SIZE = int(config['DEFAULT']['IMAGE_SIZE'])
 
+first = True
+
 # create folder for models if it doesn't exist
 if not os.path.exists(MODELS_DIRECTORY):
     os.makedirs(MODELS_DIRECTORY)
@@ -31,7 +33,10 @@ def maybe_update_models():
         if 'sess' in globals():
             sess.close()
 
-        utils.update_categories_in_use()
+        if utils.CATEGORIES_IN_USE is None:
+            utils.initialize_categories_in_use()
+        else:
+            utils.update_categories_in_use()
         num_categories = len(utils.CATEGORIES_IN_USE)
 
         # Model variables
@@ -175,6 +180,7 @@ def update_config():
         config.write(f)
 
     return "ok"
+
 
 # Train model
 @app.route('/api/train-models', methods=['POST'])

@@ -159,6 +159,11 @@ def get_category_names_in_use():
     return list(CATEGORIES_IN_USE.keys())
 
 
+def initialize_categories_in_use():
+    global CATEGORIES_IN_USE
+
+    CATEGORIES_IN_USE = {c: i for (i, c) in enumerate(c for (c, n) in get_number_of_images_per_category().items() if n >= get_number_of_images_required())}
+
 # Returns dictionary with keys = category names (from folders), values = number of images for the category
 def get_number_of_images_per_category():
     cat_images = {}
