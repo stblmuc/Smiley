@@ -58,6 +58,7 @@ Description of all parameters of `smiley/config.ini`:
 - **train_batch_size:** number of samples in a single batch
 - **train_ratio:** the ratio of how much data will be used for training and how much for validation
 - **image_size:** the width and height of the network-input images 
+- **predefined_categories:** the categories which are always visible for the user
 
 ##### CNN #####
 + **learning_rate:** controls how much the weights of our network are adjusted with respect to the loss gradient
