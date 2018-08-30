@@ -113,15 +113,25 @@ class Main {
     }
 
     createCategoryButtons() {
+        var root_location = $('#categories');
+        var fixed_cat_div = document.createElement('div');
+        var user_cat_div = document.createElement('div');
+        const sort_fn = (a,b) => { return $(a).text() > $(b).text() ? 1 : -1; };
+
         this.fixed_cats.forEach((item) => {
-            this.addCategoryButton(item, $('#categories'), true);
+            this.addCategoryButton(item, fixed_cat_div, true);
         });
-        $('#categories').append("<br>");
-        param.categories.forEach((item) => {
+        $(fixed_cat_div).children().sort(sort_fn).appendTo(fixed_cat_div);
+        $(fixed_cat_div).addClass('fixed-categories row no-gutters text-justify-left').appendTo(root_location);
+        $(root_location).append("<br>");
+
+        this.cats.forEach((item) => {
             if (!this.fixed_cats.includes(item)) {
-                this.addCategoryButton(item, $('#categories'), false);
+                this.addCategoryButton(item, user_cat_div, false);
             }
         });
+        $(user_cat_div).children().sort(sort_fn).appendTo(user_cat_div);
+        $(user_cat_div).addClass('user-categories row no-gutters text-justify-left').appendTo(root_location);
 
         this.addNumberToCategories();
     }
@@ -397,7 +407,7 @@ class Main {
                     $(option).val(label);
                     catsList.append(option);
 
-                    this.addCategoryButton(label, $('#categories')[0]);
+                    this.addCategoryButton(label, $('#categories .user-categories')[0]);
                 }
 
                 this.updateCategoryNumber(label, 0);

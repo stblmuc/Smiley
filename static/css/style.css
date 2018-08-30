@@ -70,7 +70,7 @@ label {
      background-color: #ddd;
 }
 
-#categories > div {
+#categories .row > div {
     width: inherit;
     margin: 3px;
 }
