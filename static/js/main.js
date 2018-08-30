@@ -570,6 +570,13 @@ class Main {
             cnnLearningRate: this.cnnRate
         };
 
+        for(var i in conf) {
+            if (!conf[i].match(^[0-9]*[.][0-9]*$)) {
+                alert("Please use only digits(0-9) and a decimal separator(.) for the training parameter");
+                return;
+            }
+        }
+
         $.ajax({
             url: '/api/update-config',
             method: 'POST',
