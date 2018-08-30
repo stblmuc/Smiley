@@ -43,7 +43,7 @@ class Main {
     initialize() {
         this.clearOutput();
 
-        if (!!this.video) {
+        if (this.video) {
             this.video.play();
 
             this.makeMenuActive($('#modeCamera'));
@@ -101,6 +101,8 @@ class Main {
         var numberDiv = document.createElement('div');
         numberDiv.id = category + "-number";
         $(numberDiv).html(" (" + (number ? number : (Number(value)+1)) + ")").addClass("inline").appendTo(button);
+    
+        if (!number && !value) this.addDeleteToCategory(category, $(button).parent());
     }
 
     addDeleteToCategory(category, location) {
@@ -109,7 +111,7 @@ class Main {
         .html("<span>&#10060;</span>").click((e) => {
             this.deleteCategory(category, location);
             e.stopPropagation();
-        }).appendTo(location);
+        }).appendTo($(location).removeClass('rounded'));
     }
 
     createCategoryButtons() {
@@ -141,7 +143,7 @@ class Main {
         $(outerDiv).addClass("input-group")
 
         var button = document.createElement('div');
-        $(button).addClass("btn btn-outline-secondary")
+        $(button).addClass("btn btn-outline-secondary rounded")
         .html(category).val(category).click((e) => {
             this.addTrainingData(outerDiv, $(e.currentTarget).val());
         }).appendTo(outerDiv);
@@ -150,7 +152,10 @@ class Main {
             $(button).addClass("button-own-image " + category + "-img")
         }
 
-        this.addDeleteToCategory(category, outerDiv);
+        if (this.cats_img_number[category]) {
+            this.addDeleteToCategory(category, outerDiv);
+        }
+
         location.append(outerDiv);
     }
 
@@ -163,6 +168,7 @@ class Main {
             success: (data) => {
                 $("#trainingDataLabelOptions option[value='"+category+"']").remove(); // delete cat from datalist options
                 $(button).find('div[id$="number"]').remove();
+                $(button).find('.button-own-image').addClass('rounded').siblings('.btn-outline-danger').remove();
 
                 if (!this.fixed_cats.includes(category)) {
                     $(button).remove();
@@ -183,14 +189,14 @@ class Main {
     }
 
     onMouseDown(e) {
-        if (!!this.video) return; // don't draw in camera mode
+        if (this.video) return; // don't draw in camera mode
 
         this.prev = this.getPosition(e.clientX, e.clientY);
         this.drawing = true;
     }
 
     onMouseUp() {
-        if (!!this.video) {
+        if (this.video) {
             this.video.pause();
             this.recogniseInput((input) => {})
         }
@@ -276,7 +282,7 @@ class Main {
     }
 
     recogniseInput(cb) {
-        if (!!this.video) this.video.pause();
+        if (this.video) this.video.pause();
 
         this.drawInput((input) => {
             (typeof cb == 'function') ? cb(input) : this.loadOutput(input);
@@ -423,7 +429,7 @@ class Main {
     }
 
     useModeDraw(button) {
-        if (!!this.video) {
+        if (this.video) {
             this.video.pause();
             this.video.srcObject.getVideoTracks().forEach(function(track) {
                 track.stop();
@@ -435,7 +441,7 @@ class Main {
     }
 
     useModeCamera(button) {
-        if (!!(navigator.mediaDevices && navigator.mediaDevices.getUserMedia)) {
+        if ((navigator.mediaDevices && navigator.mediaDevices.getUserMedia)) {
             if (!this.video) {
                 var constraints = {video: {width: this.rect_size, height: this.rect_size, facingMode: "user", frameRate: 10}};
                 
@@ -490,7 +496,7 @@ class Main {
     }
 
     trainModels(button) {
-        if (!!this.is_training) {
+        if (this.is_training) {
             $(button).prop('disabled', true);
             $.ajax({
                 url: '/api/stop-training',
@@ -636,7 +642,7 @@ class Main {
     //     $.ajax({
     //         url: '/api/get-console-output',
     //         success: (data) => {
-    //             if (!!firstCall) obj.append("done!<br>");
+    //             if (firstCall) obj.append("done!<br>");
     //             if (data.out) obj.append(data.out.replace(/(\r\n|\n|\r)/gm, "<br>"));
     //         }
     //     })
