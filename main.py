@@ -185,7 +185,7 @@ def update_config():
 @app.route('/api/train-models', methods=['POST'])
 @utils.capture
 def train_models():
-    if num_categories == 0:
+    if len(utils.CATEGORIES) == 0:
         err = utils.get_no_cat_error()
         return jsonify(error=err)
     elif utils.not_enough_images():
