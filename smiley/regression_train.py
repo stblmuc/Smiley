@@ -28,8 +28,8 @@ def train():
 
     # regression model
     x = tf.placeholder(tf.float32, [None, IMAGE_SIZE * IMAGE_SIZE], name="image")  # regression input placeholder
-    y_ = tf.placeholder(tf.float32, [None, curr_number_of_categories], name="labels")  # regression output placeholder
-    y, variables = regression_model.regression(x, nCategories=curr_number_of_categories)
+    y_ = tf.placeholder(tf.float32, [None, curr_number_of_categories], name="labels")  # regression ground truth labels
+    y, variables = regression_model.regression(x, nCategories=curr_number_of_categories)  # regression output and variables
 
     # training variables
     with tf.name_scope("Loss"):

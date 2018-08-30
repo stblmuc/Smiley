@@ -14,4 +14,4 @@ def regression(x, nCategories):
         b = tf.Variable(tf.zeros([nCategories]), name="b")  # biases
         y = tf.nn.softmax(tf.matmul(x, W) + b)  # softmax function
 
-    return y, [W, b]
+    return y, tf.get_collection(tf.GraphKeys.TRAINABLE_VARIABLES, scope="regression")

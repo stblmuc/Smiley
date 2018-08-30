@@ -30,7 +30,7 @@ def train():
     # CNN model
     x = tf.placeholder(tf.float32, [None, IMAGE_SIZE * IMAGE_SIZE], name="image")  # CNN input placeholder
     y_ = tf.placeholder(tf.float32, [None, curr_number_of_categories], name="labels")  # CNN ground truth labels
-    y, variables = cnn_model.convolutional(x, nCategories=curr_number_of_categories) # CNN output and variables
+    y, variables = cnn_model.convolutional(x, nCategories=curr_number_of_categories)  # CNN output and variables
 
     is_training = tf.placeholder(tf.bool)  # used for activating the dropout in training phase
 

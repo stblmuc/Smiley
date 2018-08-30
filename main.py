@@ -42,11 +42,11 @@ def maybe_update_models():
         sess.run(tf.global_variables_initializer())
 
         # Regression model
-        y1, variables = regression_model.regression(x, nCategories=num_categories) # prediction results and variables
+        y1, variables = regression_model.regression(x, nCategories=num_categories)  # prediction results and variables
         saver_regression = tf.train.Saver(variables)
 
         # CNN model
-        y2, variables = cnn_model.convolutional(x, nCategories=num_categories, is_training=is_training) # prediction results and variables
+        y2, variables = cnn_model.convolutional(x, nCategories=num_categories, is_training=is_training)  # prediction results and variables
         saver_cnn = tf.train.Saver(variables)
 
 
@@ -144,6 +144,7 @@ def add_training_example():
     image = np.array(request.json["img"], dtype=np.uint8).reshape(image_size, image_size, 1)
     category = request.json["cat"]
     utils.add_training_example(image, category)
+    maybe_update_models()
 
     if utils.not_enough_images():
         err = utils.get_not_enough_images_error()
@@ -157,6 +158,7 @@ def add_training_example():
 def delete_category():
     category = request.json["cat"]
     utils.delete_category(category)
+    maybe_update_models()
 
     return "ok"
 
