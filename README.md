@@ -53,20 +53,20 @@ Changing important parameters, e.g. learning rates and number of epochs, can be 
 Description of all parameters of `smiley/config.ini`:
 
 ##### DEFAULT #####
-- **number_augmentations_per_image:** number of artificially created images per one original image (the artificial images are obtained by scaling, translating and rotating the original image)
+- **number_augmentations_per_image:** number of artificially created images per one original image (the artificial images are obtained by zooming-in/out, translating and rotating the original image)
 - **max_angle_for_augmentation:** images are rotated maximum +/- this angle at augmentation
 - **train_batch_size:** number of samples in a single batch
 - **train_ratio:** the ratio of how much data will be used for training and how much for validation
-- **image_size:** the width and height of the network-input images 
-- **predefined_categories:** the categories which are always visible for the user
+- **image_size:** the width and height of the network-input images
+- **predefined_categories:** the categories which are always available for the user
 
 ##### CNN #####
-+ **learning_rate:** controls how much the weights of our network are adjusted with respect to the loss gradient
++ **learning_rate:** hyper-parameter that controls how much the weights of our network are adjusted for an optimizer step
 + **epochs:** number of times the entire (train-)dataset is passed forward and backward through the network
 + **model_filename:** the filename of the stored CNN model
 
 ##### REGRESSION #####
-+ **learning_rate:** controls how much the weights of our network are adjusted with respect to the loss gradient
++ **learning_rate:** controls how much the weights of our network are adjusted with respect for an optimizer step
 + **epochs:** number of times the entire (train-)dataset is passed forward and backward through the network
 + **model_filename:** the filename of the stored softmax regression model
 
