@@ -111,8 +111,14 @@ class Main {
     }
 
     createCategoryButtons() {
+        this.fixed_cats.forEach((item) => {
+            this.addCategoryButton(item, $('#categories'), true);
+        });
+        $('#categories').append("<br>");
         param.categories.forEach((item) => {
-            this.addCategoryButton(item, $('#categories'), this.fixed_cats.includes(item));
+            if (!this.fixed_cats.includes(item)) {
+                this.addCategoryButton(item, $('#categories'), false);
+            }
         });
 
         this.addNumberToCategories();
