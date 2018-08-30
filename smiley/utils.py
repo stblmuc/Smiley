@@ -13,6 +13,7 @@ MODELS_DIRECTORY = os.path.join(config['DIRECTORIES']['LOGIC'], config['DIRECTOR
 CATEGORIES_LOCATION = os.path.join(os.path.dirname(__file__), config['DIRECTORIES']['CATEGORIES'],
                                        config['DEFAULT']['IMAGE_SIZE'] + "/")
 CATEGORIES = None
+CATEGORIES_IN_USE = None
 PROGRESS = {
     'value': 100,
     'num_processes': 2,
@@ -117,6 +118,12 @@ def update_categories():
     return CATEGORIES
 
 
+def update_categories_in_use():
+    global CATEGORIES_IN_USE
+
+    CATEGORIES_IN_USE = CATEGORIES
+
+
 def add_training_example(image, category):
     # create folder for category if it doesn't exist:
     path = os.path.join(CATEGORIES_LOCATION, category)
@@ -146,6 +153,10 @@ def delete_category(category):
 
 def get_category_names():
     return list(CATEGORIES.keys())
+
+
+def get_category_names_in_use():
+    return list(CATEGORIES_IN_USE.keys())
 
 
 # Returns dictionary with keys = category names (from folders), values = number of images for the category

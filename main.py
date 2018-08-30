@@ -31,7 +31,8 @@ def maybe_update_models():
         if 'sess' in globals():
             sess.close()
 
-        num_categories = len(utils.CATEGORIES)
+        utils.update_categories_in_use()
+        num_categories = len(utils.CATEGORIES_IN_USE)
 
         # Model variables
         x = tf.placeholder("float", [None, IMAGE_SIZE * IMAGE_SIZE])  # image input placeholder
@@ -94,8 +95,6 @@ def main():
 # Predict
 @app.route('/api/recognise', methods=['POST'])
 def recognise():
-    maybe_update_models()
-
     # input with pixel values between 0 (black) and 255 (white)
     data = np.array(request.json, dtype=np.uint8)
 
@@ -118,23 +117,23 @@ def recognise():
     elif utils.not_enough_images():
         err = utils.get_not_enough_images_error()
 
-    else:
-        retrain_error = "Models not found or incompatible number of categories or image size. Please (re-)train the classifiers."
 
-        try:
-            regression_output = regression_predict(regression_input)
-            regression_output = [-1.0 if math.isnan(b) else b for b in regression_output]
-        except (NotFoundError, InvalidArgumentError):
-            err = retrain_error
+    retrain_error = "Models not found or incompatible number of categories or image size. Please (re-)train the classifiers."
 
-        try:
-            cnn_output = cnn_predict(cnn_input)
-            cnn_output = [-1.0 if math.isnan(f) else f for f in cnn_output]
-        except (NotFoundError, InvalidArgumentError):
-            err = retrain_error
+    try:
+        regression_output = regression_predict(regression_input)
+        regression_output = [-1.0 if math.isnan(b) else b for b in regression_output]
+    except (NotFoundError, InvalidArgumentError):
+        err = retrain_error
+
+    try:
+        cnn_output = cnn_predict(cnn_input)
+        cnn_output = [-1.0 if math.isnan(f) else f for f in cnn_output]
+    except (NotFoundError, InvalidArgumentError):
+        err = retrain_error
 
     return jsonify(classifiers=["Softmax Regression", "CNN"], results=[regression_output, cnn_output],
-                   error=err, categories=utils.get_category_names())
+                   error=err, categories=utils.get_category_names_in_use())
 
 
 # Add training example
@@ -144,7 +143,6 @@ def add_training_example():
     image = np.array(request.json["img"], dtype=np.uint8).reshape(image_size, image_size, 1)
     category = request.json["cat"]
     utils.add_training_example(image, category)
-    maybe_update_models()
 
     if utils.not_enough_images():
         err = utils.get_not_enough_images_error()
@@ -158,7 +156,6 @@ def add_training_example():
 def delete_category():
     category = request.json["cat"]
     utils.delete_category(category)
-    maybe_update_models()
 
     return "ok"
 
