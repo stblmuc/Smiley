@@ -304,7 +304,7 @@ class Main {
                 var results = data.results;
 
                 if (error) {
-                    $("#error").html(error);
+                    $("#error").html(error.replace(/(\r\n|\n|\r)/gm, "<br>"));
                 } else {
                     $("#error").text("");
                 }

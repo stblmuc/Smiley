@@ -14,12 +14,26 @@ CATEGORIES_LOCATION = os.path.join(os.path.dirname(__file__), config['DIRECTORIE
                                        config['DEFAULT']['IMAGE_SIZE'] + "/")
 CATEGORIES = None
 CATEGORIES_IN_USE = None
+MAYBE_OLD_VERSION = False
 PROGRESS = {
     'value': 100,
     'num_processes': 2,
     'previous_value': 0,
     'stop': False
 }
+
+
+def is_maybe_old():
+    global MAYBE_OLD_VERSION
+
+    return MAYBE_OLD_VERSION
+
+
+def set_maybe_old(value):
+    global MAYBE_OLD_VERSION
+
+    MAYBE_OLD_VERSION = value
+
 
 
 def get_progress():
@@ -132,6 +146,7 @@ def add_training_example(image, category):
 
     save_image(image, path)
     update_categories()
+    set_maybe_old(True)
 
 
 def save_image(image, path):
@@ -149,6 +164,7 @@ def delete_category(category):
     path = os.path.join(CATEGORIES_LOCATION, category)
     shutil.rmtree(path)
     update_categories()
+    set_maybe_old(True)
 
 
 def get_category_names():
