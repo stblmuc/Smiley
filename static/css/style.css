@@ -1,4 +1,4 @@
-.col-lg-6>* {
+.col-lg-6 > * {
     max-width: 450px;
     margin-bottom: 1rem;
 }
@@ -6,6 +6,7 @@
 canvas {
     border: 1px solid;
     z-index: -1;
+    transition: box-shadow .4s;
 }
 
 label {
@@ -71,6 +72,21 @@ label {
 
 #categories > div {
     width: inherit;
+    margin: 3px;
+}
+
+#categories .btn-outline-secondary {
+    border-top-right-radius: 0px;
+    border-bottom-right-radius: 0px;
+    padding-left: 6px;
+    padding-right: 6px;
+}
+
+#categories .btn-outline-danger {
+    border-top-left-radius: 0px;
+    border-bottom-left-radius: 0px;
+    padding-left: 6px;
+    padding-right: 6px;
 }
 
 #trainModels {
@@ -99,10 +115,7 @@ label {
     width: 10px;
     margin-top: 7px;
     display: inline-flex !important;
-    -moz-transition: -moz-transform .4s;
-    -webkit-transition: -webkit-transform .4s;
-    -o-transition: -o-transform .4s;
-    transition: transform .4s;
+    transition: transform .4s ease;
 }
 
 .toggle-arrow::after {
@@ -134,7 +147,7 @@ label {
     border: 0;
 }
 
-#config-form .form-control > * {
+#config-form .input-group * {
     border-radius: 0;
 }
 
@@ -148,8 +161,8 @@ label {
     border-color: #ced4da;
 }
 
-.inline {
-    display: inline;
+#config-form .input-group-append .input-group-text {
+    background-color: white;
 }
 
 .circle {
@@ -167,21 +180,15 @@ label {
     cursor: pointer;
 }
 
+.inline {
+    display: inline;
+}
+
 .relative {
     position: relative !important;
 }
 
-#categories .btn-outline-secondary {
-    border-top-right-radius: 0px;
-    border-bottom-right-radius: 0px;
-}
-
-#categories .btn-outline-danger {
-    border-top-left-radius: 0px;
-    border-bottom-left-radius: 0px;
-}
-
-.red-box-shadow{
+.red-box-shadow {
     box-shadow: 0 0 2px 1px #dc3545;
     border-color: #dc3545;
 }

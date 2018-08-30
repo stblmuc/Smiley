@@ -173,10 +173,8 @@ class Main {
     onMouseDown(e) {
         if (!!this.video) return; // don't draw in camera mode
 
-        $(this.canvas).removeClass("red-box-shadow");
-        this.canvas.style.cursor = 'default';
-        this.drawing = true;
         this.prev = this.getPosition(e.clientX, e.clientY);
+        this.drawing = true;
     }
 
     onMouseUp() {
@@ -250,6 +248,9 @@ class Main {
             }
             if (Math.min(...input) === 255) {
                 $(this.canvas).addClass("red-box-shadow");
+                setTimeout(() => {
+                    $(this.canvas).removeClass("red-box-shadow");
+                }, 1000);
                 return;
             }
             cb(input);
