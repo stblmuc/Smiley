@@ -136,6 +136,8 @@ def recognise():
     except (NotFoundError, InvalidArgumentError):
         err = retrain_error
 
+    if len(utils.CATEGORIES) != len(utils.CATEGORIES_IN_USE):
+        err += " The current models do not consider all images and categories."
     return jsonify(classifiers=["Softmax Regression", "CNN"], results=[regression_output, cnn_output],
                    error=err, categories=utils.get_category_names_in_use())
 
