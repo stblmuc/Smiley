@@ -1,4 +1,4 @@
-.col-lg-6>* {
+.col-lg-6 > * {
     max-width: 450px;
     margin-bottom: 1rem;
 }
@@ -71,6 +71,21 @@ label {
 
 #categories > div {
     width: inherit;
+    margin: 3px;
+}
+
+#categories .btn-outline-secondary {
+    border-top-right-radius: 0px;
+    border-bottom-right-radius: 0px;
+    padding-left: 6px;
+    padding-right: 6px;
+}
+
+#categories .btn-outline-danger {
+    border-top-left-radius: 0px;
+    border-bottom-left-radius: 0px;
+    padding-left: 6px;
+    padding-right: 6px;
 }
 
 #trainModels {
@@ -134,7 +149,7 @@ label {
     border: 0;
 }
 
-#config-form .form-control > * {
+#config-form .input-group * {
     border-radius: 0;
 }
 
@@ -146,6 +161,10 @@ label {
     outline: none;
     box-shadow: none;
     border-color: #ced4da;
+}
+
+#config-form .input-group-append .input-group-text {
+    background-color: white;
 }
 
 .inline {
@@ -169,14 +188,4 @@ label {
 
 .relative {
     position: relative !important;
-}
-
-#categories .btn-outline-secondary {
-    border-top-right-radius: 0px;
-    border-bottom-right-radius: 0px;
-}
-
-#categories .btn-outline-danger {
-    border-top-left-radius: 0px;
-    border-bottom-left-radius: 0px;
 }
