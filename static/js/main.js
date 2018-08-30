@@ -28,6 +28,8 @@ class Main {
             catsList.append(option);
         });
         this.fixed_cats = param.categories.filter(x => !param.user_categories.includes(x));
+        this.cats_img_number = param.cats_img_number;
+        this.maxNumUserCat = param.maxNumUserCat;
 
         this.canvas.addEventListener('mousedown', this.onMouseDown.bind(this));
         this.canvas.addEventListener('mouseup', this.onMouseUp.bind(this));
@@ -81,10 +83,10 @@ class Main {
     }
 
     addNumberToCategories() {
-        for (var key in param.cat_number) {
+        for (var key in this.cats_img_number) {
             // check if the property/key is defined in the object itself, not in parent
-            if (param.cat_number.hasOwnProperty(key)) {
-                this.updateCategoryNumber(key, param.cat_number[key]);
+            if (this.cats_img_number.hasOwnProperty(key)) {
+                this.updateCategoryNumber(key, this.cats_img_number[key]);
             }
         }
     }
@@ -351,7 +353,13 @@ class Main {
     }
 
     addTrainingData(button, label) {
-        if (label) {
+        if (!label) 
+            alert("Please assign a category for the data");
+        else if (!label.match(/^[a-zA-Z0-9]*$/))
+            alert("Please use only latin alphabet (a-z/A-Z) and digits(0-9) for the category name");
+        else if (this.cats.filter((e) => !this.fixed_cats.includes(e)).length == this.maxNumUserCat)
+            alert("Maximum number of categories reached");
+        else{
             this.recogniseInput((input) => {
                 const uploadData = {
                     cat: label,
@@ -365,8 +373,6 @@ class Main {
 
                 this.uploadTrainingData(uploadData, blink);
             });
-        } else {
-            alert("Please assign a category for the data");
         }
     }
 

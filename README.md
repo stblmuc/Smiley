@@ -53,6 +53,7 @@ Changing important parameters, e.g. learning rates and number of epochs, can be 
 Description of all parameters of `smiley/config.ini`:
 
 ##### DEFAULT #####
+- **max_number_user_categories:** number of maximum categories a user can add to the application
 - **number_augmentations_per_image:** number of artificially created images per one original image (the artificial images are obtained by zooming-in/out, translating and rotating the original image)
 - **max_angle_for_augmentation:** images are rotated maximum +/- this angle at augmentation
 - **train_batch_size:** number of samples in a single batch

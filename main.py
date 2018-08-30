@@ -79,8 +79,9 @@ app = Flask(__name__)
 # Root
 @app.route('/')
 def main():
+    maxNumUserCat = config['DEFAULT']['MAX_NUMBER_USER_CATEGORIES']
     numAugm = config['DEFAULT']['NUMBER_AUGMENTATIONS_PER_IMAGE']
-    batchSize = config['DEFAULT']['train_batch_size']
+    batchSize = config['DEFAULT']['TRAIN_BATCH_SIZE']
     srRate = config['REGRESSION']['LEARNING_RATE']
     srEpochs = config['REGRESSION']['EPOCHS']
     cnnRate = config['CNN']['LEARNING_RATE']
@@ -88,10 +89,10 @@ def main():
     predefined_categories = config['DEFAULT']['PREDEFINED_CATEGORIES'].split(",")
     
     data = {'image_size': IMAGE_SIZE, 'numAugm': numAugm, 'batchSize': batchSize, 'srRate': srRate,
-            'srEpochs': srEpochs, 'cnnRate': cnnRate, 'cnnEpochs': cnnEpochs,
+            'srEpochs': srEpochs, 'cnnRate': cnnRate, 'cnnEpochs': cnnEpochs, 'maxNumUserCat': maxNumUserCat,
             'categories': list(set().union(utils.get_category_names(), predefined_categories)),
             'user_categories': list(set(utils.get_category_names()) - set(predefined_categories)),
-            'cat_number': utils.get_number_of_images_per_category()}
+            'cats_img_number': utils.get_number_of_images_per_category()}
     
     return render_template('index.html', data=data)
 
