@@ -35,7 +35,6 @@ def set_maybe_old(value):
     MAYBE_OLD_VERSION = value
 
 
-
 def get_progress():
     global PROGRESS
 
@@ -47,7 +46,7 @@ def update_progress(value):
 
     PROGRESS['value'] = PROGRESS['previous_value'] + (100*value/PROGRESS['num_processes'])
     
-    # if proccess is completed, add its contribution to previous_value
+    # if process is completed, add its contribution to previous_value
     if value == 1:
         PROGRESS['previous_value'] += 100/PROGRESS['num_processes']
 

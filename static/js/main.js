@@ -554,6 +554,27 @@ class Main {
     }
 
     updateConfig(button) {
+        var ints = [$('#num-augm').val(), $('#batch-size').val(), $('#sr-epochs').val(), $('#cnn-epochs').val()];
+        var floats = [$('#sr-rate').val(), $('#cnn-epochs').val()];
+        for (var i in ints) {
+            if(!/^\+?(0|[1-9]\d*)$/.test(ints[i])) {
+                var icon = $(button).find('i.fa-spinner.fa-spin');
+                icon.removeClass("fa-spinner fa-spin").addClass("fa-pen");
+                this.initializeConfigValues();
+                alert("Parameter must be a positive integer. Please use only digits(0-9) for this parameter.");
+                return;
+            }
+        }
+        for (var j in floats) {
+            if(!/^\d+(\.\d+)?$/.test(floats[j])) {
+                var icon = $(button).find('i.fa-spinner.fa-spin');
+                icon.removeClass("fa-spinner fa-spin").addClass("fa-pen");
+                this.initializeConfigValues();
+                alert("Parameter must be a decimal number. Please use only digits(0-9) and a decimal separator(.) for this parameter.");
+                return;
+            }
+        }
+
         this.numAugm = $('#num-augm').val();
         this.batchSize = $('#batch-size').val();
         this.srRate = $('#sr-rate').val();
@@ -569,13 +590,6 @@ class Main {
             cnnEpochs: this.cnnEpochs,
             cnnLearningRate: this.cnnRate
         };
-
-        for(var i in conf) {
-            if (!conf[i].match(^[0-9]*[.][0-9]*$)) {
-                alert("Please use only digits(0-9) and a decimal separator(.) for the training parameter");
-                return;
-            }
-        }
 
         $.ajax({
             url: '/api/update-config',
