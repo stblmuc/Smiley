@@ -202,7 +202,7 @@ def get_number_of_images_required():
 # Returns a string error message that a category has to be added
 def get_no_cat_error():
     req_images_per_cat = get_number_of_images_required()
-    return "Please add at least one category (by adding at least <b>%d</b> images in that category)." % req_images_per_cat
+    return "Please add at least <b>%d</b> images to at least one category." % req_images_per_cat
 
 
 # Checks if at least one category has not the least required number of images
