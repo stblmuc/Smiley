@@ -224,3 +224,8 @@ def get_not_enough_images_error():
     if len(msg) > 0:
         msg += "but at least <b>%d</b> images are required for each category. Please add the missing images and (re-)train the classifiers for updated results." % req_images_per_cat
     return msg
+
+
+def open_category_folder(category):
+    dir = os.path.abspath(os.path.join(CATEGORIES_LOCATION, category))
+    os.startfile(dir)

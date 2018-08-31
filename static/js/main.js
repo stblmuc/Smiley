@@ -314,7 +314,7 @@ class Main {
                     $("#error").text("");
                 }
 
-                // Don't display table if results contain empty arrays
+                // Do not display table if results contain empty arrays
                 if (!results.filter((e)=>{return e.length}).length)
                     return;
                 else {
@@ -347,8 +347,13 @@ class Main {
                     const row = $("<tr>");
                     tbody.append(row);
                     const categoryNameCell = $("<th scope='row'>");
-                    const textElement = $("<span class='button-own-image "+categories[categoryIdx]+"-img'>");
+                    const textElement = $("<button class='btn button-own-image "+categories[categoryIdx]+"-img'>");
                     textElement.text(categories[categoryIdx]);
+                    const $this = this;
+                    textElement.click(function(e) {
+                        console.log(e.currentTarget);
+                        $this.open_category_folder($(e.currentTarget).text());
+                    });
                     categoryNameCell.append(textElement);
                     row.append(categoryNameCell);
                     for (let classifierIdx = 0; classifierIdx < classifiers.length; classifierIdx++) {
@@ -367,6 +372,22 @@ class Main {
                 for (let index = 0; index < mostSuccessfulCells.length; index++){
                     mostSuccessfulCells[index].addClass("table-success");
                 }
+            }
+        })
+        .fail(() => {
+            this.clearOutput();
+            this.checkConnection();
+        });
+    }
+
+    open_category_folder(category) {
+        console.log(category);
+        $.ajax({
+            url: '/api/open-category-folder',
+            method: 'POST',
+            contentType: 'application/json',
+            data: JSON.stringify({ cat: category }),
+            success: (data) => {
             }
         })
         .fail(() => {

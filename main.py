@@ -235,6 +235,12 @@ def console_output():
     return jsonify(out=output)
 
 
+@app.route('/api/open-category-folder', methods=['POST'])
+def open_category_folder():
+    category = request.json["cat"]
+    utils.open_category_folder(category)
+    return "ok"
+
 # main
 if __name__ == '__main__':
     # Open webbrowser tab for the app
