@@ -351,7 +351,6 @@ class Main {
                     textElement.text(categories[categoryIdx]);
                     const $this = this;
                     textElement.click(function(e) {
-                        console.log(e.currentTarget);
                         $this.open_category_folder($(e.currentTarget).text());
                     });
                     categoryNameCell.append(textElement);
@@ -381,7 +380,6 @@ class Main {
     }
 
     open_category_folder(category) {
-        console.log(category);
         $.ajax({
             url: '/api/open-category-folder',
             method: 'POST',

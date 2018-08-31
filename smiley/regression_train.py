@@ -92,11 +92,11 @@ def train():
 
             # break inner loop if stop training is required
             if utils.train_should_stop():
-                break;
+                break
 
         # break outer loop if stop training is required
         if utils.train_should_stop():
-            break;
+            break
 
     # Code with test set
     # restore variables from disk
