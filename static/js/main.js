@@ -254,7 +254,7 @@ class Main {
             for (var i = 0; i < this.image_size; i++) {
                 for (var j = 0; j < this.image_size; j++) {
                     var n = 4 * (i * this.image_size + j);
-                    var grayscale = (data[n + 0]*.3 + data[n + 1]*.59 + data[n + 2]*.11)
+                    var grayscale = (data[n + 0] + data[n + 1] + data[n + 2]) / 3
                     max = Math.max(max,grayscale)
                     min = Math.min(min,grayscale)
                 }
@@ -263,13 +263,13 @@ class Main {
             for (var i = 0; i < this.image_size; i++) {
                 for (var j = 0; j < this.image_size; j++) {
                     var n = 4 * (i * this.image_size + j);
-                    var grayscale = (data[n + 0]*.3 + data[n + 1]*.59 + data[n + 2]*.11)
+                    var grayscale = (data[n + 0] + data[n + 1] + data[n + 2]) / 3
                     grayscale = 255 * (grayscale - min) / (max - min)
 
                     // Threshold
-                    const threshold = 51
-                    const scale = 3
-                    var scaled_gray = Math.min(255,((grayscale - threshold)*scale) + threshold)
+                    const threshold = 0
+                    const contrast_factor = 2.5
+                    var scaled_gray = Math.min(255,((grayscale - threshold)*contrast_factor) + threshold)
                     grayscale = grayscale > threshold ? scaled_gray : grayscale
 
                     input[i * this.image_size + j] = grayscale;
