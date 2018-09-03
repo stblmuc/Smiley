@@ -193,3 +193,5 @@ label {
     box-shadow: 0 0 2px 1px #dc3545;
     border-color: #dc3545;
 }
+
+.fa-folder-open { line-height: inherit !important;}

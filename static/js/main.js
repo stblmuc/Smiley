@@ -358,7 +358,7 @@ class Main {
                     const $this = this;
                     const button = document.createElement('div');
                     $(button).addClass("input-group-append btn btn-outline-secondary")
-                    .html("<i class='fa fa-folder-open fa-lg'></i>").click(function(e) {
+                    .html("<i class='fa fa-folder-open'></i>").click(function(e) {
                         $this.open_category_folder(categories[categoryIdx]);
                     }).appendTo(outerDiv);
                     categoryNameCell.append(outerDiv);
