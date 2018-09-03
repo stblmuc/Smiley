@@ -84,17 +84,14 @@ class Main {
     }
 
     createCategoryButtons() {
-        var root_location = $('#categories');
-        var fixed_cat_div = document.createElement('div');
-        var user_cat_div = document.createElement('div');
+        var fixed_cat_div = $('#categories .fixed-categories');
+        var user_cat_div = $('#categories .user-categories');
         const sort_fn = (a,b) => { return $(a).text() > $(b).text() ? 1 : -1; };
 
         this.fixed_cats.forEach((item) => {
             this.addCategoryButton(item, fixed_cat_div, true);
         });
         $(fixed_cat_div).children().sort(sort_fn).appendTo(fixed_cat_div);
-        $(fixed_cat_div).addClass('fixed-categories row no-gutters text-justify-left').appendTo(root_location);
-        $(root_location).append("<br>");
 
         this.cats.forEach((item) => {
             if (!this.fixed_cats.includes(item)) {
@@ -102,14 +99,13 @@ class Main {
             }
         });
         $(user_cat_div).children().sort(sort_fn).appendTo(user_cat_div);
-        $(user_cat_div).addClass('user-categories row no-gutters text-justify-left').appendTo(root_location);
 
         this.addNumberToCategories();
     }
 
     addCategoryButton(category, location, fixed) {
         var outerDiv = document.createElement('div');
-        $(outerDiv).addClass("input-group")
+        $(outerDiv).addClass("input-group col-sm-6")
 
         var button = document.createElement('div');
         $(button).addClass("btn btn-outline-secondary rounded")
@@ -341,7 +337,7 @@ class Main {
 
                 const headRow = $("<tr>");
                 thead.append(headRow);
-                headRow.append("<th>");
+                headRow.append("<th>Network Output</th>");
                 for (let classifierIdx = 0; classifierIdx < classifiers.length; classifierIdx++) {
                     const cell = $("<th scope='col'>");
                     headRow.append(cell);
@@ -367,7 +363,7 @@ class Main {
                         const cell = $("<td>");
                         row.append(cell);
                         const result = results[classifierIdx][categoryIdx];
-                        cell.text((result*100).toFixed(3)+"%");
+                        cell.text((result*100).toFixed(2)+"%");
                         const mostSuccessfulValue = mostSuccessfulValues[classifierIdx];
                         if (!mostSuccessfulValue || result > mostSuccessfulValue) {
                             mostSuccessfulValues[classifierIdx] = result;
@@ -543,6 +539,7 @@ class Main {
         } else {
             this.is_training = true;
 
+            $(button).children('.progress-bar').addClass('bg-danger')
             $(button).children('.label-progress-bar').text("Stop Training").css('color', 'black');
 
             var update_progress = setInterval(function() {
@@ -572,7 +569,7 @@ class Main {
                 this.is_training = false;
 
                 $(button).prop('disabled', false);
-                $(button).children('.progress-bar').css('width', '100%');
+                $(button).children('.progress-bar').removeClass('bg-danger').css('width', '100%');
                 $(button).children('.label-progress-bar').text("Start Training").css('color', 'white');
             })
             .fail(() => {

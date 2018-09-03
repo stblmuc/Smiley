@@ -35,11 +35,17 @@
                     <span>Add to training dataset</span>
                 </div>
                 <div class="card-body">
-                    <div id="categories"></div>
+                    <div id="categories">
+                        <span>Fixed Categories:</span>
+                        <div class="fixed-categories row no-gutters text-justify-left"></div>
+                        <br>
+                        <span>User Categories:</span>
+                        <div class="user-categories row no-gutters text-justify-left"></div>
+                    </div>
                     <br>
                     <div class="input-group">
                         <div class="input-group-prepend">
-                            <label for="trainingDataLabel" class="input-group-text">Other category:</label>
+                            <label for="trainingDataLabel" class="input-group-text">New:</label>
                         </div>
                         <input list="trainingDataLabelOptions" id="trainingDataLabel" placeholder=" e.g. elephant">
                         <datalist id="trainingDataLabelOptions"></datalist>
@@ -119,7 +125,6 @@
                 <hr>
             </div>
             <div>
-                <p>network output:</p>
                 <p class="error" id="error"></p>
                 <table id="output" class="table"></table>
             </div>

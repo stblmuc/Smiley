@@ -138,7 +138,7 @@ def classify():
     if utils.is_maybe_old() and len(err) == 0:
         err = "The network may be outdated. Please retrain the classifier for updated results."
 
-    return jsonify(classifiers=["Softmax Regression", "CNN"], results=[regression_output, cnn_output],
+    return jsonify(classifiers=["Regression", "CNN"], results=[regression_output, cnn_output],
                    error=err, categories=utils.get_category_names_in_use())
 
 

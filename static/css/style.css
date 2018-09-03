@@ -72,8 +72,7 @@ label {
 }
 
 #categories .row > div {
-    width: inherit;
-    margin: 3px;
+    margin-bottom: 5px;
 }
 
 #categories .btn-outline-secondary {

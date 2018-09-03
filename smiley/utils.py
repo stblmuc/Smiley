@@ -17,7 +17,8 @@ CATEGORIES_IN_USE = None
 MAYBE_OLD_VERSION = False
 PROGRESS = {
     'value': 100,
-    'num_processes': 2,
+    'process_dist': [0.1,0.9],
+    'current_process': 0,
     'previous_value': 0,
     'stop': False
 }
@@ -44,11 +45,12 @@ def get_progress():
 def update_progress(value):
     global PROGRESS
 
-    PROGRESS['value'] = PROGRESS['previous_value'] + (100*value/PROGRESS['num_processes'])
+    PROGRESS['value'] = PROGRESS['previous_value'] + (100*value*PROGRESS['process_dist'][PROGRESS['current_process']])
     
     # if process is completed, add its contribution to previous_value
     if value == 1:
-        PROGRESS['previous_value'] += 100/PROGRESS['num_processes']
+        PROGRESS['previous_value'] += 100*PROGRESS['process_dist'][PROGRESS['current_process']]
+        PROGRESS['current_process'] += 1
 
     return PROGRESS['value']
 
@@ -66,6 +68,7 @@ def reset_progress():
     global PROGRESS
 
     PROGRESS['value'] = 100
+    PROGRESS['current_process'] = 0
     PROGRESS['previous_value'] = 0
 
 
@@ -202,7 +205,7 @@ def get_number_of_images_required():
 # Returns a string error message that a category has to be added
 def get_no_cat_error():
     req_images_per_cat = get_number_of_images_required()
-    return "Please add at least one category (by adding at least <b>%d</b> images in that category)." % req_images_per_cat
+    return "Please add at least <b>%d</b> images to at least one category." % req_images_per_cat
 
 
 # Checks if at least one category has not the least required number of images
