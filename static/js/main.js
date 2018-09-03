@@ -347,13 +347,18 @@ class Main {
                     const row = $("<tr>");
                     tbody.append(row);
                     const categoryNameCell = $("<th scope='row'>");
-                    const textElement = $("<button class='btn button-own-image "+categories[categoryIdx]+"-img'>");
-                    textElement.text(categories[categoryIdx]);
+
+                    const outerDiv = document.createElement('div');
+                    $(outerDiv).addClass("input-group")
+                    const textElement = $("<span class='btn button-own-image "+categories[categoryIdx]+"-img'>");
+                    textElement.text(categories[categoryIdx]).appendTo(outerDiv);
                     const $this = this;
-                    textElement.click(function(e) {
-                        $this.open_category_folder($(e.currentTarget).text());
-                    });
-                    categoryNameCell.append(textElement);
+                    const button = document.createElement('div');
+                    $(button).addClass("input-group-append btn btn-outline-secondary")
+                    .html("<i class='fa fa-folder-open'></i>").click(function(e) {
+                        $this.open_category_folder(categories[categoryIdx]);
+                    }).appendTo(outerDiv);
+                    categoryNameCell.append(outerDiv);
                     row.append(categoryNameCell);
                     for (let classifierIdx = 0; classifierIdx < classifiers.length; classifierIdx++) {
                         const cell = $("<td>");
@@ -667,7 +672,7 @@ class Main {
     //                 img: input
     //             };
     //             $.ajax({
-    //                 url: '/api/generate-training-example',
+    //                 url: '/api/add-training-example',
     //                 method: 'POST',
     //                 contentType: 'application/json',
     //                 data: JSON.stringify(uploadData),
