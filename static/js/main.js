@@ -121,10 +121,6 @@ class Main {
             $(button).addClass("button-own-image " + category + "-img")
         }
 
-        if (this.cats_img_number[category]) {
-            this.addDeleteToCategory(category, outerDiv);
-        }
-
         location.append(outerDiv);
     }
 
@@ -132,12 +128,12 @@ class Main {
         for (var key in this.cats_img_number) {
             // check if the property/key is defined in the object itself, not in parent
             if (this.cats_img_number.hasOwnProperty(key)) {
-                this.updateCategoryNumber(key, this.cats_img_number[key]);
+                this.updateCategoryButton(key, this.cats_img_number[key]);
             }
         }
     }
 
-    updateCategoryNumber(category, number) {
+    updateCategoryButton(category, number) {
         var button = $('#categories .btn')
         .filter(function(){return this.value==category})[0];
 
@@ -148,7 +144,21 @@ class Main {
         numberDiv.id = category + "-number";
         $(numberDiv).html(" (" + (number ? number : (Number(value)+1)) + ")").addClass("inline").appendTo(button);
     
-        if (!number && !value) this.addDeleteToCategory(category, $(button).parent());
+        if (!value) {
+            this.addFolderToCategory(category, $(button).parent());
+            this.addDeleteToCategory(category, $(button).parent());
+        }
+    }
+
+    addFolderToCategory(category, location) {
+        $(location).children().removeClass('rounded');
+        
+        var button = document.createElement('div');
+        $(button).addClass("input-group-append btn btn-outline-secondary")
+        .html("<i class='fa fa-folder-open'></i>").click((e) => {
+            this.open_category_folder(category);
+            e.stopPropagation();
+        }).appendTo(location);
     }
 
     addDeleteToCategory(category, location) {
@@ -171,7 +181,7 @@ class Main {
             success: (data) => {
                 $("#trainingDataLabelOptions option[value='"+category+"']").remove(); // delete cat from datalist options
                 $(button).find('div[id$="number"]').remove();
-                $(button).find('.button-own-image').addClass('rounded').siblings('.btn-outline-danger').remove();
+                $(button).find('.button-own-image').addClass('rounded').siblings().remove();
 
                 if (!this.fixed_cats.includes(category)) {
                     $(button).remove();
@@ -284,8 +294,7 @@ class Main {
     }
 
     clearOutput() {
-        $("#error").text("");
-        $("#error").removeClass("alert alert-warning");
+        $("#error").text("").removeClass("alert alert-warning alert-danger");
         $('#output td, #output tr').remove();
     }
 
@@ -310,11 +319,7 @@ class Main {
                 var results = data.results;
 
                 if (error) {
-                    $("#error").html(error.replace(/(\r\n|\n|\r)/gm, "<br>"));
-                    $("#error").addClass("alert alert-warning");
-                } else {
-                    $("#error").text("");
-                    $("#error").removeClass("alert alert-warning");
+                    $("#error").html(error.replace(/(\r\n|\n|\r)/gm, "<br>")).addClass("alert alert-warning");
                 }
 
                 // Do not display table if results contain empty arrays
@@ -355,14 +360,9 @@ class Main {
                     $(outerDiv).addClass("input-group")
                     const textElement = $("<span class='btn button-own-image "+categories[categoryIdx]+"-img'>");
                     textElement.text(categories[categoryIdx]).appendTo(outerDiv);
-                    const $this = this;
-                    const button = document.createElement('div');
-                    $(button).addClass("input-group-append btn btn-outline-secondary")
-                    .html("<i class='fa fa-folder-open'></i>").click(function(e) {
-                        $this.open_category_folder(categories[categoryIdx]);
-                    }).appendTo(outerDiv);
                     categoryNameCell.append(outerDiv);
                     row.append(categoryNameCell);
+                    
                     for (let classifierIdx = 0; classifierIdx < classifiers.length; classifierIdx++) {
                         const cell = $("<td>");
                         row.append(cell);
@@ -436,8 +436,7 @@ class Main {
                 this.initialize();
                 const error = data.error;
                 if (error) {
-                    $("#error").addClass("alert alert-warning");
-                    $("#error").html(error);
+                    $("#error").html(error).addClass("alert alert-warning");
                 }
 
                 var label = input.cat;
@@ -451,7 +450,7 @@ class Main {
                     this.addCategoryButton(label, $('#categories .user-categories')[0]);
                 }
 
-                this.updateCategoryNumber(label, 0);
+                this.updateCategoryButton(label, 0);
             }
         })
         .always(() => {
@@ -563,8 +562,7 @@ class Main {
 
                     const error = data.error;
                     if (error) {
-                        $("#error").addClass("alert alert-warning");
-                        $("#error").html(error);
+                        $("#error").html(error).addClass("alert alert-warning");
                     }
                 }
             })
@@ -644,7 +642,7 @@ class Main {
 
     checkConnection() {
         const error = "<b>Please make sure the server is running and check its console for further information.</b>";
-        $("#error").html(error);
+        $("#error").html(error).addClass('alert alert-danger');
     }
 
 

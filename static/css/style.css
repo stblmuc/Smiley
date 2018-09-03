@@ -83,6 +83,10 @@ label {
     padding-right: 6px;
 }
 
+#categories .btn-outline-secondary:nth-child(2) {
+    border-radius: 0;
+}
+
 #categories .btn-outline-danger {
     border-top-left-radius: 0px;
     border-bottom-left-radius: 0px;
