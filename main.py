@@ -23,6 +23,7 @@ IMAGE_SIZE = int(config['DEFAULT']['IMAGE_SIZE'])
 if not os.path.exists(MODELS_DIRECTORY):
     os.makedirs(MODELS_DIRECTORY)
 
+
 # updates the models if the number of classes changed
 def maybe_update_models():
     global y1, variables, saver_regression, y2, saver_cnn, x, is_training, sess, num_categories
@@ -135,7 +136,7 @@ def classify():
         err = first_train_error
 
     if utils.is_maybe_old() and len(err) == 0:
-        err = "The network maybe be outdated. Please retrain the classifier for updated results."
+        err = "The network may be outdated. Please retrain the classifier for updated results."
 
     return jsonify(classifiers=["Softmax Regression", "CNN"], results=[regression_output, cnn_output],
                    error=err, categories=utils.get_category_names_in_use())

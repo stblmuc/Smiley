@@ -285,6 +285,7 @@ class Main {
 
     clearOutput() {
         $("#error").text("");
+        $("#error").removeClass("alert alert-warning");
         $('#output td, #output tr').remove();
     }
 
@@ -310,8 +311,10 @@ class Main {
 
                 if (error) {
                     $("#error").html(error.replace(/(\r\n|\n|\r)/gm, "<br>"));
+                    $("#error").addClass("alert alert-warning");
                 } else {
                     $("#error").text("");
+                    $("#error").removeClass("alert alert-warning");
                 }
 
                 // Do not display table if results contain empty arrays
@@ -355,7 +358,7 @@ class Main {
                     const $this = this;
                     const button = document.createElement('div');
                     $(button).addClass("input-group-append btn btn-outline-secondary")
-                    .html("<i class='fa fa-folder-open'></i>").click(function(e) {
+                    .html("<i class='fa fa-folder-open fa-lg'></i>").click(function(e) {
                         $this.open_category_folder(categories[categoryIdx]);
                     }).appendTo(outerDiv);
                     categoryNameCell.append(outerDiv);
@@ -433,6 +436,7 @@ class Main {
                 this.initialize();
                 const error = data.error;
                 if (error) {
+                    $("#error").addClass("alert alert-warning");
                     $("#error").html(error);
                 }
 
@@ -558,7 +562,10 @@ class Main {
                     this.clearOutput();
 
                     const error = data.error;
-                    $("#error").html(error ? error : "");
+                    if (error) {
+                        $("#error").addClass("alert alert-warning");
+                        $("#error").html(error);
+                    }
                 }
             })
             .always(() => {
