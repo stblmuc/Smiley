@@ -309,8 +309,8 @@ class Main {
             contentType: 'application/json',
             data: JSON.stringify(input),
             success: (data) => {
-                const categories = data.categories;
                 const error = data.error;
+                var categories = data.categories;
                 var classifiers = data.classifiers;
                 var results = data.results;
 
@@ -322,10 +322,19 @@ class Main {
                 if (!results.filter((e)=>{return e.length}).length)
                     return;
                 else {
-                    // concat average to results
+                    // Concat average to results
                     const average = arr => arr[0].map((v,i) => (v+arr[1][i]) / 2);
                     classifiers = classifiers.concat(["Average"]);
                     results = results.concat([average(results)]);
+
+                    // Display user categories as last
+                    categories.forEach((v,i) => { 
+                        if (!this.fixed_cats.includes(v)) {
+                            categories.push(categories.splice(i,1));
+                            for (var j in results)
+                                results[j].push(results[j].splice(i,1)[0]);
+                        }
+                    });
                 }
 
                 const table = $("#output");
@@ -354,7 +363,7 @@ class Main {
 
                     const outerDiv = document.createElement('div');
                     $(outerDiv).addClass("input-group")
-                    const textElement = $("<span class='btn button-own-image "+categories[categoryIdx]+"-img'>");
+                    const textElement = $("<span class='button-own-image "+categories[categoryIdx]+"-img'>");
                     textElement.text(categories[categoryIdx]).appendTo(outerDiv);
                     categoryNameCell.append(outerDiv);
                     row.append(categoryNameCell);
