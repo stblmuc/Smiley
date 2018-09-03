@@ -197,4 +197,6 @@ label {
     border-color: #dc3545;
 }
 
-.fa-folder-open { line-height: inherit !important;}
+.fa {
+    line-height: inherit !important;
+}

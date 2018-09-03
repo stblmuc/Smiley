@@ -162,7 +162,7 @@ class Main {
         
         var button = document.createElement('div');
         $(button).addClass("input-group-append btn btn-outline-danger")
-        .html("<span>&#10060;</span>").click((e) => {
+        .html("<i class='fa fa-times'></i>").click((e) => {
             this.deleteCategory(category, location);
             e.stopPropagation();
         }).appendTo(location);
