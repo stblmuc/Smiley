@@ -12,6 +12,10 @@ MODELS_DIRECTORY = os.path.join(config['DIRECTORIES']['LOGIC'], config['DIRECTOR
                                 config['DEFAULT']['IMAGE_SIZE'])
 CATEGORIES_LOCATION = os.path.join(os.path.dirname(__file__), config['DIRECTORIES']['CATEGORIES'],
                                        config['DEFAULT']['IMAGE_SIZE'] + "/")
+#In config: [DIRECTORIES] categories = T:\categories
+#CATEGORIES_LOCATION = os.path.join(config['DIRECTORIES']['CATEGORIES'],
+#                                       config['DEFAULT']['IMAGE_SIZE'] + "/")
+
 CATEGORIES = None
 CATEGORIES_IN_USE = None
 MAYBE_OLD_VERSION = False
