@@ -1,7 +1,11 @@
-.col-lg-6 > * {
-    max-width: 450px;
+.col-xl-4 > * {
     margin-bottom: 1rem;
     user-select: none;
+}
+
+.col-xl-4 > .fixed-size {
+    max-width: 450px;
+    margin: auto;
 }
 
 canvas {
@@ -169,6 +173,10 @@ label {
     background-color: white;
 }
 
+#output td {
+    text-align: right;
+}
+
 .circle {
 	border: 4px solid #000000;
 	border-radius: 50%;
@@ -199,12 +207,4 @@ label {
 
 .fa {
     line-height: inherit !important;
-}
-
-td {
-    text-align: right;
-}
-
-text-right {
-    text-align: right;
 }

@@ -14,22 +14,11 @@
     </script>
 </head>
 <body>
-<div class="container">
+<div class="container-fluid">
     <h1>Smiley Recognition</h1>
+    <br>
     <div class="row">
-        <div class="col-lg-6">
-            <div class="btn-group d-flex">
-                <button id="modeDraw" class="btn btn-outline-secondary w-50">Draw <i class="fa fa-paint-brush"></i></button>
-                <button id="modeCamera" class="btn btn-outline-secondary w-50">Camera <i class="fa fa-camera"></i></button>
-            </div>
-            <div class="relative">
-                <canvas id="main"></canvas>
-                <div id="takePhoto" class="circle" style="display: none;"></div>
-                <div class="row no-gutters justify-content-between">
-                    <button id="clear" class="btn btn-outline-secondary">Clear</button>
-                    <button id="classify" class="btn btn-outline-secondary">Classify</button>
-                </div>
-            </div>
+        <div class="col-xl-4">
             <div class="card">
                 <div class="card-header">
                     <span>Add to training dataset</span>
@@ -85,14 +74,14 @@
                                 </div>
                             </div>
                             <div class="input-group">
-                                <div class="input-group-prepend"><label class="input-group-text" for="sr-rate">Softmax regression learning rate:</label></div>
+                                <div class="input-group-prepend"><label class="input-group-text" for="sr-rate">Regression learning rate:</label></div>
                                 <input type="number" id="sr-rate" class="form-control" value="0.01" step="0.0001">
                                 <div class="input-group-append">
                                     <label class="input-group-text" for="sr-rate"><i class="fa fa-pen"></i></label>
                                 </div>
                             </div>
                             <div class="input-group">
-                                <div class="input-group-prepend"><label class="input-group-text" for="sr-epochs">Softmax regression epochs:</label></div>
+                                <div class="input-group-prepend"><label class="input-group-text" for="sr-epochs">Regression epochs:</label></div>
                                 <input type="number" id="sr-epochs" class="form-control" value="3">
                                 <div class="input-group-append">
                                     <label class="input-group-text" for="sr-epochs"><i class="fa fa-pen"></i></label>
@@ -118,7 +107,22 @@
             </div>
         </div>
         <br>
-        <div class="col-lg-6">
+        <div class="col-xl-4">
+            <div class="relative fixed-size">
+                <div class="btn-group d-flex">
+                    <button id="modeDraw" class="btn btn-outline-secondary w-50">Draw <i class="fa fa-paint-brush"></i></button>
+                    <button id="modeCamera" class="btn btn-outline-secondary w-50">Camera <i class="fa fa-camera"></i></button>
+                </div>
+                <canvas id="main"></canvas>
+                <div id="takePhoto" class="circle" style="display: none;"></div>
+                <div class="row no-gutters justify-content-between">
+                    <button id="clear" class="btn btn-outline-secondary">Clear</button>
+                    <button id="classify" class="btn btn-outline-secondary">Classify</button>
+                </div>
+            </div>
+        </div>
+        <br>
+        <div class="col-xl-4">
             <div>
                 <p>network input ({{data.image_size}}x{{data.image_size}} black/white):</p>
                 <canvas id="input" width="140" height="140"></canvas>
