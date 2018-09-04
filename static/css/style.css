@@ -200,3 +200,7 @@ label {
 .fa {
     line-height: inherit !important;
 }
+
+td {
+    text-align: right;
+}
