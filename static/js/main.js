@@ -267,8 +267,8 @@ class Main {
                     grayscale = 255 * (grayscale - min) / (max - min)
 
                     // Threshold
-                    const threshold = 0
-                    const contrast_factor = 2.5
+                    const threshold = 80
+                    const contrast_factor = 2
                     var scaled_gray = Math.min(255,((grayscale - threshold)*contrast_factor) + threshold)
                     grayscale = grayscale > threshold ? scaled_gray : grayscale
 
