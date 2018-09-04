@@ -18,6 +18,15 @@ label {
     margin-bottom: 0;
 }
 
+#modeDraw {
+    border-bottom-left-radius: 0;
+}
+
+#modeCamera {
+    margin-left: 0;
+    border-bottom-right-radius: 0;
+}
+
 .menu-active{
     background-color: #6c757d !important;
     color: #FFFFFF !important;
@@ -180,12 +189,9 @@ label {
 .circle {
 	border: 4px solid #000000;
 	border-radius: 50%;
-	-webkit-box-shadow: 0 0 2px 0px rgb( 255, 255, 255);
-	box-shadow: 0 0 2px 0px rgb( 255, 255, 255);
 	width: 40px;
 	height: 40px;
 	z-index: 2;
-    display: block;
     position: absolute;
     left: 205px; /*(450 / 2) - 20 */
     bottom: 65px;

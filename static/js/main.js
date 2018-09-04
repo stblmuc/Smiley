@@ -397,9 +397,7 @@ class Main {
             url: '/api/open-category-folder',
             method: 'POST',
             contentType: 'application/json',
-            data: JSON.stringify({ cat: category }),
-            success: (data) => {
-            }
+            data: JSON.stringify({ cat: category })
         })
         .fail(() => {
             this.clearOutput();
@@ -410,11 +408,13 @@ class Main {
     addTrainingData(button, label) {
         if (!label) 
             alert("Please assign a category for the data");
-        else if (!label.match(/^[a-zA-Z0-9\-]*$/))
-            alert("Please use only latin alphabet (a-z/A-Z), hyphen(-) and digits(0-9) for the category name");
         else if (this.cats.filter((e) => !this.fixed_cats.includes(e)).length == this.maxNumUserCat)
-            alert("Maximum number of categories reached");
-        else{
+            alert("Maximum number of categories reached ("+this.maxNumUserCat+")");
+        else if (label.length > 12)
+            alert("Maximum number of characters reached (12)");
+        else if (!/^[a-zA-Z0-9\-]*$/.test(label))
+            alert("Please use only latin alphabet (a-z/A-Z), hyphen(-) and digits(0-9) for the category name");
+        else {
             this.recogniseInput((input) => {
                 const uploadData = {
                     cat: label,
@@ -542,6 +542,7 @@ class Main {
                 method: 'POST'
             })
             .fail(() => {
+                $(button).prop('disabled', false);
                 this.clearOutput();
                 this.checkConnection();
             });
@@ -591,10 +592,10 @@ class Main {
     updateConfig(button) {
         var ints = [$('#num-augm').val(), $('#batch-size').val(), $('#sr-epochs').val(), $('#cnn-epochs').val()];
         var floats = [$('#sr-rate').val(), $('#cnn-epochs').val()];
+
         for (var i in ints) {
             if(!/^\+?(0|[1-9]\d*)$/.test(ints[i])) {
-                var icon = $(button).find('i.fa-spinner.fa-spin');
-                icon.removeClass("fa-spinner fa-spin").addClass("fa-pen");
+                $(button).find('i.fa-spinner.fa-spin').removeClass("fa-spinner fa-spin").addClass("fa-pen");
                 this.initializeConfigValues();
                 alert("Parameter must be a positive integer. Please use only digits(0-9) for this parameter.");
                 return;
@@ -602,8 +603,7 @@ class Main {
         }
         for (var j in floats) {
             if(!/^\d+(\.\d+)?$/.test(floats[j])) {
-                var icon = $(button).find('i.fa-spinner.fa-spin');
-                icon.removeClass("fa-spinner fa-spin").addClass("fa-pen");
+                $(button).find('i.fa-spinner.fa-spin').removeClass("fa-spinner fa-spin").addClass("fa-pen");
                 this.initializeConfigValues();
                 alert("Parameter must be a decimal number. Please use only digits(0-9) and a decimal separator(.) for this parameter.");
                 return;
@@ -650,69 +650,6 @@ class Main {
         const error = "<b>Please make sure the server is running and check its console for further information.</b>";
         $("#error").html(error).addClass('alert alert-danger');
     }
-
-
-    // loadImage(data, cb) {
-    //     var img = new Image();
-    //     img.onload = () => {
-    //         this.initialize();
-    //         var imgSize = Math.min(img.width, img.height);
-    //      var left = (img.width - imgSize) / 2;
-    //      var top = (img.height - imgSize) / 2;
-
-    //         // draw squared-up image in canvas
-    //         this.ctx.drawImage(img, left, top, imgSize, imgSize, 0, 0, this.ctx.canvas.width, this.ctx.canvas.height);
-
-    //         this.drawInput((input) => {
-    //             if (typeof cb == 'function')
-    //                 cb(data, input);
-    //             else
-    //                 this.loadOutput(input);
-    //         });
-    //     }
-    //     img.src = window.URL.createObjectURL(data)
-    // }
-
-    // loadAndUploadImages(target) {
-    //     function cb(data, input) {
-    //         var path = data.webkitRelativePath.split("/");
-    //         var label = path[path.length - 2];
-    //         if (label) {
-    //             const uploadData = {
-    //                 cat: label,
-    //                 img: input
-    //             };
-    //             $.ajax({
-    //                 url: '/api/add-training-example',
-    //                 method: 'POST',
-    //                 contentType: 'application/json',
-    //                 data: JSON.stringify(uploadData),
-    //                 success: (data) => {
-    //                 }
-    //             })
-    //         } else {
-    //             alert("Please select a folder of one category or of one image size");
-    //         };
-    //     }
-
-    //     for (var i = 0; i < target.files.length; i++) {
-    //         this.loadImage(target.files[i], cb);
-    //     }
-    // }
-
-    // getConsoleOutput(firstCall) {
-    //     var obj = $('#consoleOutput .card-body');
-    //     $.ajax({
-    //         url: '/api/get-console-output',
-    //         success: (data) => {
-    //             if (firstCall) obj.append("done!<br>");
-    //             if (data.out) obj.append(data.out.replace(/(\r\n|\n|\r)/gm, "<br>"));
-    //         }
-    //     })
-    //     .fail(() => {
-    //         obj.html("Connection failed.<br>");
-    //     });
-    // }
 }
 
 $(() => {
@@ -738,6 +675,12 @@ $(() => {
         main.recogniseInput();
     });
 
+    $('#trainingDataLabel')[0].addEventListener("keyup", (e) => {
+        if (e.keyCode === 13) // Enter pressed
+            $('#addTrainingData').click();
+        return false;
+    });
+
     $('#addTrainingData').click((e) => {
         main.addTrainingData(e.currentTarget, $('#trainingDataLabel').val());
     });
@@ -761,16 +704,66 @@ $(() => {
             }, 1000);
         })
     });
-
-    /*$('#importFile').change((e) => {
-        main.loadImage(e.currentTarget.files[0]);
-    });
-
-    $('#importFolder').change((e) => {
-        main.loadAndUploadImages(e.currentTarget);
-    });
-
-    $('#deleteModels').click((e) => {
-        main.deleteAllModels(e.currentTarget);
-    });*/
 });
+
+/*loadImage(data, cb) {
+    var img = new Image();
+    img.onload = () => {
+        this.initialize();
+        var imgSize = Math.min(img.width, img.height);
+     var left = (img.width - imgSize) / 2;
+     var top = (img.height - imgSize) / 2;
+
+        // draw squared-up image in canvas
+        this.ctx.drawImage(img, left, top, imgSize, imgSize, 0, 0, this.ctx.canvas.width, this.ctx.canvas.height);
+
+        this.drawInput((input) => {
+            if (typeof cb == 'function')
+                cb(data, input);
+            else
+                this.loadOutput(input);
+        });
+    }
+    img.src = window.URL.createObjectURL(data)
+}
+
+loadAndUploadImages(target) {
+    function cb(data, input) {
+        var path = data.webkitRelativePath.split("/");
+        var label = path[path.length - 2];
+        if (label) {
+            const uploadData = {
+                cat: label,
+                img: input
+            };
+            $.ajax({
+                url: '/api/add-training-example',
+                method: 'POST',
+                contentType: 'application/json',
+                data: JSON.stringify(uploadData),
+                success: (data) => {
+                }
+            })
+        } else {
+            alert("Please select a folder of one category or of one image size");
+        };
+    }
+
+    for (var i = 0; i < target.files.length; i++) {
+        this.loadImage(target.files[i], cb);
+    }
+}
+
+getConsoleOutput(firstCall) {
+    var obj = $('#consoleOutput .card-body');
+    $.ajax({
+        url: '/api/get-console-output',
+        success: (data) => {
+            if (firstCall) obj.append("done!<br>");
+            if (data.out) obj.append(data.out.replace(/(\r\n|\n|\r)/gm, "<br>"));
+        }
+    })
+    .fail(() => {
+        obj.html("Connection failed.<br>");
+    });
+}*/

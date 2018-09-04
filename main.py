@@ -219,7 +219,9 @@ def train_models():
 # Retrieve training progress
 @app.route('/api/train-progress')
 def train_progress():
-    return jsonify(progress=utils.get_progress())
+    progress = utils.get_progress()
+
+    return jsonify(progress=progress)
 
 
 # Stop the training and delete all saved models
@@ -233,6 +235,7 @@ def stop_training():
 @app.route('/api/get-console-output')
 def console_output():
     output = utils.LOGGER.pop()
+    
     return jsonify(out=output)
 
 
@@ -240,6 +243,7 @@ def console_output():
 def open_category_folder():
     category = request.json["cat"]
     utils.open_category_folder(category)
+
     return "ok"
 
 # main
