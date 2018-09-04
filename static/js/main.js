@@ -348,7 +348,7 @@ class Main {
                 thead.append(headRow);
                 headRow.append("<th>Network Output</th>");
                 for (let classifierIdx = 0; classifierIdx < classifiers.length; classifierIdx++) {
-                    const cell = $("<th scope='col'>");
+                    const cell = $("<th scope='col' class='text-right'>");
                     headRow.append(cell);
                     cell.text(classifiers[classifierIdx]);
                 }
