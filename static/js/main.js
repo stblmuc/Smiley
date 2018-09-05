@@ -290,8 +290,20 @@ class Main {
     }
 
     clearOutput() {
-        $("#error").text("").removeClass("alert alert-warning alert-danger");
-        $('#output td, #output tr').remove();
+        this.dismissAlert();
+        $("#output td, #output tr").remove();
+    }
+
+    dismissAlert() {
+        $("#error").removeClass((i, className) => {
+            return (className.match(/(^|\s)alert-\S+/g) || []).join(' ');
+        }).hide().find("p").text("");
+    }
+
+    displayAlert(content, type) {
+        var alert = $("#error");
+        alert.addClass("alert-"+type).fadeIn().find("p").html(content.replace(/(\r\n|\n|\r)/gm, "<br>"));
+        setTimeout(() => {alert.fadeOut();}, 60000);
     }
 
     recogniseInput(cb) {
@@ -315,7 +327,7 @@ class Main {
                 var results = data.results;
 
                 if (error) {
-                    $("#error").html(error.replace(/(\r\n|\n|\r)/gm, "<br>")).addClass("alert alert-warning");
+                    this.displayAlert(error,"warning");
                 }
 
                 // Do not display table if results contain empty arrays
@@ -447,7 +459,7 @@ class Main {
                 this.initialize();
                 const error = data.error;
                 if (error) {
-                    $("#error").html(error).addClass("alert alert-warning");
+                    this.displayAlert(error, "warning");
                 }
 
                 var label = input.cat;
@@ -575,7 +587,7 @@ class Main {
 
                     const error = data.error;
                     if (error) {
-                        $("#error").html(error).addClass("alert alert-warning");
+                        this.displayAlert(error, "warning");
                     }
                 }
             })
@@ -654,7 +666,7 @@ class Main {
 
     checkConnection() {
         const error = "<b>Please make sure the server is running and check its console for further information.</b>";
-        $("#error").html(error).addClass('alert alert-danger');
+        this.displayAlert(error, "danger");
     }
 }
 
@@ -710,6 +722,10 @@ $(() => {
             }, 1000);
         })
     });
+
+    $('#error .close').click(() => {
+        main.dismissAlert();
+    })
 });
 
 /*loadImage(data, cb) {

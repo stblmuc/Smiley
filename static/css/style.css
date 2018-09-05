@@ -1,11 +1,6 @@
-.col-xl-4 > * {
-    margin-bottom: 1rem;
+body {
+    font-size: large;
     user-select: none;
-}
-
-.col-xl-4 > .fixed-size {
-    width: 450px !important;
-    margin: auto;
 }
 
 canvas {
@@ -16,6 +11,15 @@ canvas {
 
 label {
     margin-bottom: 0;
+}
+
+.col-xl-4 > * {
+    margin-bottom: 1rem;
+}
+
+.col-xl-4 > .fixed-size {
+    width: 450px !important;
+    margin: auto;
 }
 
 #modeDraw {
@@ -186,6 +190,14 @@ label {
     text-align: right;
 }
 
+#error {
+    position: fixed;
+    bottom: 0%;
+    z-index: 100;
+    width: 50%;
+    left:25%;
+}
+
 .circle {
 	border: 4px solid #000000;
 	border-radius: 50%;
@@ -213,4 +225,14 @@ label {
 
 .fa {
     line-height: inherit !important;
+}
+
+.alert-heading {
+    text-transform:capitalize;
+    font-size: 1.5rem;
+    font-weight: 900;
+}
+
+.btn {
+    font-size: large;
 }
