@@ -204,9 +204,10 @@ class Main {
         this.drawing = true;
     }
 
-    onMouseUp() {
+    onMouseUp(e) {
         if (this.video) this.video.pause();
 
+        this.onMouseMove(e);
         this.recogniseInput((input) => {});
         this.drawing = false;
     }

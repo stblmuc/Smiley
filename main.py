@@ -234,6 +234,7 @@ def open_category_folder():
 
     return "ok"
 
+
 # main
 if __name__ == '__main__':
     # Open webbrowser tab for the app
