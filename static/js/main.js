@@ -328,13 +328,19 @@ class Main {
                     results = results.concat([average(results)]);
 
                     // Display user categories as last
-                    categories.forEach((v,i) => { 
+                    const rm_duplicates = (v,i,a) => a.lastIndexOf(v) == i
+
+                    categories.forEach((v,i) => {
                         if (!this.fixed_cats.includes(v)) {
-                            categories.push(categories.splice(i,1));
                             for (var j in results)
-                                results[j].push(results[j].splice(i,1)[0]);
+                                results[j].push(results[j][i]);
+                            categories.push(v);
                         }
                     });
+
+                    categories = categories.filter(rm_duplicates)
+                    for (var j in results)
+                        results[j] = results[j].filter(rm_duplicates)
                 }
 
                 const table = $("#output");
