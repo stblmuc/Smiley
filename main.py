@@ -191,6 +191,7 @@ def train_models():
         cnn_train.train()
     except:
         err = "Unknown error."
+        utils.delete_all_models()
         return jsonify(error=err)
 
     if utils.train_should_stop():
