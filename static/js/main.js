@@ -131,7 +131,7 @@ class Main {
 
     updateCategoryButton(category, number) {
         var button = $('#categories .btn')
-        .filter(function(){return this.value==category})[0];
+        .filter(function(){return this.value==category;})[0];
 
         var value = $(button).children().text().replace(/\D/g, '');
         $(button).children().remove();
@@ -332,7 +332,7 @@ class Main {
                 }
 
                 // Do not display table if results contain empty arrays
-                if (!results.filter((e)=>{return e.length}).length)
+                if (!results.filter((e)=>{return e.length;}).length)
                     return;
                 else {
                     // Concat average to results
@@ -351,9 +351,9 @@ class Main {
                         }
                     });
 
-                    categories = categories.filter(rm_duplicates)
+                    categories = categories.filter(rm_duplicates);
                     for (var j in results)
-                        results[j] = results[j].filter(rm_duplicates)
+                        results[j] = results[j].filter(rm_duplicates);
                 }
 
                 const table = $("#output");
@@ -608,64 +608,47 @@ class Main {
         }
     }
 
-    updateConfig(button) {
-        var ints = [$('#num-augm').val(), $('#batch-size').val(), $('#sr-epochs').val(), $('#cnn-epochs').val()];
-        var floats = [$('#sr-rate').val(), $('#cnn-rate').val()];
+    updateConfig(form) {
+        var ints = {numAugm: $('#num-augm').val(), batchSize: $('#batch-size').val(), srEpochs: $('#sr-epochs').val(), cnnEpochs: $('#cnn-epochs').val()};
+        var floats = {srRate: $('#sr-rate').val(), cnnRate: $('#cnn-rate').val()};
         
         for (var i in ints) {
-            if(!/^\+?(0|[1-9]\d*)$/.test(ints[i])) {
-                $(button).find('i.fa-spinner.fa-spin').removeClass("fa-spinner fa-spin").addClass("fa-pen");
+            if(!/^\+?\d+$/.test(ints[i])) {
+                $(form).find('i.fa-spinner.fa-spin').removeClass("fa-spinner fa-spin").addClass("fa-pen");
                 this.initializeConfigValues();
                 alert("Parameter must be a positive integer. Please use only digits(0-9) for this parameter.");
-                return;
+                return false;
             }
         }
         for (var j in floats) {
-            if(!/^\d+(\.\d+)?$/.test(floats[j])) {
-                $(button).find('i.fa-spinner.fa-spin').removeClass("fa-spinner fa-spin").addClass("fa-pen");
+            if(!/^\+?0*?\.\d+$/.test(floats[j])) {
+                $(form).find('i.fa-spinner.fa-spin').removeClass("fa-spinner fa-spin").addClass("fa-pen");
                 this.initializeConfigValues();
-                alert("Parameter must be a decimal number. Please use only digits(0-9) and a decimal separator(.) for this parameter.");
-                return;
-            } else if (Number(floats[j]) > 1 || Number(floats[j]) == 0.0) {
-                this.initializeConfigValues();
-                alert("Learning rates have to be between 0 and 1.");
-                return;
+                alert("Parameter must be a decimal number between 0 and 1. Please use only digits(0-9) and a decimal separator(.) for this parameter.");
+                return false;
             }
         }
-        if (ints[1] == 0) { // Check batch size
+        if (ints['batchSize'] == 0 || ints['srEpochs'] == 0 || ints['cnnEpochs'] == 0) { // Check batch size
             this.initializeConfigValues();
-            alert("Batch size must be greater than zero.")
-            return;
+            alert("Parameter must be greater than zero.")
+            return false;
         }
 
-        this.numAugm = $('#num-augm').val();
-        this.batchSize = $('#batch-size').val();
-        this.srRate = $('#sr-rate').val();
-        this.srEpochs = $('#sr-epochs').val();
-        this.cnnRate = $('#cnn-rate').val();
-        this.cnnEpochs = $('#cnn-epochs').val();
+        this.update_config = {...ints,...floats};
+        for (var key in this.update_config)
+            this[key] = this.update_config[key];
 
-        this.update_config = {
-            numberAugmentations: this.numAugm,
-            batchSize: this.batchSize,
-            srLearningRate: this.srRate,
-            srEpochs: this.srEpochs,
-            cnnEpochs: this.cnnEpochs,
-            cnnLearningRate: this.cnnRate
-        };
-
-        this.update_timeout = setTimeout(() => {
+        setTimeout(() => {
             $.ajax({
                 url: '/api/update-config',
                 method: 'POST',
                 contentType: 'application/json',
                 data: JSON.stringify(this.update_config),
                 success: (data) => {
-                    var icon = $(button).find('i.fa-spinner.fa-spin');
-                    icon.removeClass("fa-spinner fa-spin").addClass("fa-check");
+                    $(form).find('i.fa-spinner.fa-spin').removeClass("fa-spinner fa-spin").addClass("fa-check");
 
                     setTimeout(function() {
-                        icon.removeClass("fa-check").addClass("fa-pen");
+                        $(form).find('i.fa-check').removeClass("fa-check").addClass("fa-pen");
                     }, 1000);
                 }
             })
@@ -674,6 +657,8 @@ class Main {
                 this.checkConnection();
             });
         }, 400);
+
+        return true;
     }
 
     checkConnection() {
@@ -720,7 +705,8 @@ $(() => {
     });
 
     $('#config-form').submit((e) => {
-        main.updateConfig(e.currentTarget);
+        if (!main.updateConfig(e.currentTarget))
+            $(e.currentTarget).find('i').removeClass('fa-spinner fa-spin fa-check').addClass('fa-pen');
         return false;
     });
 

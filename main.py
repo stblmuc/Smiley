@@ -160,11 +160,11 @@ def delete_category():
 # Update config parameters
 @app.route('/api/update-config', methods=['POST'])
 def update_config():
-    config.set("CNN", "LEARNING_RATE", request.json["cnnLearningRate"])
-    config.set("REGRESSION", "LEARNING_RATE", request.json["srLearningRate"])
+    config.set("CNN", "LEARNING_RATE", request.json["cnnRate"])
+    config.set("REGRESSION", "LEARNING_RATE", request.json["srRate"])
     config.set("CNN", "EPOCHS", request.json["cnnEpochs"])
     config.set("REGRESSION", "EPOCHS", request.json["srEpochs"])
-    config.set("DEFAULT", "number_augmentations_per_image", request.json["numberAugmentations"])
+    config.set("DEFAULT", "number_augmentations_per_image", request.json["numAugm"])
     config.set("DEFAULT", "train_batch_size", request.json["batchSize"])
 
     # Write config back to file
