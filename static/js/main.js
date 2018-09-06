@@ -105,7 +105,7 @@ class Main {
 
     addCategoryButton(category, location, fixed) {
         var outerDiv = document.createElement('div');
-        $(outerDiv).addClass("input-group col-sm-6")
+        $(outerDiv).addClass("input-group col-sm-6");
 
         var button = document.createElement('div');
         $(button).addClass("btn btn-outline-secondary rounded")
@@ -114,7 +114,7 @@ class Main {
         }).appendTo(outerDiv);
 
         if (fixed) {
-            $(button).addClass("button-own-image " + category + "-img")
+            $(button).addClass("button-own-image " + category + "-img");
         }
 
         location.append(outerDiv);
@@ -255,23 +255,23 @@ class Main {
             for (var i = 0; i < this.image_size; i++) {
                 for (var j = 0; j < this.image_size; j++) {
                     var n = 4 * (i * this.image_size + j);
-                    var grayscale = (data[n + 0] + data[n + 1] + data[n + 2]) / 3
-                    max = Math.max(max,grayscale)
-                    min = Math.min(min,grayscale)
+                    var grayscale = (data[n + 0] + data[n + 1] + data[n + 2]) / 3;
+                    max = Math.max(max,grayscale);
+                    min = Math.min(min,grayscale);
                 }
             }
 
             for (var i = 0; i < this.image_size; i++) {
                 for (var j = 0; j < this.image_size; j++) {
                     var n = 4 * (i * this.image_size + j);
-                    var grayscale = (data[n + 0] + data[n + 1] + data[n + 2]) / 3
-                    grayscale = 255 * (grayscale - min) / (max - min)
+                    var grayscale = (data[n + 0] + data[n + 1] + data[n + 2]) / 3;
+                    grayscale = 255 * (grayscale - min) / (max - min);
 
                     // Threshold
-                    const threshold = 80
-                    const contrast_factor = 2
-                    var scaled_gray = Math.min(255,((grayscale - threshold)*contrast_factor) + threshold)
-                    grayscale = grayscale > threshold ? scaled_gray : grayscale
+                    const threshold = 80;
+                    const contrast_factor = 2;
+                    var scaled_gray = Math.min(255,((grayscale - threshold)*contrast_factor) + threshold);
+                    grayscale = grayscale > threshold ? scaled_gray : grayscale;
 
                     input[i * this.image_size + j] = grayscale;
                     ctx.fillStyle = 'rgb(' + Array(3).fill(grayscale) + ')';
@@ -341,7 +341,7 @@ class Main {
                     results = results.concat([average(results)]);
 
                     // Display user categories as last
-                    const rm_duplicates = (v,i,a) => a.lastIndexOf(v) == i
+                    const rm_duplicates = (v,i,a) => a.lastIndexOf(v) == i;
 
                     categories.forEach((v,i) => {
                         if (!this.fixed_cats.includes(v)) {
@@ -381,7 +381,7 @@ class Main {
                     const categoryNameCell = $("<th scope='row'>");
 
                     const outerDiv = document.createElement('div');
-                    $(outerDiv).addClass("input-group")
+                    $(outerDiv).addClass("input-group");
                     const textElement = $("<span class='button-own-image "+categories[categoryIdx]+"-img'>");
                     textElement.text(categories[categoryIdx]).appendTo(outerDiv);
                     categoryNameCell.append(outerDiv);
@@ -465,7 +465,7 @@ class Main {
 
                 var label = input.cat;
                 if (!this.cats.includes(label)) {
-                    this.cats.push(label)
+                    this.cats.push(label);
                     var catsList = $('#trainingDataLabelOptions')[0];
                     var option = document.createElement('option');
                     $(option).val(label);
@@ -568,7 +568,7 @@ class Main {
         } else {
             this.is_training = true;
 
-            $(button).children('.progress-bar').addClass('bg-danger')
+            $(button).children('.progress-bar').addClass('bg-danger');
             $(button).children('.label-progress-bar').text("Stop Training").css('color', 'black');
 
             var update_progress = setInterval(function() {
@@ -630,7 +630,7 @@ class Main {
         }
         if (ints['batchSize'] == 0 || ints['srEpochs'] == 0 || ints['cnnEpochs'] == 0) { // Check batch size
             this.initializeConfigValues();
-            alert("Parameter must be greater than zero.")
+            alert("Parameter must be greater than zero.");
             return false;
         }
 
@@ -663,7 +663,7 @@ class Main {
 
     checkConnection() {
         const error = "<b>Please make sure the server is running and check its console for further information.</b>";
-        this.displayAlert(error, "danger");
+        this.displayAlert(error, "danger")
     }
 }
 
@@ -716,12 +716,12 @@ $(() => {
             .removeClass('fa-pen fa-check').addClass('fa-spinner fa-spin');
 
             $('#config-form').submit();
-        })
+        });
     });
 
     $('#error .close').click(() => {
         main.dismissAlert();
-    })
+    });
 });
 
 /*loadImage(data, cb) {
