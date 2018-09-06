@@ -27,32 +27,32 @@ if not os.path.exists(MODELS_DIRECTORY):
 # updates the models if the number of classes changed
 def maybe_update_models():
     global y1, variables, saver_regression, y2, saver_cnn, x, is_training, sess, num_categories
-    if 'num_categories' not in globals() or num_categories != len(utils.update_categories()):
-        # close (old) tensorflow if existent
-        if 'sess' in globals():
-            sess.close()
 
-        if utils.CATEGORIES_IN_USE is None:
-            utils.initialize_categories_in_use()
-        else:
-            utils.update_categories_in_use()
-        num_categories = len(utils.CATEGORIES_IN_USE)
+    # close (old) tensorflow if existent
+    if 'sess' in globals():
+        sess.close()
 
-        # Model variables
-        x = tf.placeholder("float", [None, IMAGE_SIZE * IMAGE_SIZE])  # image input placeholder
-        is_training = tf.placeholder("bool")  # used for activating the dropout in training phase
+    if utils.CATEGORIES_IN_USE is None:
+        utils.initialize_categories_in_use()
+    else:
+        utils.update_categories_in_use()
+    num_categories = len(utils.CATEGORIES_IN_USE)
 
-        # Tensorflow session
-        sess = tf.InteractiveSession()
-        sess.run(tf.global_variables_initializer())
+    # Model variables
+    x = tf.placeholder("float", [None, IMAGE_SIZE * IMAGE_SIZE])  # image input placeholder
+    is_training = tf.placeholder("bool")  # used for activating the dropout in training phase
 
-        # Regression model
-        y1, variables = regression_model.regression(x, nCategories=num_categories)  # prediction results and variables
-        saver_regression = tf.train.Saver(variables)
+    # Tensorflow session
+    sess = tf.InteractiveSession()
+    sess.run(tf.global_variables_initializer())
 
-        # CNN model
-        y2, variables = cnn_model.convolutional(x, nCategories=num_categories, is_training=is_training)  # prediction results and variables
-        saver_cnn = tf.train.Saver(variables)
+    # Regression model
+    y1, variables = regression_model.regression(x, nCategories=num_categories)  # prediction results and variables
+    saver_regression = tf.train.Saver(variables)
+
+    # CNN model
+    y2, variables = cnn_model.convolutional(x, nCategories=num_categories, is_training=is_training)  # prediction results and variables
+    saver_cnn = tf.train.Saver(variables)
 
 
 # Initialize the categories mapping, the tensorflow session and the models
@@ -124,10 +124,10 @@ def classify():
         cnn_output = cnn_predict(cnn_input)
         cnn_output = [-1.0 if math.isnan(f) else f for f in cnn_output]
     except (NotFoundError, InvalidArgumentError):
-        err = "Models not found or incompatible number of categories or image size. Please (re-)train the classifiers."
+        err = "No model found. Please train the network."
 
     if utils.is_maybe_old() and len(err) == 0:
-        err = "The network may be outdated. Please retrain the classifier for updated results."
+        err = "The model may be outdated. Please retrain the network for updated results."
 
     return jsonify(classifiers=["Regression", "CNN"], results=[regression_output, cnn_output],
                    error=err, categories=utils.get_category_names_in_use())
@@ -183,8 +183,8 @@ def train_models():
         return jsonify(error=err)
 
     utils.delete_all_models()
-    maybe_update_models()
     utils.set_maybe_old(True)
+    maybe_update_models()
 
     try:
         regression_train.train()

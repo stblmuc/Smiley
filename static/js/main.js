@@ -580,30 +580,32 @@ class Main {
                 });
             }, 800);
 
-            $.ajax({
-                url: '/api/train-models',
-                method: 'POST',
-                success: (data) => {
-                    this.clearOutput();
+            $(document).one("ajaxStop", () => {
+                $.ajax({
+                    url: '/api/train-models',
+                    method: 'POST',
+                    success: (data) => {
+                        this.clearOutput();
 
-                    const error = data.error;
-                    if (error) {
-                        this.displayAlert(error, "warning");
+                        const error = data.error;
+                        if (error) {
+                            this.displayAlert(error, "warning");
+                        }
                     }
-                }
-            })
-            .always(() => {
-                clearInterval(update_progress);
+                })
+                .always(() => {
+                    clearInterval(update_progress);
 
-                this.is_training = false;
+                    this.is_training = false;
 
-                $(button).prop('disabled', false);
-                $(button).children('.progress-bar').removeClass('bg-danger').css('width', '100%');
-                $(button).children('.label-progress-bar').text("Start Training").css('color', 'white');
-            })
-            .fail(() => {
-                this.clearOutput();
-                this.checkConnection();
+                    $(button).prop('disabled', false);
+                    $(button).children('.progress-bar').removeClass('bg-danger').css('width', '100%');
+                    $(button).children('.label-progress-bar').text("Start Training").css('color', 'white');
+                })
+                .fail(() => {
+                    this.clearOutput();
+                    this.checkConnection();
+                });
             });
         }
     }
@@ -666,7 +668,7 @@ class Main {
 
     checkConnection() {
         const error = "<b>Please make sure the server is running and check its console for further information.</b>";
-        this.displayAlert(error, "danger")
+        this.displayAlert(error, "danger");
     }
 }
 
