@@ -634,9 +634,7 @@ class Main {
             return false;
         }
 
-        this.update_config = {...ints,...floats};
-        for (var key in this.update_config)
-            this[key] = this.update_config[key];
+        this.update_config = Object.assign(ints, floats);;
 
         setTimeout(() => {
             $.ajax({
@@ -645,6 +643,9 @@ class Main {
                 contentType: 'application/json',
                 data: JSON.stringify(this.update_config),
                 success: (data) => {
+                    for (var key in this.update_config)
+                        this[key] = this.update_config[key];
+
                     $(form).find('i.fa-spinner.fa-spin').removeClass("fa-spinner fa-spin").addClass("fa-check");
 
                     setTimeout(function() {
@@ -653,6 +654,8 @@ class Main {
                 }
             })
             .fail(() => {
+                $(form).find('i').removeClass("fa-spinner fa-spin fa-check").addClass("fa-pen");
+                this.initializeConfigValues();
                 this.clearOutput();
                 this.checkConnection();
             });
