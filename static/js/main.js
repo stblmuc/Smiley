@@ -610,7 +610,7 @@ class Main {
 
     updateConfig(button) {
         var ints = [$('#num-augm').val(), $('#batch-size').val(), $('#sr-epochs').val(), $('#cnn-epochs').val()];
-        var floats = [$('#sr-rate').val(), $('#cnn-epochs').val()];
+        var floats = [$('#sr-rate').val(), $('#cnn-rate').val()];
 
         for (var i in ints) {
             if(!/^\+?(0|[1-9]\d*)$/.test(ints[i])) {
@@ -626,7 +626,16 @@ class Main {
                 this.initializeConfigValues();
                 alert("Parameter must be a decimal number. Please use only digits(0-9) and a decimal separator(.) for this parameter.");
                 return;
+            } else if (Number(floats[j]) > 1 || Number(floats[j]) == 0.0) {
+                this.initializeConfigValues();
+                alert("Learning rates have to be between 0 and 1.");
+                return;
             }
+        }
+        if (ints[1] == 0) { // Check batch size
+            this.initializeConfigValues();
+            alert("Batch size must be greater than zero.")
+            return;
         }
 
         this.numAugm = $('#num-augm').val();
