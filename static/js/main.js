@@ -611,7 +611,7 @@ class Main {
     updateConfig(button) {
         var ints = [$('#num-augm').val(), $('#batch-size').val(), $('#sr-epochs').val(), $('#cnn-epochs').val()];
         var floats = [$('#sr-rate').val(), $('#cnn-rate').val()];
-
+        
         for (var i in ints) {
             if(!/^\+?(0|[1-9]\d*)$/.test(ints[i])) {
                 $(button).find('i.fa-spinner.fa-spin').removeClass("fa-spinner fa-spin").addClass("fa-pen");
@@ -645,7 +645,7 @@ class Main {
         this.cnnRate = $('#cnn-rate').val();
         this.cnnEpochs = $('#cnn-epochs').val();
 
-        const conf = {
+        this.update_config = {
             numberAugmentations: this.numAugm,
             batchSize: this.batchSize,
             srLearningRate: this.srRate,
@@ -654,24 +654,26 @@ class Main {
             cnnLearningRate: this.cnnRate
         };
 
-        $.ajax({
-            url: '/api/update-config',
-            method: 'POST',
-            contentType: 'application/json',
-            data: JSON.stringify(conf),
-            success: (data) => {
-                var icon = $(button).find('i.fa-spinner.fa-spin');
-                icon.removeClass("fa-spinner fa-spin").addClass("fa-check");
+        this.update_timeout = setTimeout(() => {
+            $.ajax({
+                url: '/api/update-config',
+                method: 'POST',
+                contentType: 'application/json',
+                data: JSON.stringify(this.update_config),
+                success: (data) => {
+                    var icon = $(button).find('i.fa-spinner.fa-spin');
+                    icon.removeClass("fa-spinner fa-spin").addClass("fa-check");
 
-                setTimeout(function() {
-                    icon.removeClass("fa-check").addClass("fa-pen");
-                }, 1000);
-            }
-        })
-        .fail(() => {
-            this.clearOutput();
-            this.checkConnection();
-        });
+                    setTimeout(function() {
+                        icon.removeClass("fa-check").addClass("fa-pen");
+                    }, 1000);
+                }
+            })
+            .fail(() => {
+                this.clearOutput();
+                this.checkConnection();
+            });
+        }, 400);
     }
 
     checkConnection() {
@@ -725,11 +727,9 @@ $(() => {
     $('#config-form input').each(function() {
         $(this).change((e) => {
             $(this).siblings('.input-group-append').find('i')
-            .removeClass('fa-pen').addClass('fa-spinner fa-spin');
+            .removeClass('fa-pen fa-check').addClass('fa-spinner fa-spin');
 
-            this.timeout = setTimeout(() => {
-                $('#config-form').submit();
-            }, 1000);
+            $('#config-form').submit();
         })
     });
 
