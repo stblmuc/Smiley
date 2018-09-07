@@ -36,6 +36,19 @@ class Main {
         this.canvas.addEventListener('mousemove', this.onMouseMove.bind(this));
         this.canvas.addEventListener('mouseout', this.onMouseOut.bind(this));
 
+        $(this.canvas).click(e => {
+            var curr = this.getPosition(e.clientX + 0.02, e.clientY + 0);
+            this.ctx.lineWidth = Math.max(5, 46 - (this.image_size / 2));
+            this.ctx.lineCap = 'round';
+            this.ctx.beginPath();
+            this.ctx.moveTo(this.prev.x, this.prev.y);
+            this.ctx.lineTo(curr.x, curr.y);
+            this.ctx.stroke();
+            this.ctx.closePath();
+            this.prev = curr;
+            this.recogniseInput((input) => {});
+        });
+
         this.createCategoryButtons();
         this.initializeConfigValues();
         this.initialize();
@@ -108,7 +121,7 @@ class Main {
         $(outerDiv).addClass("input-group col-sm-6");
 
         var button = document.createElement('div');
-        $(button).addClass("btn btn-outline-secondary rounded");
+        $(button).addClass("btn btn-outline-secondary rounded")
         .html(category).val(category).click((e) => {
             this.addTrainingData(outerDiv, $(e.currentTarget).val());
         }).appendTo(outerDiv);
@@ -150,7 +163,7 @@ class Main {
         $(location).children().removeClass('rounded');
         
         var button = document.createElement('div');
-        $(button).addClass("input-group-append btn btn-outline-secondary");
+        $(button).addClass("input-group-append btn btn-outline-secondary")
         .html("<i class='fa fa-folder-open'></i>").click((e) => {
             this.open_category_folder(category);
             e.stopPropagation();
@@ -161,7 +174,7 @@ class Main {
         $(location).children().removeClass('rounded');
         
         var button = document.createElement('div');
-        $(button).addClass("input-group-append btn btn-outline-danger");
+        $(button).addClass("input-group-append btn btn-outline-danger")
         .html("<i class='fa fa-times'></i>").click((e) => {
             this.deleteCategory(category, location);
             e.stopPropagation();
