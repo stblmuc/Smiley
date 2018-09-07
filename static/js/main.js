@@ -305,7 +305,7 @@ class Main {
     displayAlert(content, type) {
         var alert = $("#error");
         alert.addClass("alert-"+type).fadeIn().find("p").html(content.replace(/(\r\n|\n|\r)/gm, "<br>"));
-        this.alert_timeout = setTimeout(() => {alert.fadeOut();}, 6000);
+        this.alert_timeout = setTimeout(() => {alert.fadeOut();}, 60000);
     }
 
     recogniseInput(cb) {
