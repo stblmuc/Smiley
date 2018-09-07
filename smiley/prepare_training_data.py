@@ -225,9 +225,7 @@ def cv2_clipped_zoom(model, img, zoom_factor):
     pad_height1, pad_width1 = (height - resize_height) // 2, (width - resize_width) // 2
     pad_height2, pad_width2 = (height - resize_height) - pad_height1, (width - resize_width) - pad_width1
     pad_spec = [(pad_height1, pad_height2), (pad_width1, pad_width2)] + [(0, 0)] * (img.ndim - 2)
-    const_fill_value = 0
-    if model == "CNN":
-        const_fill_value = -0.5
+    const_fill_value = -0.5 if model == "CNN" else 0
 
     result = cv2.resize(cropped_img, (resize_width, resize_height))
     result = numpy.pad(result, pad_spec, mode='constant', constant_values=const_fill_value)
