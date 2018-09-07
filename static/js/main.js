@@ -299,12 +299,13 @@ class Main {
         $("#error").removeClass((i, className) => {
             return (className.match(/(^|\s)alert-\S+/g) || []).join(' ');
         }).hide().find("p").text("");
+        clearTimeout(this.alert_timeout);
     }
 
     displayAlert(content, type) {
         var alert = $("#error");
         alert.addClass("alert-"+type).fadeIn().find("p").html(content.replace(/(\r\n|\n|\r)/gm, "<br>"));
-        setTimeout(() => {alert.fadeOut();}, 60000);
+        this.alert_timeout = setTimeout(() => {alert.fadeOut();}, 6000);
     }
 
     recogniseInput(cb) {
@@ -636,7 +637,7 @@ class Main {
 
         this.update_config = Object.assign(ints, floats);
 
-        setTimeout(() => {
+        this.update_timeout = setTimeout(() => {
             $.ajax({
                 url: '/api/update-config',
                 method: 'POST',
