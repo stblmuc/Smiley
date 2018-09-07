@@ -36,19 +36,6 @@ class Main {
         this.canvas.addEventListener('mousemove', this.onMouseMove.bind(this));
         this.canvas.addEventListener('mouseout', this.onMouseOut.bind(this));
 
-        $(this.canvas).click(e => {
-            var curr = this.getPosition(e.clientX + 0.02, e.clientY + 0);
-            this.ctx.lineWidth = Math.max(5, 46 - (this.image_size / 2));
-            this.ctx.lineCap = 'round';
-            this.ctx.beginPath();
-            this.ctx.moveTo(this.prev.x, this.prev.y);
-            this.ctx.lineTo(curr.x, curr.y);
-            this.ctx.stroke();
-            this.ctx.closePath();
-            this.prev = curr;
-            this.recogniseInput((input) => {});
-        });
-
         this.createCategoryButtons();
         this.initializeConfigValues();
         this.initialize();
@@ -593,32 +580,30 @@ class Main {
                 });
             }, 800);
 
-            $(document).one("ajaxStop", () => {
-                $.ajax({
-                    url: '/api/train-models',
-                    method: 'POST',
-                    success: (data) => {
-                        this.clearOutput();
-
-                        const error = data.error;
-                        if (error) {
-                            this.displayAlert(error, "warning");
-                        }
-                    }
-                })
-                .always(() => {
-                    clearInterval(update_progress);
-
-                    this.is_training = false;
-
-                    $(button).prop('disabled', false);
-                    $(button).children('.progress-bar').removeClass('bg-danger').css('width', '100%');
-                    $(button).children('.label-progress-bar').text("Start Training").css('color', 'white');
-                })
-                .fail(() => {
+            $.ajax({
+                url: '/api/train-models',
+                method: 'POST',
+                success: (data) => {
                     this.clearOutput();
-                    this.checkConnection();
-                });
+
+                    const error = data.error;
+                    if (error) {
+                        this.displayAlert(error, "warning");
+                    }
+                }
+            })
+            .always(() => {
+                clearInterval(update_progress);
+
+                this.is_training = false;
+
+                $(button).prop('disabled', false);
+                $(button).children('.progress-bar').removeClass('bg-danger').css('width', '100%');
+                $(button).children('.label-progress-bar').text("Start Training").css('color', 'white');
+            })
+            .fail(() => {
+                this.clearOutput();
+                this.checkConnection();
             });
         }
     }

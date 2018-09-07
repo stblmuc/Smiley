@@ -115,6 +115,7 @@ label {
     background-color: #e9ecef;
     text-align: center;
     vertical-align: middle;
+    border-radius: calc(.25rem - 1px);
 }
 
 .label-progress-bar {
@@ -193,7 +194,7 @@ label {
 #error {
     position: fixed;
     bottom: 0%;
-    z-index: 100;
+    z-index: 2;
     width: 50%;
     left:25%;
 }
