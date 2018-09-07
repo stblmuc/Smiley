@@ -439,11 +439,11 @@ class Main {
 
     addTrainingData(button, label) {
         if (!label) 
-            alert("Please assign a category for the data");
+            alert("Please assign a category for the image");
         else if (this.cats.filter((e) => !this.fixed_cats.includes(e)).length == this.maxNumUserCat)
-            alert("Maximum number of categories reached ("+this.maxNumUserCat+")");
+            alert("Maximum number of user-defined categories ("+this.maxNumUserCat+") already reached");
         else if (label.length > 12)
-            alert("Maximum number of characters reached (12)");
+            alert("Maximum number of characters (12) exceeded");
         else if (!/^[a-zA-Z0-9\-]*$/.test(label))
             alert("Please use only latin alphabet (a-z/A-Z), hyphen(-) and digits(0-9) for the category name");
         else {
