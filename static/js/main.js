@@ -108,7 +108,7 @@ class Main {
         $(outerDiv).addClass("input-group col-sm-6");
 
         var button = document.createElement('div');
-        $(button).addClass("btn btn-outline-secondary rounded")
+        $(button).addClass("btn btn-outline-secondary rounded");
         .html(category).val(category).click((e) => {
             this.addTrainingData(outerDiv, $(e.currentTarget).val());
         }).appendTo(outerDiv);
@@ -150,7 +150,7 @@ class Main {
         $(location).children().removeClass('rounded');
         
         var button = document.createElement('div');
-        $(button).addClass("input-group-append btn btn-outline-secondary")
+        $(button).addClass("input-group-append btn btn-outline-secondary");
         .html("<i class='fa fa-folder-open'></i>").click((e) => {
             this.open_category_folder(category);
             e.stopPropagation();
@@ -161,7 +161,7 @@ class Main {
         $(location).children().removeClass('rounded');
         
         var button = document.createElement('div');
-        $(button).addClass("input-group-append btn btn-outline-danger")
+        $(button).addClass("input-group-append btn btn-outline-danger");
         .html("<i class='fa fa-times'></i>").click((e) => {
             this.deleteCategory(category, location);
             e.stopPropagation();
@@ -250,8 +250,8 @@ class Main {
             var data = small.getImageData(0, 0, this.image_size, this.image_size).data;
 
             // get max and min for normalization
-            var max = 0
-            var min = 0
+            var max = 0;
+            var min = 0;
             for (var i = 0; i < this.image_size; i++) {
                 for (var j = 0; j < this.image_size; j++) {
                     var n = 4 * (i * this.image_size + j);
@@ -630,13 +630,13 @@ class Main {
                 return false;
             }
         }
-        if (ints['batchSize'] == 0 || ints['srEpochs'] == 0 || ints['cnnEpochs'] == 0) { // Check batch size
+        if (ints['batchSize'] == 0 || ints['srEpochs'] == 0 || ints['cnnEpochs'] == 0) {
             this.initializeConfigValues();
             alert("Parameter must be greater than zero.");
             return false;
         }
 
-        this.update_config = Object.assign(ints, floats);;
+        this.update_config = Object.assign(ints, floats);
 
         setTimeout(() => {
             $.ajax({
