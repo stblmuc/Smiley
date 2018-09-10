@@ -23,11 +23,9 @@ class Main {
         var catsList = $('#trainingDataLabelOptions')[0];
         this.cats = param.categories;
         this.cats.forEach(function(item){
-            var option = document.createElement('option');
-            $(option).val(item);
-            catsList.append(option);
+            $("<option></option>").val(item).appendTo(catsList);
         });
-        this.fixed_cats = param.categories.filter(x => !param.user_categories.includes(x));
+        this.fixed_cats = this.cats.filter(x => !param.user_categories.includes(x));
         this.cats_img_number = param.cats_img_number;
         this.maxNumUserCat = param.maxNumUserCat;
 
