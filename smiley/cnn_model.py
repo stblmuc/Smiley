@@ -15,11 +15,11 @@ def convolutional(x, nCategories, is_training=True):
         x_image = tf.reshape(x, [-1, image_size, image_size, 1])
 
         # Convolutional layer + max pool layer
-        conv1 = tf.layers.conv2d(x_image, 32, 5, activation=tf.nn.relu)
+        conv1 = tf.layers.conv2d(x_image, 32, 5, activation=tf.nn.relu, kernel_initializer=tf.contrib.layers.variance_scaling_initializer())
         conv1 = tf.layers.max_pooling2d(conv1, 2, 2)
 
         # Convolutional layer + max pool layer
-        conv2 = tf.layers.conv2d(conv1, 64, 5, activation=tf.nn.relu)
+        conv2 = tf.layers.conv2d(conv1, 64, 5, activation=tf.nn.relu, kernel_initializer=tf.contrib.layers.variance_scaling_initializer())
         conv2 = tf.layers.max_pooling2d(conv2, 2, 2)
 
         flatten = tf.contrib.layers.flatten(conv2)
