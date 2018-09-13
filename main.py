@@ -89,9 +89,9 @@ def main():
     
     data = {'image_size': IMAGE_SIZE, 'numAugm': numAugm, 'batchSize': batchSize, 'srRate': srRate,
             'srEpochs': srEpochs, 'cnnRate': cnnRate, 'cnnEpochs': cnnEpochs, 'maxNumUserCat': maxNumUserCat,
+            'cats_img_number': utils.get_number_of_images_per_category(),
             'categories': list(set().union(utils.get_category_names(), predefined_categories)),
-            'user_categories': list(set(utils.get_category_names()) - set(predefined_categories)),
-            'cats_img_number': utils.get_number_of_images_per_category()}
+            'user_categories': list(set(utils.get_category_names()) - set(predefined_categories))}
     
     return render_template('index.html', data=data)
 
