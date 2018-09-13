@@ -194,8 +194,12 @@ def get_number_of_images_per_category():
     for z in os.walk(CATEGORIES_LOCATION):
         if len(str(z[0].split("/")[-1])) > 0:
             for x in os.walk(os.path.join(CATEGORIES_LOCATION, str(z[0].split("/")[-1]))):
-                # the number of files in the category folder is used for the number of images for that category
-                cat_images[str(x[0].split("/")[-1])] = len(x[-1])
+                # the number of png-files in the category folder is used for the number of images for that category
+                pngs = [a for a in x[-1] if a.split(".")[-1] == "png"]
+                if len(pngs) == 0:
+                    delete_category(str(x[0].split("/")[-1]))
+                else:
+                    cat_images[str(x[0].split("/")[-1])] = len(pngs)
     return cat_images
 
 

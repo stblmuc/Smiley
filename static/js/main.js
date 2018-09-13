@@ -127,6 +127,11 @@ class Main {
         }
     }
 
+    /*
+        Parameter:
+        category: category name
+        number: number of images for category, or -1 if current number should be increased by one
+    */
     updateCategoryButton(category, number) {
         var button = $('#categories .btn')
         .filter(function(){return this.value==category;})[0];
@@ -136,7 +141,7 @@ class Main {
 
         var numberDiv = document.createElement('div');
         numberDiv.id = category + "-number";
-        $(numberDiv).html(" (" + (number ? number : (Number(value)+1)) + ")").addClass("inline").appendTo(button);
+        $(numberDiv).html(" (" + (number >= 0 ? number : (Number(value)+1)) + ")").addClass("inline").appendTo(button);
     
         if (!value) {
             this.addFolderToCategory(category, $(button).parent());
@@ -473,7 +478,7 @@ class Main {
                     this.addCategoryButton(label, $('#categories .user-categories')[0]);
                 }
 
-                this.updateCategoryButton(label, 0);
+                this.updateCategoryButton(label, -1);
             }
         })
         .always(() => {
