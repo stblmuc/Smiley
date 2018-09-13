@@ -157,7 +157,7 @@ def add_training_example(image, category):
 
 def save_image(image, path):
     # name for new training example image
-    image_name = max([0] + [int(x.split(".")[0]) for x in os.listdir(path)]) + 1
+    image_name = max([0] + [int(x.split(".")[0]) for x in [a for a in os.listdir(path) if a.split(".")[-1] == "png" and a.split(".")[0].isdigit()]]) + 1
 
     # store new training example image
     image_size = int(config['DEFAULT']['IMAGE_SIZE'])
