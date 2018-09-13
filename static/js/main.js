@@ -130,7 +130,7 @@ class Main {
     /*
         Parameter:
             - category: category name
-            - number: number of images for category, or -1 if current number should be increased by one
+            - number: number of images for category, or <0 if current number should be increased by one
     */
     updateCategoryButton(category, number) {
         var button = $('#categories .btn')
