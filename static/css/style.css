@@ -60,14 +60,6 @@ label {
      background-image : url("../img/sad.png");
 }
 
-.scream-img:before{
-     background-image : url("../img/scream.png");
-}
-
-.angry-img:before{
-     background-image : url("../img/angry.png");
-}
-
 .upside-down-img:before{
      background-image : url("../img/upside-down.png");
 }
