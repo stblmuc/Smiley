@@ -190,6 +190,7 @@ def initialize_categories_in_use():
 
 # Returns dictionary with keys = category names (from folders), values = number of images for the category
 def get_number_of_images_per_category():
+    update_categories()
     cat_images = {}
     for z in os.walk(CATEGORIES_LOCATION):
         if len(str(z[0].split("/")[-1])) > 0:
